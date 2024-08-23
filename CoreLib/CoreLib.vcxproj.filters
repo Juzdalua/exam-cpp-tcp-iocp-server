@@ -4,6 +4,9 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{2fdce61c-e415-4f0a-b1c8-941cde3e379b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{9905a4a0-83db-439f-a7f5-bdf4c49ac30a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -21,6 +24,9 @@
     <ClInclude Include="CoreMacro.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="SocketUtils.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CoreLib.cpp">
@@ -31,6 +37,9 @@
     </ClCompile>
     <ClCompile Include="CorePch.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketUtils.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
