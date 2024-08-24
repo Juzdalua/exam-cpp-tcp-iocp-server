@@ -40,6 +40,7 @@ void WorkerThreadMain(HANDLE iocpHandle)
 		Session* session = nullptr;
 		OverlappedEx* overlappedEx = nullptr;
 
+		// Find Job
 		BOOL ret = GetQueuedCompletionStatus(iocpHandle, &bytesTransfered, (ULONG_PTR*)&session, (LPOVERLAPPED*)&overlappedEx, INFINITE);
 		if (ret == FALSE || bytesTransfered == 0)
 		{
@@ -53,6 +54,21 @@ void WorkerThreadMain(HANDLE iocpHandle)
 
 		cout << "Recv Data: " << wsaBuf.buf << endl;
 
+		// Echo
+		DWORD numsOfBytes = 0;
+		if (WSASend(session->socket, &wsaBuf, 1, &numsOfBytes, 0, nullptr, nullptr) == SOCKET_ERROR)
+		{
+			int32 errorCode = WSAGetLastError();
+			if (errorCode != WSA_IO_PENDING)
+			{
+				HandleError("Echo Send Error");
+				continue;
+			}
+		}
+
+		
+
+		// Wait Recv
 		DWORD recvLen = 0;
 		DWORD flags = 0;
 		WSARecv(session->socket, &wsaBuf, 1, OUT &recvLen, OUT &flags, &overlappedEx->overlapped, NULL);
