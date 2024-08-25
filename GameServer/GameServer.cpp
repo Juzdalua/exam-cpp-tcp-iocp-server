@@ -66,8 +66,6 @@ void WorkerThreadMain(HANDLE iocpHandle)
 			}
 		}
 
-		
-
 		// Wait Recv
 		DWORD recvLen = 0;
 		DWORD flags = 0;
