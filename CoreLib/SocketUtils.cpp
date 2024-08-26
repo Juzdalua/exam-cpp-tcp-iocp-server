@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SocketUtils.h"
+#include "Session.h"
 
 void SocketUtils::Init()
 {
@@ -35,6 +36,15 @@ bool SocketUtils::BindAnyAddress(SOCKET listenSocket, uint16 port)
 bool SocketUtils::Listen(SOCKET listenSocket, int32 backlog)
 {
 	return SOCKET_ERROR != listen(listenSocket, backlog);
+}
+
+void SocketUtils::Accept()
+{
+	for (int32 i = 0; i < 5; i++)
+	{
+		shared_ptr<Session> sessionRef = make_shared<Session>();
+		GSessionManager._sessionManager.push_back(sessionRef);
+	}
 }
 
 

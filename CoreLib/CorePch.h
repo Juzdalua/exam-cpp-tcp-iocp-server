@@ -2,6 +2,7 @@
 
 #include "Types.h"
 #include "CoreMacro.h"
+#include "CoreGlobal.h"
 
 #include <vector>
 #include <list>
@@ -22,3 +23,5 @@ using namespace std;
 #include <MSWSock.h>
 #include <WS2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
+
+#include "Session.h"

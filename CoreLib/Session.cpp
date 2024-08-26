@@ -2,6 +2,8 @@
 #include "Session.h"
 #include "SocketUtils.h"
 
+SessionManager GSessionManager;
+
 Session::Session()
 {
 	_clientSocket = SocketUtils::CreateSocket();
@@ -21,4 +23,13 @@ bool Session::ClientConnectEx()
 void Session::DisconnectEx(const WCHAR* cause)
 {
 	// TODO
+}
+
+HANDLE Session::GetHandle()
+{
+	return HANDLE();
+}
+
+void Session::Dispatch(IocpEvent* iocpEvent, int32 numOfBytes)
+{
 }

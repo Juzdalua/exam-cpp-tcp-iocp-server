@@ -11,12 +11,6 @@ void HandleError(const char* cause)
 
 // Session
 const int BUFSIZE = 1'000;
-struct Session
-{
-	SOCKET socket = INVALID_SOCKET;
-	char recvBuffer[BUFSIZE] = {};
-	int recvBytes = 0;
-};
 
 // Worker Thread
 void WorkerThreadMain(HANDLE iocpHandle)
@@ -25,7 +19,7 @@ void WorkerThreadMain(HANDLE iocpHandle)
 	{
 		ULONG_PTR key = 0;
 		DWORD bytesTransfered = 0;
-		Session* session = nullptr;
+		//Session* session = nullptr;
 		IocpEvent* iocpEvent = nullptr;
 
 		// Find Job
@@ -71,8 +65,6 @@ int main()
 	SocketUtils::Listen(listenSocket);
 	cout << "Accept" << endl;
 
-	vector<Session*> sessionManager;
-
 	// IOCP Set
 	IocpCore* iocpCore = new IocpCore();
 	unique_ptr<IocpCore> uIocpCore(iocpCore);
@@ -95,9 +87,8 @@ int main()
 			return 0;
 		}
 		
-		Session* session = new Session();
-		session->socket = clientSocket;
-		sessionManager.push_back(session);
+		shared_ptr<Session> sessionRef = make_shared<Session>();
+		sessionRef->SetSocket(clientSocket);
 
 		cout << "Client Connected" << endl;
 
@@ -105,7 +96,7 @@ int main()
 
 		// 8. Register Client Socket to IOCP
 		WSABUF wsaBuf;
-		wsaBuf.buf = session->recvBuffer;
+		wsaBuf.buf = sessionRef->GetRecvBuffer();
 		wsaBuf.len = BUFSIZE;
 
 		DWORD recvLen = 0;

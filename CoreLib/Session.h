@@ -25,6 +25,14 @@ public:
 	bool ClientConnectEx();
 	void DisconnectEx(const WCHAR* cause);
 
+	// TEMP
+	void SetSocket(SOCKET clientSocket) { _clientSocket = clientSocket; }
+	char* GetRecvBuffer() { return _recvBuffer; }
+
+private:
+	virtual HANDLE GetHandle() override;
+	virtual void Dispatch(class IocpEvent* iocpEvent, int32 numOfBytes = 0) override;
+
 private:
 	SOCKET _clientSocket = INVALID_SOCKET;
 	atomic<bool> _connected = false;
@@ -40,3 +48,14 @@ private:
 	SendEvent _sendEvent;
 };
 
+class SessionManager
+{
+public:
+	SessionManager() {};
+	virtual ~SessionManager() {};
+
+public:
+	vector<shared_ptr<Session>> _sessionManager = {};
+};
+
+extern SessionManager GSessionManager;

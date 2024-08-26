@@ -36,6 +36,9 @@
     <ClInclude Include="IocpEvent.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="CoreGlobal.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CoreLib.cpp">
@@ -57,6 +60,9 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="IocpEvent.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreGlobal.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>

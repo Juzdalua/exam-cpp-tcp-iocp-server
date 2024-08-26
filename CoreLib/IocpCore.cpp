@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "IocpCore.h"
 #include "IocpEvent.h"
+#include "Session.h"
 
 IocpCore::IocpCore()
 {
@@ -59,18 +60,16 @@ void IocpCore::RegisterRecv(IocpEvent* iocpEvent)
 	if (iocpEvent->eventType != EventType::Recv)
 		return;
 
-	WSABUF wsaBuf;
-	wsaBuf.buf = session->recvBuffer;
-	wsaBuf.len = BUFSIZE;
+	//WSABUF wsaBuf;
+	//wsaBuf.buf = session->recvBuffer;
+	//wsaBuf.len = BUFSIZE;
 
-	DWORD recvLen = 0;
-	DWORD flags = 0;
+	//DWORD recvLen = 0;
+	//DWORD flags = 0;
 
-	OverlappedEx* overlappedEx = new OverlappedEx();
-	overlappedEx->type = IO_TYPE::READ;
 
-	// 9. WSARecv
-	WSARecv(clientSocket, &wsaBuf, 1, &recvLen, &flags, &overlappedEx->overlapped, NULL);
+	//// 9. WSARecv
+	//WSARecv(clientSocket, &wsaBuf, 1, &recvLen, &flags, &overlappedEx->overlapped, NULL);
 }
 
 void IocpCore::RegisterSend(IocpEvent* iocpEvent)
