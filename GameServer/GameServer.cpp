@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
-#include "CorePch.h"
+#include "IocpCore.h"
+#include "SocketUtils.h"
 
 // Error
 void HandleError(const char* cause)
@@ -76,51 +77,23 @@ void WorkerThreadMain(HANDLE iocpHandle)
 // Main
 int main()
 {
-	// 1. WSAStartup
-	WSAData wsaData;
-	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-		HandleError("WSAStartup");
-		return 0;
-	}
-
-	// 2. TCP Socket Set
-	SOCKET listenSocket = socket(AF_INET, SOCK_STREAM,IPPROTO_TCP);
-	if (listenSocket == INVALID_SOCKET)
-	{
-		HandleError("listenSocket");
-		return 0;
-	}
-
-	// 3. Server Set
-	SOCKADDR_IN serverAddr;
-	memset(&serverAddr, 0, sizeof(serverAddr));
-	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serverAddr.sin_port = htons(7777);
-
-	// 4. Bind
-	if (::bind(listenSocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
-	{
-		HandleError("Bind");
-		return 0;
-	}
-
-	// 5. Listen
-	if (listen(listenSocket, SOMAXCONN) == SOCKET_ERROR)
-	{
-		HandleError("Listen");
-		return 0;
-	}
+	// Socket Set
+	SocketUtils::Init();
+	SOCKET listenSocket = SocketUtils::CreateSocket();
+	SocketUtils::BindAnyAddress(listenSocket, 7777);
+	SocketUtils::Listen(listenSocket);
 
 	cout << "Accept" << endl;
 
 	vector<Session*> sessionManager;
+	shared_ptr<Session> sessionRef = make_shared<Session>();
 
+	// IOCP Set
+	IocpCore* iocpCore = new IocpCore();
+	unique_ptr<IocpCore> uIocpCore(iocpCore);
+	CreateIoCompletionPort((HANDLE)listenSocket, uIocpCore->GetHandle(), 0, 0);
 
-	// 6. IOCP Handle Set
-	HANDLE iocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
-
-	thread t1(WorkerThreadMain, iocpHandle);
+	thread t1(WorkerThreadMain, uIocpCore->GetHandle());
 
 	while (true)
 	{
@@ -140,7 +113,7 @@ int main()
 		cout << "Client Connected" << endl;
 
 		// 8. Register Client Socket to IOCP
-		CreateIoCompletionPort((HANDLE)clientSocket, iocpHandle, /*key*/(ULONG_PTR)session, 0);
+		//CreateIoCompletionPort((HANDLE)clientSocket, iocpHandle, /*key*/(ULONG_PTR)session, 0);
 
 		WSABUF wsaBuf;
 		wsaBuf.buf = session->recvBuffer;
@@ -159,5 +132,7 @@ int main()
 	if (t1.joinable())
 		t1.join();
 
-	WSACleanup();
+	// Socket Close
+	SocketUtils::Close(listenSocket);
+	SocketUtils::Clear();
 }

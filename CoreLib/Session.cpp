@@ -11,3 +11,14 @@ Session::~Session()
 {
 	SocketUtils::Close(_clientSocket);
 }
+
+bool Session::ClientConnectEx()
+{
+	// TODO
+	return false;
+}
+
+void Session::DisconnectEx(const WCHAR* cause)
+{
+	// TODO
+}

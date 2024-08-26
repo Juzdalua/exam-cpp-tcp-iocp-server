@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <thread>
+#include <string>
 
 #include <windows.h>
 #include <iostream>

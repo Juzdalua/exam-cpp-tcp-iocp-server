@@ -30,6 +30,12 @@
     <ClInclude Include="Session.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="IocpCore.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="IocpEvent.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CoreLib.cpp">
@@ -45,6 +51,12 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="Session.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="IocpCore.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="IocpEvent.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
