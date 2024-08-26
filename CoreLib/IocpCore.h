@@ -19,6 +19,10 @@ public:
 	bool Register(HANDLE iocpHandle);
 	void Dispatch(uint32 timeoutMs = INFINITE);
 
+	void RegisterAccept(IocpEvent* iocpEvent);
+	void RegisterRecv(IocpEvent* iocpEvent);
+	void RegisterSend(IocpEvent* iocpEvent);
+
 private:
 	HANDLE _iocpHandle;
 };

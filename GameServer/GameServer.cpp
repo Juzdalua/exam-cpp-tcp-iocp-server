@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "IocpCore.h"
 #include "SocketUtils.h"
+#include "IocpEvent.h"
 
 // Error
 void HandleError(const char* cause)
@@ -17,21 +18,6 @@ struct Session
 	int recvBytes = 0;
 };
 
-// Overlapped
-enum IO_TYPE
-{
-	READ,
-	WRITE,
-	ACCEPT,
-	CONNECT,
-};
-
-struct OverlappedEx
-{
-	WSAOVERLAPPED overlapped = {};
-	int type = 0; // IO_TYPE
-};
-
 // Worker Thread
 void WorkerThreadMain(HANDLE iocpHandle)
 {
@@ -40,10 +26,10 @@ void WorkerThreadMain(HANDLE iocpHandle)
 		ULONG_PTR key = 0;
 		DWORD bytesTransfered = 0;
 		Session* session = nullptr;
-		OverlappedEx* overlappedEx = nullptr;
+		IocpEvent* iocpEvent = nullptr;
 
 		// Find Job
-		BOOL ret = GetQueuedCompletionStatus(iocpHandle, &bytesTransfered, &key, (LPOVERLAPPED*)&overlappedEx, INFINITE);
+		BOOL ret = GetQueuedCompletionStatus(iocpHandle, &bytesTransfered, &key, (LPOVERLAPPED*)&iocpEvent, INFINITE);
 		if (ret == FALSE || bytesTransfered == 0)
 		{
 			continue;
@@ -57,7 +43,7 @@ void WorkerThreadMain(HANDLE iocpHandle)
 		//cout << "Recv Data: " << wsaBuf.buf << endl;
 
 		// Echo
-		DWORD numsOfBytes = 0;
+		/*DWORD numsOfBytes = 0;
 		if (WSASend(session->socket, &wsaBuf, 1, &numsOfBytes, 0, nullptr, nullptr) == SOCKET_ERROR)
 		{
 			int32 errorCode = WSAGetLastError();
@@ -66,12 +52,12 @@ void WorkerThreadMain(HANDLE iocpHandle)
 				HandleError("Echo Send Error");
 				continue;
 			}
-		}
+		}*/
 
 		// Wait Recv
 		DWORD recvLen = 0;
 		DWORD flags = 0;
-		WSARecv(session->socket, &wsaBuf, 1, OUT &recvLen, OUT &flags, &overlappedEx->overlapped, NULL);
+		//WSARecv(session->socket, &wsaBuf, 1, OUT &recvLen, OUT &flags, &overlappedEx->overlapped, NULL);
 	}
 }
 
@@ -91,7 +77,12 @@ int main()
 	IocpCore* iocpCore = new IocpCore();
 	unique_ptr<IocpCore> uIocpCore(iocpCore);
 
-	thread t1(WorkerThreadMain, uIocpCore->GetHandle());
+	// Worker Threads
+	vector<thread> workers;
+	for (int32 i = 0; i < 5; i++)
+	{
+		workers.emplace_back([&]() {WorkerThreadMain(uIocpCore->GetHandle());});
+	}
 
 	while (true)
 	{
@@ -120,15 +111,21 @@ int main()
 		DWORD recvLen = 0;
 		DWORD flags = 0;
 
-		OverlappedEx* overlappedEx = new OverlappedEx();
-		overlappedEx->type = IO_TYPE::READ;
+		IocpEvent* iocpEvent = new IocpEvent(EventType::Recv);
 
 		// 9. WSARecv
-		WSARecv(clientSocket, &wsaBuf, 1, &recvLen, &flags, &overlappedEx->overlapped, NULL);
+		WSARecv(clientSocket, &wsaBuf, 1, &recvLen, &flags, iocpEvent, NULL);
 	}
 
-	if (t1.joinable())
-		t1.join();
+
+
+
+
+	for (auto& t : workers)
+	{
+		if (t.joinable())
+			t.join();
+	}
 
 	// Socket Close
 	SocketUtils::Close(listenSocket);

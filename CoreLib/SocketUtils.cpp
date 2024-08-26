@@ -37,12 +37,6 @@ bool SocketUtils::Listen(SOCKET listenSocket, int32 backlog)
 	return SOCKET_ERROR != listen(listenSocket, backlog);
 }
 
-bool SocketUtils::AcceptEx(SOCKET listenSocket, SOCKET clientSocket, PVOID outputBuffer, DWORD recvDataLen, DWORD localAddressLen, DWORD remoteAddressLen, DWORD bytesReceived, LPOVERLAPPED iocpEvent)
-{
-	// TODO
-	return false;
-}
-
 
 void SocketUtils::Close(SOCKET& socket)
 {

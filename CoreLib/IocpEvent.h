@@ -1,4 +1,5 @@
 #pragma once
+#include "IocpCore.h"
 
 class Session;
 
@@ -20,7 +21,7 @@ public:
 
 public:
 	EventType eventType;
-	//shared_ptr<IocpObject> owner;
+	shared_ptr<IocpObject> owner;
 };
 
 /*----------------

@@ -26,8 +26,10 @@ void IocpCore::Dispatch(uint32 timeoutMs)
 
 	if (GetQueuedCompletionStatus(_iocpHandle, OUT &numOfBytes, OUT &key, OUT reinterpret_cast<LPOVERLAPPED*>(&iocpEvent), timeoutMs))
 	{
-		//IocpObjectRef iocpObject = iocpEvent->owner;
-		//iocpObject->Dispatch(iocpEvent, numOfBytes);
+		shared_ptr<IocpObject> iocpObject = iocpEvent->owner;
+		iocpObject->Dispatch(iocpEvent, numOfBytes);
+		
+		//iocpEvent->eventType;
 	}
 	else
 	{
@@ -44,4 +46,35 @@ void IocpCore::Dispatch(uint32 timeoutMs)
 			break;
 		}
 	}
+}
+
+void IocpCore::RegisterAccept(IocpEvent* iocpEvent)
+{
+	if (iocpEvent->eventType != EventType::Accept)
+		return;
+}
+
+void IocpCore::RegisterRecv(IocpEvent* iocpEvent)
+{
+	if (iocpEvent->eventType != EventType::Recv)
+		return;
+
+	WSABUF wsaBuf;
+	wsaBuf.buf = session->recvBuffer;
+	wsaBuf.len = BUFSIZE;
+
+	DWORD recvLen = 0;
+	DWORD flags = 0;
+
+	OverlappedEx* overlappedEx = new OverlappedEx();
+	overlappedEx->type = IO_TYPE::READ;
+
+	// 9. WSARecv
+	WSARecv(clientSocket, &wsaBuf, 1, &recvLen, &flags, &overlappedEx->overlapped, NULL);
+}
+
+void IocpCore::RegisterSend(IocpEvent* iocpEvent)
+{
+	if (iocpEvent->eventType != EventType::Send)
+		return;
 }
