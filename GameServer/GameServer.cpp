@@ -37,12 +37,13 @@ void WorkerThreadMain(HANDLE iocpHandle)
 {
 	while (true)
 	{
+		ULONG_PTR key = 0;
 		DWORD bytesTransfered = 0;
 		Session* session = nullptr;
 		OverlappedEx* overlappedEx = nullptr;
 
 		// Find Job
-		BOOL ret = GetQueuedCompletionStatus(iocpHandle, &bytesTransfered, (ULONG_PTR*)&session, (LPOVERLAPPED*)&overlappedEx, INFINITE);
+		BOOL ret = GetQueuedCompletionStatus(iocpHandle, &bytesTransfered, &key, (LPOVERLAPPED*)&overlappedEx, INFINITE);
 		if (ret == FALSE || bytesTransfered == 0)
 		{
 			continue;
@@ -50,10 +51,10 @@ void WorkerThreadMain(HANDLE iocpHandle)
 		cout << "Recv Data Len: " << bytesTransfered << endl;
 
 		WSABUF wsaBuf;
-		wsaBuf.buf = session->recvBuffer;
+		//wsaBuf.buf = session->recvBuffer;
 		wsaBuf.len = BUFSIZE;
 
-		cout << "Recv Data: " << wsaBuf.buf << endl;
+		//cout << "Recv Data: " << wsaBuf.buf << endl;
 
 		// Echo
 		DWORD numsOfBytes = 0;
@@ -82,16 +83,13 @@ int main()
 	SOCKET listenSocket = SocketUtils::CreateSocket();
 	SocketUtils::BindAnyAddress(listenSocket, 7777);
 	SocketUtils::Listen(listenSocket);
-
 	cout << "Accept" << endl;
 
 	vector<Session*> sessionManager;
-	shared_ptr<Session> sessionRef = make_shared<Session>();
 
 	// IOCP Set
 	IocpCore* iocpCore = new IocpCore();
 	unique_ptr<IocpCore> uIocpCore(iocpCore);
-	CreateIoCompletionPort((HANDLE)listenSocket, uIocpCore->GetHandle(), 0, 0);
 
 	thread t1(WorkerThreadMain, uIocpCore->GetHandle());
 
@@ -105,16 +103,16 @@ int main()
 			HandleError("Accept");
 			return 0;
 		}
-
+		
 		Session* session = new Session();
 		session->socket = clientSocket;
 		sessionManager.push_back(session);
 
 		cout << "Client Connected" << endl;
 
-		// 8. Register Client Socket to IOCP
-		//CreateIoCompletionPort((HANDLE)clientSocket, iocpHandle, /*key*/(ULONG_PTR)session, 0);
+		CreateIoCompletionPort((HANDLE)clientSocket, uIocpCore->GetHandle(), 0, 0);
 
+		// 8. Register Client Socket to IOCP
 		WSABUF wsaBuf;
 		wsaBuf.buf = session->recvBuffer;
 		wsaBuf.len = BUFSIZE;
