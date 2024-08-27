@@ -28,6 +28,7 @@ public:
 
 	// TEMP
 	bool Register(SOCKET& socket);
+	bool Register(shared_ptr<Session> session);
 	bool Dispatch(SOCKET& listenSocket);
 
 	void ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes, SOCKET& listenSocket);

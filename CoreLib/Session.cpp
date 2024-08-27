@@ -11,16 +11,3 @@ Session::~Session()
 {
 	SocketUtils::Close(_clientSocket);
 }
-
-SessionManager::SessionManager()
-{
-}
-
-SessionManager::~SessionManager()
-{
-	for (Session* session : _sessionManager)
-	{
-		delete session;
-	}
-	_sessionManager.clear();
-}

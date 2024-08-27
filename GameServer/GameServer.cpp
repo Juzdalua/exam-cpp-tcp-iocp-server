@@ -27,17 +27,14 @@ int main()
 	cout << "IOCP Set Done" << endl;
 
 	// Client
-	SessionManager* sessions = new SessionManager();
 	vector<IocpEvent*> iocpEvents;
 
 	cout << "Start AcceptEx" << endl;
 	// AcceptEx
 	for (int32 i = 0; i < MAX_CLIENT_COUNT; i++)
 	{
-		Session* session = new Session();
-		sessions->_sessionManager.push_back(session);
-		SOCKET clientSocket = session->GetSocket();
-		uIocpCore->Register(clientSocket);
+		shared_ptr<Session> session = make_shared<Session>();
+		uIocpCore->Register(session);
 
 		IocpEvent* iocpEvent = new IocpEvent(EventType::Accept);
 		iocpEvent->Init();
@@ -63,52 +60,17 @@ int main()
 	}
 	cout << "Worker Thread Start" << endl;
 
-	//while (true)
-	//{
-	//	// 7. Accept Client Socket
-	//	SOCKADDR_IN clientAddr;
-	//	int addrLen = sizeof(clientAddr);
-	//	SOCKET clientSocket = accept(listenSocket, (SOCKADDR*)&clientAddr, &addrLen);
-	//	if (clientSocket == INVALID_SOCKET) {
-	//		HandleError("Accept");
-	//		return 0;
-	//	}
-	//	
-	//	shared_ptr<Session> sessionRef = make_shared<Session>();
-
-	//	cout << "Client Connected" << endl;
-
-	//	CreateIoCompletionPort((HANDLE)clientSocket, uIocpCore->GetHandle(), 0, 0);
-
-	//	// 8. Register Client Socket to IOCP
-	//	WSABUF wsaBuf;
-	//	wsaBuf.buf = sessionRef->GetRecvBuffer();
-	//	wsaBuf.len = BUFSIZE;
-
-	//	DWORD recvLen = 0;
-	//	DWORD flags = 0;
-
-	//	IocpEvent* iocpEvent = new IocpEvent(EventType::Recv);
-
-	//	// 9. WSARecv
-	//	WSARecv(clientSocket, &wsaBuf, 1, &recvLen, &flags, iocpEvent, NULL);
-	//}
-
-
-	//for (auto& t : workers)
-	//{
-	//	if (t.joinable())
-	//		t.join();
-	//}
-
-
+	for (thread& t : workers)
+	{
+		if (t.joinable())
+			t.join();
+	}
 
 	for ( IocpEvent* iocpEvent: iocpEvents)
 	{
 		delete iocpEvent;
 	}
 	delete iocpCore;
-	delete sessions;
 
 	// Socket Close
 	SocketUtils::Close(listenSocket);

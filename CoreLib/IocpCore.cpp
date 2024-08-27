@@ -55,6 +55,11 @@ bool IocpCore::Register(SOCKET& socket)
 	return CreateIoCompletionPort((HANDLE)socket, _iocpHandle, /*key*/0, 0);
 }
 
+bool IocpCore::Register(shared_ptr<Session> session)
+{
+	return CreateIoCompletionPort((HANDLE)(session->GetSocket()), _iocpHandle, /*key*/0, 0);
+}
+
 bool IocpCore::Dispatch(SOCKET& listenSocket)
 {
 	DWORD numOfBytes = 0;

@@ -14,13 +14,3 @@ public:
 private:
 	SOCKET _clientSocket = INVALID_SOCKET;
 };
-
-class SessionManager
-{
-public:
-	SessionManager();
-	~SessionManager();
-
-public:
-	vector<Session*> _sessionManager = {};
-};
