@@ -13,6 +13,11 @@ IocpCore::IocpCore()
 IocpCore::~IocpCore()
 {
 	CloseHandle(_iocpHandle);
+	for (IocpEvent* iocpEvent : _iocpEvents)
+	{
+		delete iocpEvent;
+	}
+	_iocpEvents.clear();
 }
 
 //bool IocpCore::Register(IocpObjectRef iocpObject)
@@ -85,6 +90,23 @@ bool IocpCore::Dispatch(SOCKET& listenSocket)
 	return true;
 }
 
+void IocpCore::RegisterAccept(SOCKET& listenSocket)
+{
+	for (int32 i = 0; i < MAX_CLIENT_COUNT; i++)
+	{
+		shared_ptr<Session> session = make_shared<Session>();
+		Register(session);
+
+		IocpEvent* iocpEvent = new IocpEvent(EventType::Accept);
+		iocpEvent->Init();
+		iocpEvent->_session = session;
+		_iocpEvents.push_back(iocpEvent);
+		DWORD numOfBytes = 0;
+
+		SocketUtils::AcceptEx(listenSocket, session->GetSocket(), &session->buffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, OUT & numOfBytes, static_cast<LPOVERLAPPED>(iocpEvent));
+	}
+}
+
 void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes, SOCKET& listenSocket)
 {
 	switch (iocpEvent->eventType)
@@ -93,8 +115,7 @@ void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes, SOCKET& lis
 		cout << "Process Accept Start" << endl;
 		if (false == SocketUtils::SetUpdateAcceptSocket(iocpEvent->_session->GetSocket(), listenSocket))
 		{
-			//RegisterAccept(acceptEvent);
-			cout << "Process Accept Error" << endl;
+			RegisterAccept(listenSocket);
 			return;
 		}
 		break;

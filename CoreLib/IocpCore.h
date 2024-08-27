@@ -31,8 +31,10 @@ public:
 	bool Register(shared_ptr<Session> session);
 	bool Dispatch(SOCKET& listenSocket);
 
+	void RegisterAccept(SOCKET& listenSocket);
 	void ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes, SOCKET& listenSocket);
-
+	vector<IocpEvent*> _iocpEvents;
+	
 private:
 	HANDLE _iocpHandle;
 };

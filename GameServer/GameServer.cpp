@@ -5,7 +5,7 @@
 #include "IocpEvent.h"
 #include <thread>
 
-int32 MAX_CLIENT_COUNT = 1;
+int32 MAX_CLIENT_COUNT = 5;
 
 // Main
 int main()
@@ -21,29 +21,17 @@ int main()
 	cout << "Socket Listen Start" << endl;
 
 	//// IOCP Set
-	IocpCore* iocpCore = new IocpCore();
-	unique_ptr<IocpCore> uIocpCore(iocpCore);
-	uIocpCore->Register(listenSocket);
+	shared_ptr<IocpCore> iocpCoreRef = make_shared<IocpCore>();
+	iocpCoreRef->Register(listenSocket);
+
 	cout << "IOCP Set Done" << endl;
 
 	// Client
 	vector<IocpEvent*> iocpEvents;
 
-	cout << "Start AcceptEx" << endl;
 	// AcceptEx
-	for (int32 i = 0; i < MAX_CLIENT_COUNT; i++)
-	{
-		shared_ptr<Session> session = make_shared<Session>();
-		uIocpCore->Register(session);
-
-		IocpEvent* iocpEvent = new IocpEvent(EventType::Accept);
-		iocpEvent->Init();
-		iocpEvent->_session = session;
-		iocpEvents.push_back(iocpEvent);
-		DWORD numOfBytes = 0;
-
-		SocketUtils::AcceptEx(listenSocket, session->GetSocket(), &session->buffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, OUT & numOfBytes, static_cast<LPOVERLAPPED>(iocpEvent));
-	}
+	iocpCoreRef->RegisterAccept(listenSocket);
+	cout << "Start AcceptEx" << endl;
 
 	// Worker Threads
 	vector<thread> workers;
@@ -52,11 +40,11 @@ int main()
 		workers.emplace_back([&]() 
 			{
 				while (true) {
-					uIocpCore->Dispatch(listenSocket);
+					iocpCoreRef->Dispatch(listenSocket);
 				}
 			}
 		);
-		//workers.push_back(thread(WorkerThreadMain, uIocpCore->GetHandle()));
+		//workers.push_back(thread(WorkerThreadMain, iocpCoreRef->GetHandle()));
 	}
 	cout << "Worker Thread Start" << endl;
 
@@ -70,7 +58,6 @@ int main()
 	{
 		delete iocpEvent;
 	}
-	delete iocpCore;
 
 	// Socket Close
 	SocketUtils::Close(listenSocket);
