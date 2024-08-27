@@ -27,7 +27,7 @@ public:
 
 	// TEMP
 	char* GetRecvBuffer() { return _recvBuffer; }
-
+	char _recvBuffer[100];
 private:
 	virtual HANDLE GetHandle() override;
 	virtual void Dispatch(class IocpEvent* iocpEvent, int32 numOfBytes = 0) override;
@@ -36,7 +36,7 @@ private:
 	SOCKET _clientSocket = INVALID_SOCKET;
 	atomic<bool> _connected = false;
 
-	char _recvBuffer[100];
+	//char _recvBuffer[100];
 	queue<vector<char[100]>> sendQueue;
 
 private:

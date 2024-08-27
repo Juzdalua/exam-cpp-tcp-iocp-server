@@ -69,12 +69,16 @@ int main()
 	IocpCore* iocpCore = new IocpCore();
 	unique_ptr<IocpCore> uIocpCore(iocpCore);
 
+	CreateIoCompletionPort((HANDLE)listenSocket, uIocpCore->GetHandle(), 0, 0);
+
+	SocketUtils::Accept(listenSocket);
+
 	// Worker Threads
 	vector<thread> workers;
 	for (int32 i = 0; i < 5; i++)
 	{
-		workers.emplace_back([&]() {WorkerThreadMain(uIocpCore->GetHandle());});
-		//workers.push_back(thread(WorkerThreadMain, uIocpCore->GetHandle()));
+		//workers.emplace_back([&]() {WorkerThreadMain(uIocpCore->GetHandle());});
+		workers.push_back(thread(WorkerThreadMain, uIocpCore->GetHandle()));
 	}
 
 	while (true)
@@ -107,9 +111,6 @@ int main()
 		// 9. WSARecv
 		WSARecv(clientSocket, &wsaBuf, 1, &recvLen, &flags, iocpEvent, NULL);
 	}
-
-
-
 
 
 	for (auto& t : workers)
