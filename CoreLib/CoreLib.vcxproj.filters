@@ -27,18 +27,29 @@
     <ClInclude Include="SocketUtils.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Session.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="IocpCore.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="IocpEvent.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="CoreGlobal.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="IocpCore.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="IocpEvent.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Listener.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="NetAddress.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Service.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBuffer.h" />
+    <ClInclude Include="RecvBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CoreLib.cpp">
@@ -53,17 +64,28 @@
     <ClCompile Include="SocketUtils.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Session.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="IocpCore.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="IocpEvent.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="CoreGlobal.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="IocpCore.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="IocpEvent.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Listener.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NetAddress.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Service.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBuffer.cpp" />
+    <ClCompile Include="RecvBuffer.cpp" />
   </ItemGroup>
 </Project>

@@ -1,22 +1,23 @@
 #include "pch.h"
 #include "SocketUtils.h"
-#include "Session.h"
 
+/*-----------------
+	Socket Utils
+-----------------*/
 LPFN_CONNECTEX		SocketUtils::ConnectEx = nullptr;
 LPFN_DISCONNECTEX	SocketUtils::DisconnectEx = nullptr;
 LPFN_ACCEPTEX		SocketUtils::AcceptEx = nullptr;
-vector<IocpEvent*> SocketUtils::_iocpEvents = {};
 
 void SocketUtils::Init()
 {
 	WSADATA wsaData;
-	ASSERT_CRASH(WSAStartup(MAKEWORD(2, 2), OUT &wsaData) == 0);
+	ASSERT_CRASH(WSAStartup(MAKEWORD(2, 2), OUT & wsaData) == 0);
 
 	/* 런타임에 주소 얻어오는 API */
 	SOCKET dummySocket = CreateSocket();
-	BindWindowsFunction(dummySocket, WSAID_CONNECTEX, reinterpret_cast<LPVOID*>(&ConnectEx));
-	BindWindowsFunction(dummySocket, WSAID_DISCONNECTEX, reinterpret_cast<LPVOID*>(&DisconnectEx));
-	BindWindowsFunction(dummySocket, WSAID_ACCEPTEX, reinterpret_cast<LPVOID*>(&AcceptEx));
+	ASSERT_CRASH(BindWindowsFunction(dummySocket, WSAID_CONNECTEX, reinterpret_cast<LPVOID*>(&ConnectEx)));
+	ASSERT_CRASH(BindWindowsFunction(dummySocket, WSAID_DISCONNECTEX, reinterpret_cast<LPVOID*>(&DisconnectEx)));
+	ASSERT_CRASH(BindWindowsFunction(dummySocket, WSAID_ACCEPTEX, reinterpret_cast<LPVOID*>(&AcceptEx)));
 	Close(dummySocket);
 }
 
@@ -28,7 +29,7 @@ void SocketUtils::Clear()
 bool SocketUtils::BindWindowsFunction(SOCKET socket, GUID guid, LPVOID* fn)
 {
 	DWORD bytes = 0;
-	return SOCKET_ERROR != WSAIoctl(socket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), fn, sizeof(*fn), OUT &bytes, NULL, NULL);
+	return SOCKET_ERROR != WSAIoctl(socket, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), fn, sizeof(*fn), OUT & bytes, NULL, NULL);
 }
 
 SOCKET SocketUtils::CreateSocket()
@@ -36,51 +37,59 @@ SOCKET SocketUtils::CreateSocket()
 	return WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 }
 
-bool SocketUtils::Bind(SOCKET socket, wstring ip, uint16 port)
+bool SocketUtils::SetLinger(SOCKET socket, uint16 onoff, uint16 linger)
 {
-	return false;
+	LINGER option;
+	option.l_onoff = onoff;
+	option.l_linger = linger;
+	return SetSocketOpt(socket, SOL_SOCKET, SO_LINGER, option);
 }
 
-bool SocketUtils::BindAnyAddress(SOCKET listenSocket, uint16 port)
+bool SocketUtils::SetReuseAddress(SOCKET socket, bool flag)
+{
+	return SetSocketOpt(socket, SOL_SOCKET, SO_REUSEADDR, flag);
+}
+
+bool SocketUtils::SetRecvBufferSize(SOCKET socket, int32 size)
+{
+	return SetSocketOpt(socket, SOL_SOCKET, SO_RCVBUF, size);
+}
+
+bool SocketUtils::SetSendBufferSize(SOCKET socket, int32 size)
+{
+	return SetSocketOpt(socket, SOL_SOCKET, SO_SNDBUF, size);
+}
+
+bool SocketUtils::SetTcpNoDelay(SOCKET socket, bool flag)
+{
+	return SetSocketOpt(socket, SOL_SOCKET, TCP_NODELAY, flag);
+}
+
+// ListenSocket 특성을 ClientSocket에 그대로 적용
+bool SocketUtils::SetUpdateAcceptSocket(SOCKET socket, SOCKET listenSocket)
+{
+	return SetSocketOpt(socket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, listenSocket);
+}
+
+bool SocketUtils::Bind(SOCKET socket, NetAddress netAddr)
+{
+	return SOCKET_ERROR != bind(socket, reinterpret_cast<const SOCKADDR*>(&netAddr.GetSockAddr()), sizeof(SOCKADDR_IN));
+}
+
+bool SocketUtils::BindAnyAddress(SOCKET socket, uint16 port)
 {
 	SOCKADDR_IN myAddress;
 	myAddress.sin_family = AF_INET;
 	myAddress.sin_addr.s_addr = htonl(INADDR_ANY);
 	myAddress.sin_port = htons(port);
 
-	return SOCKET_ERROR != ::bind(listenSocket, reinterpret_cast<const SOCKADDR*>(&myAddress), sizeof(myAddress));
+	return SOCKET_ERROR != ::bind(socket, reinterpret_cast<const SOCKADDR*>(&myAddress), sizeof(myAddress));
 }
 
-bool SocketUtils::Listen(SOCKET listenSocket, int32 backlog)
+bool SocketUtils::Listen(SOCKET socket, int32 backlog)
 {
-	return SOCKET_ERROR != listen(listenSocket, backlog);
+	return SOCKET_ERROR != listen(socket, backlog);
 }
-
-void SocketUtils::Accept(SOCKET listenSocket)
-{
-	for (int32 i = 0; i < 5; i++)
-	{
-		shared_ptr<Session> sessionRef = make_shared<Session>();
-		GSessionManager._sessionManager.push_back(sessionRef);
-		
-		DWORD bytesReceived = 0;
-		IocpEvent* iocpEvent = new IocpEvent(EventType::Accept);
-		iocpEvent->Init();
-		_iocpEvents.push_back(iocpEvent);
-
-		if (false == AcceptEx(listenSocket, sessionRef->GetSocket(), sessionRef->_recvBuffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, OUT &bytesReceived, static_cast<LPOVERLAPPED>(iocpEvent)))
-		{
-			const int32 errorCode = WSAGetLastError();
-
-			if (errorCode != WSA_IO_PENDING)
-			{
-				// Error -> 다시 Accept 시도
-				SocketUtils::Accept(listenSocket);
-			}
-		}
-	}
-}
-
 
 void SocketUtils::Close(SOCKET& socket)
 {

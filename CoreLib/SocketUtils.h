@@ -1,5 +1,9 @@
 #pragma once
+#include "NetAddress.h"
 
+/*-----------------
+	Socket Utils
+-----------------*/
 class SocketUtils
 {
 public:
@@ -13,13 +17,22 @@ public:
 
 	static bool BindWindowsFunction(SOCKET socket, GUID guid, LPVOID* fn);
 	static SOCKET CreateSocket();
-	static bool Bind(SOCKET socket, wstring ip, uint16 port);
+
+	static bool SetLinger(SOCKET socket, uint16 onoff, uint16 linger);
+	static bool SetReuseAddress(SOCKET socket, bool flag);
+	static bool SetRecvBufferSize(SOCKET socket, int32 size);
+	static bool SetSendBufferSize(SOCKET socket, int32 size);
+	static bool SetTcpNoDelay(SOCKET socket, bool flag);
+	static bool SetUpdateAcceptSocket(SOCKET socket, SOCKET listenSocket);
+
+	static bool Bind(SOCKET socket, NetAddress netAddr);
 	static bool BindAnyAddress(SOCKET socket, uint16 port);
 	static bool Listen(SOCKET socket, int32 backlog = SOMAXCONN);
-	static void Accept(SOCKET listenSocket);
 	static void Close(SOCKET& socket);
-
-public:
-	static vector<IocpEvent*> _iocpEvents;
 };
 
+template<typename T>
+static inline bool SetSocketOpt(SOCKET socket, int32 level, int32 optName, T optval)
+{
+	return SOCKET_ERROR != setsockopt(socket, level, optName, reinterpret_cast<char*>(&optval), sizeof(T));
+}

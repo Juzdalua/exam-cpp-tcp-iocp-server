@@ -4,6 +4,7 @@
 #include "CoreMacro.h"
 #include "CoreGlobal.h"
 
+#include <array>
 #include <vector>
 #include <list>
 #include <queue>
@@ -12,8 +13,6 @@
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
-#include <thread>
-#include <string>
 
 #include <windows.h>
 #include <iostream>
