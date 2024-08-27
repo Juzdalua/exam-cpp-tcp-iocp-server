@@ -26,7 +26,6 @@ public:
 	void DisconnectEx(const WCHAR* cause);
 
 	// TEMP
-	void SetSocket(SOCKET clientSocket) { _clientSocket = clientSocket; }
 	char* GetRecvBuffer() { return _recvBuffer; }
 
 private:

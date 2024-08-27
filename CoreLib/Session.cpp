@@ -27,7 +27,7 @@ void Session::DisconnectEx(const WCHAR* cause)
 
 HANDLE Session::GetHandle()
 {
-	return HANDLE();
+	return reinterpret_cast<HANDLE>(_clientSocket);
 }
 
 void Session::Dispatch(IocpEvent* iocpEvent, int32 numOfBytes)

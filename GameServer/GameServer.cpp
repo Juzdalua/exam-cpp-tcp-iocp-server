@@ -74,6 +74,7 @@ int main()
 	for (int32 i = 0; i < 5; i++)
 	{
 		workers.emplace_back([&]() {WorkerThreadMain(uIocpCore->GetHandle());});
+		//workers.push_back(thread(WorkerThreadMain, uIocpCore->GetHandle()));
 	}
 
 	while (true)
@@ -88,7 +89,6 @@ int main()
 		}
 		
 		shared_ptr<Session> sessionRef = make_shared<Session>();
-		sessionRef->SetSocket(clientSocket);
 
 		cout << "Client Connected" << endl;
 
