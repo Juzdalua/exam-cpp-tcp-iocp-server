@@ -122,6 +122,16 @@ void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes, SOCKET& lis
 
 	case EventType::Connect:
 		cout << "Process Connect Start" << endl;
+		iocpEvent->_session->_connected.store(true);
+
+		// 세션 등록
+		//GetService()->AddSession(GetSessionRef());
+
+		// 컨텐츠 코드에서 오버로딩
+		//OnConnected();
+
+		// 수신 등록
+		//RegisterRecv();
 		break;
 
 	case EventType::Disconnect:
