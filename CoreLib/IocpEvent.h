@@ -2,6 +2,9 @@
 
 class Session;
 
+/*-----------------
+	IOCP Event
+-----------------*/
 enum class EventType : uint8
 {
 	Connect,
@@ -20,43 +23,60 @@ public:
 
 public:
 	EventType eventType;
-	shared_ptr<IocpObject> owner;
+	IocpObjectRef owner;
+
+	// TEMP
+	Session* _session = nullptr;
 };
 
-/*----------------
-	Event
-----------------*/
+/*-----------------
+	Connect Event
+-----------------*/
 class ConnectEvent :public IocpEvent
 {
 public:
 	ConnectEvent() :IocpEvent(EventType::Connect) {}
 };
 
+/*-----------------
+	Disconnect Event
+-----------------*/
 class DisconnectEvent :public IocpEvent
 {
 public:
 	DisconnectEvent() :IocpEvent(EventType::Disconnect) {}
 };
 
+/*-----------------
+	Accept Event
+-----------------*/
 class AcceptEvent :public IocpEvent
 {
 public:
 	AcceptEvent() :IocpEvent(EventType::Accept) {}
 
 public:
-	shared_ptr<Session> session = nullptr;
+	//SessionRef session = nullptr;
 };
 
+
+/*-----------------
+	Recv Event
+-----------------*/
 class RecvEvent :public IocpEvent
 {
 public:
 	RecvEvent() :IocpEvent(EventType::Recv) {}
 };
 
+
+/*-----------------
+	Send Event
+-----------------*/
 class SendEvent :public IocpEvent
 {
 public:
 	SendEvent() :IocpEvent(EventType::Send) {}
 
-	//Vector<SendBufferRef> sendBuffers;
+	//vector<SendBufferRef> sendBuffers;
 };

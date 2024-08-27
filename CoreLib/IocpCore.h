@@ -23,8 +23,14 @@ public:
 
 	HANDLE GetHandle() { return _iocpHandle; }
 
-	bool Register(IocpObjectRef iocpObject);
-	bool Dispatch(uint32 timeoutMs = INFINITE);
+	/*bool Register(IocpObjectRef iocpObject);
+	bool Dispatch(uint32 timeoutMs = INFINITE);*/
+
+	// TEMP
+	bool Register(SOCKET& socket);
+	bool Dispatch(SOCKET& listenSocket);
+
+	void ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes, SOCKET& listenSocket);
 
 private:
 	HANDLE _iocpHandle;

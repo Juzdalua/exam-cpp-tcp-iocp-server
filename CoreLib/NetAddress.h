@@ -1,5 +1,8 @@
 #pragma once
 
+/*-----------------
+	Network Address
+-----------------*/
 class NetAddress
 {
 public:

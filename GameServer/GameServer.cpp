@@ -1,86 +1,67 @@
 ﻿#include "pch.h"
-//#include "IocpCore.h"
-//#include "SocketUtils.h"
-//#include "IocpEvent.h"
+#include "SocketUtils.h"
+#include "IocpCore.h"
+#include "Session.h"
+#include "IocpEvent.h"
+#include <thread>
 
-// Error
-void HandleError(const char* cause)
-{
-	cout << "Error: " << cause << endl;
-}
-
-// Session
-const int BUFSIZE = 1'000;
-
-// Worker Thread
-//void WorkerThreadMain(HANDLE iocpHandle)
-//{
-//	while (true)
-//	{
-//		ULONG_PTR key = 0;
-//		DWORD bytesTransfered = 0;
-//		//Session* session = nullptr;
-//		IocpEvent* iocpEvent = nullptr;
-//
-//		// Find Job
-//		BOOL ret = GetQueuedCompletionStatus(iocpHandle, &bytesTransfered, &key, (LPOVERLAPPED*)&iocpEvent, INFINITE);
-//		if (ret == FALSE || bytesTransfered == 0)
-//		{
-//			continue;
-//		}
-//		cout << "Recv Data Len: " << bytesTransfered << endl;
-//
-//		char recvBuffer[100];
-//		WSABUF wsaBuf;
-//		wsaBuf.buf = recvBuffer;
-//		wsaBuf.len = BUFSIZE;
-//
-//		cout << "Recv Data: " << wsaBuf.buf << endl;
-//
-//		// Echo
-//		/*DWORD numsOfBytes = 0;
-//		if (WSASend(session->socket, &wsaBuf, 1, &numsOfBytes, 0, nullptr, nullptr) == SOCKET_ERROR)
-//		{
-//			int32 errorCode = WSAGetLastError();
-//			if (errorCode != WSA_IO_PENDING)
-//			{
-//				HandleError("Echo Send Error");
-//				continue;
-//			}
-//		}*/
-//
-//		// Wait Recv
-//		DWORD recvLen = 0;
-//		DWORD flags = 0;
-//		//WSARecv(session->socket, &wsaBuf, 1, OUT &recvLen, OUT &flags, &overlappedEx->overlapped, NULL);
-//	}
-//}
+int32 MAX_CLIENT_COUNT = 1;
 
 // Main
 int main()
 {
 	// Socket Set
-	//SocketUtils::Init();
-	//SOCKET listenSocket = SocketUtils::CreateSocket();
-	//SocketUtils::BindAnyAddress(listenSocket, 7777);
-	//SocketUtils::Listen(listenSocket);
-	//cout << "Accept" << endl;
+	SocketUtils::Init();
+	SOCKET listenSocket = SocketUtils::CreateSocket();
+	SocketUtils::SetReuseAddress(listenSocket, true);
+	SocketUtils::SetLinger(listenSocket, 0, 0);
+
+	SocketUtils::BindAnyAddress(listenSocket, 7777);
+	SocketUtils::Listen(listenSocket);
+	cout << "Socket Listen Start" << endl;
 
 	//// IOCP Set
-	//IocpCore* iocpCore = new IocpCore();
-	//unique_ptr<IocpCore> uIocpCore(iocpCore);
+	IocpCore* iocpCore = new IocpCore();
+	unique_ptr<IocpCore> uIocpCore(iocpCore);
+	uIocpCore->Register(listenSocket);
+	cout << "IOCP Set Done" << endl;
 
-	//CreateIoCompletionPort((HANDLE)listenSocket, uIocpCore->GetHandle(), 0, 0);
+	// Client
+	SessionManager* sessions = new SessionManager();
+	vector<IocpEvent*> iocpEvents;
 
-	//SocketUtils::Accept(listenSocket);
+	cout << "Start AcceptEx" << endl;
+	// AcceptEx
+	for (int32 i = 0; i < MAX_CLIENT_COUNT; i++)
+	{
+		Session* session = new Session();
+		sessions->_sessionManager.push_back(session);
+		SOCKET clientSocket = session->GetSocket();
+		uIocpCore->Register(clientSocket);
 
-	//// Worker Threads
-	//vector<thread> workers;
-	//for (int32 i = 0; i < 5; i++)
-	//{
-	//	//workers.emplace_back([&]() {WorkerThreadMain(uIocpCore->GetHandle());});
-	//	workers.push_back(thread(WorkerThreadMain, uIocpCore->GetHandle()));
-	//}
+		IocpEvent* iocpEvent = new IocpEvent(EventType::Accept);
+		iocpEvent->Init();
+		iocpEvent->_session = session;
+		iocpEvents.push_back(iocpEvent);
+		DWORD numOfBytes = 0;
+
+		SocketUtils::AcceptEx(listenSocket, session->GetSocket(), &session->buffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, OUT & numOfBytes, static_cast<LPOVERLAPPED>(iocpEvent));
+	}
+
+	// Worker Threads
+	vector<thread> workers;
+	for (int32 i = 0; i < 5; i++)
+	{
+		workers.emplace_back([&]() 
+			{
+				while (true) {
+					uIocpCore->Dispatch(listenSocket);
+				}
+			}
+		);
+		//workers.push_back(thread(WorkerThreadMain, uIocpCore->GetHandle()));
+	}
+	cout << "Worker Thread Start" << endl;
 
 	//while (true)
 	//{
@@ -120,7 +101,16 @@ int main()
 	//		t.join();
 	//}
 
-	//// Socket Close
-	//SocketUtils::Close(listenSocket);
-	//SocketUtils::Clear();
+
+
+	for ( IocpEvent* iocpEvent: iocpEvents)
+	{
+		delete iocpEvent;
+	}
+	delete iocpCore;
+	delete sessions;
+
+	// Socket Close
+	SocketUtils::Close(listenSocket);
+	SocketUtils::Clear();
 }
