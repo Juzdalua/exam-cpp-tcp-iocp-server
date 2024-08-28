@@ -93,17 +93,7 @@ bool IocpCore::Dispatch()
 
 	if (GetQueuedCompletionStatus(_iocpHandle, OUT &numOfBytes, OUT &key, OUT reinterpret_cast<LPOVERLAPPED*>(&iocpEvent), INFINITE))
 	{
-		if (iocpEvent && iocpEvent->_session) {
-			if (!IsSocketValid(iocpEvent->_session->GetSocket())) {
-				cout << "Socket Invalid After IOCP Dispatch" << endl;
-				RegisterAccept(_listenSocket);
-				return false;
-			}
-			ProcessWorker(iocpEvent, numOfBytes);
-		}
-		else {
-			cout << "Invalid IOCP Event or Session" << endl;
-		}
+		ProcessWorker(iocpEvent, numOfBytes);
 	}
 	else
 	{
@@ -163,6 +153,7 @@ void IocpCore::RegisterRecv(SessionRef session)
 		return;
 
 	session->_recvEvent.Init();
+	session->_recvEvent._session = session;
 	
 	memset(session->_buffer.data(), 0, sizeof(session->_buffer));
 	WSABUF wsaBuf;
@@ -211,14 +202,13 @@ void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes)
 		cout << "Check Socket Addr Done" << endl;
 
 		iocpEvent->_session->SetNetAddress(NetAddress(sockAddress));
-		cout << "Client Connected" << endl;
 		
 		IocpEvent* connectEvent = new IocpEvent(EventType::Connect);
 		connectEvent->Init();
 		connectEvent->_session = iocpEvent->_session;
 		ProcessWorker(connectEvent, numOfBytes);
 
-		RegisterAccept(_listenSocket);
+		//RegisterAccept(_listenSocket);
 	}
 
 		break;
@@ -236,6 +226,7 @@ void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes)
 
 		// 컨텐츠 코드에서 오버로딩
 		//OnConnected();
+		cout << "Client Connected" << endl;
 
 		// 수신 등록
 		RegisterRecv(iocpEvent->_session);
@@ -246,7 +237,7 @@ void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes)
 		break;
 
 	case EventType::Recv:
-	{
+	
 		cout << "Process Recv Start" << endl;
 		if (numOfBytes == 0) {
 			cout << "Data Len is zero" << endl;
@@ -256,9 +247,9 @@ void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes)
 
 		// TODO - overflow check
 
+		cout << "Recv Len = " << numOfBytes << endl;
 
-
-	}
+		RegisterRecv(iocpEvent->_session);
 		break;
 
 	case EventType::Send:
@@ -266,3 +257,4 @@ void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes)
 		break;
 	}
 }
+

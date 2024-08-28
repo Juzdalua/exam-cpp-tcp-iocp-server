@@ -6,6 +6,7 @@
 #include <thread>
 
 int32 MAX_CLIENT_COUNT = 5;
+int32 MAX_WORKER_COUNT = 1;
 
 // Main
 int main()
@@ -32,7 +33,7 @@ int main()
 
 	// Worker Threads
 	vector<thread> workers;
-	for (int32 i = 0; i < 1; i++) 
+	for (int32 i = 0; i < MAX_WORKER_COUNT; i++)
 	{
 		workers.emplace_back([&]()
 			{
