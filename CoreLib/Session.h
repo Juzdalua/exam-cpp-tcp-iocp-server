@@ -1,6 +1,13 @@
 #pragma once
+#include "NetAddress.h"
+
 class Session
 {
+	enum
+	{
+		BUFFER_SIZE = 0x10000, // 64KB
+	};
+
 public:
 	Session();
 	~Session();
@@ -8,12 +15,19 @@ public:
 public:
 	SOCKET GetSocket() { return _clientSocket; }
 
+	void SetNetAddress(NetAddress address) { _netAddress = address; }
+	NetAddress GetAddress() { return _netAddress; }
+
 	// TEMP
 	vector<BYTE> buffer;
 	atomic<bool> _connected = false;
+	NetAddress _netAddress = {};
 
 private:
 	SOCKET _clientSocket = INVALID_SOCKET;
+	//vector<BYTE> buffer;
+	//atomic<bool> _connected = false;
+	//NetAddress _netAddress = {};
 };
 
 class SessionManager
@@ -23,5 +37,5 @@ public:
 	~SessionManager();
 
 public:
-	vector<shared_ptr<Session>> _sessionManager = {};
+	set<SessionRef> _sessions;
 };

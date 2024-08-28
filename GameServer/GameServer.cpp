@@ -7,6 +7,16 @@
 
 int32 MAX_CLIENT_COUNT = 5;
 
+// 서버 실행 상태를 추적하는 변수
+atomic<bool> running(true); 
+
+void WorkerThreadMain(shared_ptr<IocpCore> iocpCoreRef) 
+{
+	while (running) {
+		iocpCoreRef->Dispatch();
+	}
+}
+
 // Main
 int main()
 {
@@ -18,48 +28,37 @@ int main()
 
 	SocketUtils::BindAnyAddress(listenSocket, 7777);
 	SocketUtils::Listen(listenSocket);
-	cout << "Socket Listen Start" << endl;
+	cout << "1. Socket Listen Start" << endl;
 
 	//// IOCP Set
 	shared_ptr<IocpCore> iocpCoreRef = make_shared<IocpCore>();
 	iocpCoreRef->Register(listenSocket);
-
-	cout << "IOCP Set Done" << endl;
-
-	// Client
-	vector<IocpEvent*> iocpEvents;
+	cout << "2. IOCP Set Done" << endl;
 
 	// AcceptEx
 	iocpCoreRef->RegisterAccept(listenSocket);
-	cout << "Start AcceptEx" << endl;
+	cout << "3. Start AcceptEx" << endl;
 
 	// Worker Threads
 	vector<thread> workers;
-	for (int32 i = 0; i < 5; i++)
+	for (int32 i = 0; i < 1; i++) 
 	{
-		workers.emplace_back([&]() 
-			{
-				while (true) {
-					iocpCoreRef->Dispatch(listenSocket);
-				}
-			}
-		);
-		//workers.push_back(thread(WorkerThreadMain, iocpCoreRef->GetHandle()));
+		workers.emplace_back(WorkerThreadMain, iocpCoreRef);
 	}
-	cout << "Worker Thread Start" << endl;
+	cout << "4. Worker Thread Start" << endl;
 
+	this_thread::sleep_for(10s);
+
+	running.store(false);
 	for (thread& t : workers)
 	{
 		if (t.joinable())
 			t.join();
 	}
-
-	for ( IocpEvent* iocpEvent: iocpEvents)
-	{
-		delete iocpEvent;
-	}
+	cout << "5. Worker Thread Exit" << endl;
 
 	// Socket Close
 	SocketUtils::Close(listenSocket);
 	SocketUtils::Clear();
+	cout << "6. Server has been shut down." << endl;
 }

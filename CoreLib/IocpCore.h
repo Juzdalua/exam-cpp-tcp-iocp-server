@@ -1,4 +1,5 @@
 #pragma once
+#include "Session.h"
 
 /*-----------------
 	IOCP Core
@@ -27,14 +28,32 @@ public:
 	bool Dispatch(uint32 timeoutMs = INFINITE);*/
 
 	// TEMP
+	void HandleError(int32 errorCode);
 	bool Register(SOCKET& socket);
 	bool Register(shared_ptr<Session> session);
-	bool Dispatch(SOCKET& listenSocket);
+	bool Dispatch();
 
 	void RegisterAccept(SOCKET& listenSocket);
-	void ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes, SOCKET& listenSocket);
+	void ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes);
 	vector<IocpEvent*> _iocpEvents;
+
+	bool IsSocketValid(SOCKET socket) {
+		u_long mode = 0;
+		int result = ioctlsocket(socket, FIONREAD, &mode);
+
+		if (result == SOCKET_ERROR) {
+			int error = WSAGetLastError();
+			// 에러 코드가 WSAENOTSOCK인지 확인
+			cout << "SOCKET VALID ERROR: " << error << endl;
+			return (error != WSAENOTSOCK);
+		}
+		return true;
+	}
 	
 private:
 	HANDLE _iocpHandle;
+
+	// TEMP
+	SessionManager* _sessionManager;
+	SOCKET _listenSocket = INVALID_SOCKET;
 };
