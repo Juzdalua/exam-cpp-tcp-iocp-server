@@ -1,10 +1,8 @@
 ﻿#include "pch.h"
 #include "SocketUtils.h"
 #include "IocpCore.h"
-#include "Session.h"
 #include "GameSession.h"
 #include "Service.h"
-#include <functional>
 
 int32 MAX_CLIENT_COUNT = 1;
 int32 MAX_WORKER_COUNT = 1;
@@ -53,5 +51,5 @@ int main()
 	Listener -> Socket Set -> Register Accept (AcceptEx) 
 	Process Accept -> Client Session Set -> Process Connect -> Register Recv (WSARecv)
 	Process Recv -> GameSession Echo Set -> Send with echo -> Register Recv (WSARecv)
-	Send -> SendQueue & SendBuffer Set -> RegisterSend (WSASend) -> ProcessSend -> Register Send (WSASend)
+	SendBuffer Set -> Send (SendQueue Set) -> RegisterSend (WSASend) -> ProcessSend -> Register Send (WSASend)
 */

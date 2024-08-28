@@ -94,6 +94,7 @@ bool Session::RegisterConnect()
 
 	if (SocketUtils::BindAnyAddress(_clientSocket, 0/*남는 포트 아무거나*/) == false)
 		return false;
+	cout << "===== Set IOCP Done =====" << endl;
 
 	_connectEvent.Init();
 	_connectEvent.owner = shared_from_this();
