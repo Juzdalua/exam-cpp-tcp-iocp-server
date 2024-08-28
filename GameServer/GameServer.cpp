@@ -26,7 +26,8 @@ int main()
 	SocketUtils::SetReuseAddress(listenSocket, true);
 	SocketUtils::SetLinger(listenSocket, 0, 0);
 
-	SocketUtils::BindAnyAddress(listenSocket, 7777);
+	//SocketUtils::BindAnyAddress(listenSocket, 7777);
+	SocketUtils::Bind(listenSocket, NetAddress(L"127.0.0.1", 7777));
 	SocketUtils::Listen(listenSocket);
 	cout << "1. Socket Listen Start" << endl;
 

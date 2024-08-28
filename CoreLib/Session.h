@@ -19,13 +19,13 @@ public:
 	NetAddress GetAddress() { return _netAddress; }
 
 	// TEMP
-	vector<BYTE> buffer;
+	vector<BYTE> _buffer;
 	atomic<bool> _connected = false;
 	NetAddress _netAddress = {};
 
 private:
 	SOCKET _clientSocket = INVALID_SOCKET;
-	//vector<BYTE> buffer;
+	//vector<BYTE> _buffer;
 	//atomic<bool> _connected = false;
 	//NetAddress _netAddress = {};
 };

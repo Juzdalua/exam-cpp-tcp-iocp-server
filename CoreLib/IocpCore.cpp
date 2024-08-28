@@ -125,13 +125,14 @@ void IocpCore::RegisterAccept(SOCKET& listenSocket)
 		_listenSocket = listenSocket;
 	for (int32 i = 0; i < MAX_CLIENT_COUNT; i++)
 	{
+		IocpEvent* iocpEvent = new IocpEvent(EventType::Accept);
+		_iocpEvents.push_back(iocpEvent);
+
 		shared_ptr<Session> session = make_shared<Session>();
 		Register(session);
 
-		IocpEvent* iocpEvent = new IocpEvent(EventType::Accept);
 		iocpEvent->Init();
 		iocpEvent->_session = session;
-		_iocpEvents.push_back(iocpEvent);
 		DWORD numOfBytes = 0;
 
 		if (!IsSocketValid(iocpEvent->_session->GetSocket()) || !IsSocketValid(_listenSocket))
@@ -139,8 +140,8 @@ void IocpCore::RegisterAccept(SOCKET& listenSocket)
 			cout << "Invalid Session Socket" << endl;
 			continue; // Skip this session
 		}
-
-		if(false == SocketUtils::AcceptEx(_listenSocket, session->GetSocket(), &session->buffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, OUT &numOfBytes, static_cast<LPOVERLAPPED>(iocpEvent)))
+		
+		if (false == SocketUtils::AcceptEx(_listenSocket, session->GetSocket(), &(session->_buffer[0]), 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, OUT & numOfBytes, static_cast<LPOVERLAPPED>(iocpEvent)))
 		{
 			const int32 errorCode = WSAGetLastError();
 

@@ -5,7 +5,7 @@
 mutex m;
 
 Session::Session()
-	:buffer(BUFFER_SIZE)
+	:_buffer(BUFFER_SIZE)
 {
 	_clientSocket = SocketUtils::CreateSocket();
 }
