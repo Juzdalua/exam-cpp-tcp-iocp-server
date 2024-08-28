@@ -18,7 +18,7 @@ int main()
     if (clientSocket == INVALID_SOCKET)
     {
         int errCode = WSAGetLastError();
-        cout << "Socket ErrorCode: " << errCode << endl;
+        cout << "1. Socket ErrorCode: " << errCode << endl;
         return 0;
     }
 
@@ -46,7 +46,7 @@ int main()
     if (connect(clientSocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
     {
         int errCode = WSAGetLastError();
-        cout << "Socket ErrorCode: " << errCode << endl;
+        cout << "2. Socket ErrorCode: " << errCode << endl;
         return 0;
     }
 
