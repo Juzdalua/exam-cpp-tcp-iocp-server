@@ -2,6 +2,7 @@
 #include "SocketUtils.h"
 #include "IocpCore.h"
 #include "Session.h"
+#include "GameSession.h"
 #include "Service.h"
 #include <functional>
 
@@ -16,7 +17,7 @@ int main()
 		new ServerService(
 			NetAddress(L"127.0.0.1", 7777),
 			IocpCoreRef(new IocpCore()),
-			[&]() {return SessionRef(new Session);},
+			[&]() {return shared_ptr<GameSession>(new GameSession());},
 			MAX_CLIENT_COUNT
 		)
 	);

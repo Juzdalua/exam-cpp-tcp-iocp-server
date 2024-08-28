@@ -172,7 +172,7 @@ void Session::RegisterSend()
 			SendBufferRef sendBuffer = _sendQueue.front();
 
 			writeSize += sendBuffer->WriteSize();
-			// TODO 예외체크
+			// TODO 예외체크 -> 센드버퍼보다 데이터 크기가 클 경우
 
 			_sendQueue.pop();
 			_sendEvent.sendBuffers.push_back(sendBuffer);
@@ -197,7 +197,7 @@ void Session::RegisterSend()
 		if (errorCode != WSA_IO_PENDING)
 		{
 			HandleError(errorCode);
-			_sendEvent.owner = nullptr;
+			_sendEvent.owner = nullptr;	// shared_from_this RELEASE_REF
 			_sendEvent.sendBuffers.clear(); // shared_from_this RELEASE_REF
 			_sendRegistered.store(false);
 
@@ -261,7 +261,7 @@ void Session::ProcessRecv(int32 numOfBytes)
 
 void Session::ProcessSend(int32 numOfBytes)
 {
-	_sendEvent.owner = nullptr;
+	_sendEvent.owner = nullptr;	// shared_from_this RELEASE_REF
 	_sendEvent.sendBuffers.clear(); // shared_from_this RELEASE_REF
 
 	if (numOfBytes == 0)
