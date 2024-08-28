@@ -157,6 +157,30 @@ void IocpCore::RegisterAccept(SOCKET& listenSocket)
 	}
 }
 
+void IocpCore::RegisterRecv(SessionRef session)
+{
+	if (session->IsConnected() == false)
+		return;
+
+	session->_recvEvent.Init();
+	
+	memset(session->_buffer.data(), 0, sizeof(session->_buffer));
+	WSABUF wsaBuf;
+	wsaBuf.buf = reinterpret_cast<char*>(session->_buffer.data());
+	wsaBuf.len = sizeof(session->_buffer);
+	DWORD numOfBytes = 0;
+	DWORD flags = 0;
+
+	if (SOCKET_ERROR == WSARecv(session->GetSocket(), &wsaBuf, 1, OUT & numOfBytes, OUT & flags, &session->_recvEvent, nullptr))
+	{
+		int32 errorCode = WSAGetLastError();
+		if (errorCode != WSA_IO_PENDING)
+		{
+			HandleError(errorCode);
+		}
+	}
+}
+
 void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes)
 {
 	switch (iocpEvent->eventType)
@@ -214,7 +238,7 @@ void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes)
 		//OnConnected();
 
 		// 수신 등록
-		//RegisterRecv();
+		RegisterRecv(iocpEvent->_session);
 		break;
 
 	case EventType::Disconnect:
@@ -222,7 +246,19 @@ void IocpCore::ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes)
 		break;
 
 	case EventType::Recv:
+	{
 		cout << "Process Recv Start" << endl;
+		if (numOfBytes == 0) {
+			cout << "Data Len is zero" << endl;
+			//DIsconnect();
+			return;
+		}
+
+		// TODO - overflow check
+
+
+
+	}
 		break;
 
 	case EventType::Send:

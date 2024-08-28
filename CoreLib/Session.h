@@ -1,5 +1,6 @@
 #pragma once
 #include "NetAddress.h"
+#include "IocpEvent.h"
 
 class Session
 {
@@ -14,6 +15,7 @@ public:
 
 public:
 	SOCKET GetSocket() { return _clientSocket; }
+	bool IsConnected() { return _connected; }
 
 	void SetNetAddress(NetAddress address) { _netAddress = address; }
 	NetAddress GetAddress() { return _netAddress; }
@@ -28,6 +30,13 @@ private:
 	//vector<BYTE> _buffer;
 	//atomic<bool> _connected = false;
 	//NetAddress _netAddress = {};
+
+public: // TODO-> private
+	/* IocpEvent Àç»ç¿ë */
+	ConnectEvent _connectEvent;
+	DisconnectEvent _disconnectEvent;
+	RecvEvent _recvEvent;
+	SendEvent _sendEvent;
 };
 
 class SessionManager

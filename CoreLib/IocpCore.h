@@ -34,6 +34,8 @@ public:
 	bool Dispatch();
 
 	void RegisterAccept(SOCKET& listenSocket);
+	void RegisterRecv(SessionRef session);
+	
 	void ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes);
 	vector<IocpEvent*> _iocpEvents;
 

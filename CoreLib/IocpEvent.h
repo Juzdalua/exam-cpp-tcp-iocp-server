@@ -23,7 +23,7 @@ public:
 
 public:
 	EventType eventType;
-	//IocpObjectRef owner;
+	IocpObjectRef owner;
 
 	// TEMP
 	shared_ptr<Session> _session = nullptr;
