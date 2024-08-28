@@ -48,3 +48,10 @@ int main()
 	SocketUtils::Clear();
 	cout << "===== Server has been shut down. =====" << endl;
 }
+
+/*
+	Listener -> Socket Set -> Register Accept (AcceptEx) 
+	Process Accept -> Client Session Set -> Process Connect -> Register Recv (WSARecv)
+	Process Recv -> GameSession Echo Set -> Send with echo -> Register Recv (WSARecv)
+	Send -> SendQueue & SendBuffer Set -> RegisterSend (WSASend) -> ProcessSend -> Register Send (WSASend)
+*/
