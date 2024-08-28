@@ -7,16 +7,6 @@
 
 int32 MAX_CLIENT_COUNT = 5;
 
-// 서버 실행 상태를 추적하는 변수
-atomic<bool> running(true); 
-
-void WorkerThreadMain(shared_ptr<IocpCore> iocpCoreRef) 
-{
-	while (running) {
-		iocpCoreRef->Dispatch();
-	}
-}
-
 // Main
 int main()
 {
@@ -44,13 +34,16 @@ int main()
 	vector<thread> workers;
 	for (int32 i = 0; i < 1; i++) 
 	{
-		workers.emplace_back(WorkerThreadMain, iocpCoreRef);
+		workers.emplace_back([&]()
+			{
+				while (true) {
+					iocpCoreRef->Dispatch();
+				}
+			}
+		);
 	}
 	cout << "4. Worker Thread Start" << endl;
 
-	this_thread::sleep_for(10s);
-
-	running.store(false);
 	for (thread& t : workers)
 	{
 		if (t.joinable())
