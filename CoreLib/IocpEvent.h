@@ -5,11 +5,13 @@ class Session;
 /*-----------------
 	IOCP Event
 -----------------*/
+
 enum class EventType : uint8
 {
 	Connect,
 	Disconnect,
 	Accept,
+	//PreRecv,
 	Recv,
 	Send
 };
@@ -24,9 +26,6 @@ public:
 public:
 	EventType eventType;
 	IocpObjectRef owner;
-
-	// TEMP
-	shared_ptr<Session> _session = nullptr;
 };
 
 /*-----------------
@@ -56,7 +55,7 @@ public:
 	AcceptEvent() :IocpEvent(EventType::Accept) {}
 
 public:
-	//SessionRef session = nullptr;
+	SessionRef session = nullptr;
 };
 
 
@@ -78,5 +77,5 @@ class SendEvent :public IocpEvent
 public:
 	SendEvent() :IocpEvent(EventType::Send) {}
 
-	//vector<SendBufferRef> sendBuffers;
+	vector<SendBufferRef> sendBuffers;
 };

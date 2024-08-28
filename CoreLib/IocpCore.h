@@ -1,5 +1,4 @@
 #pragma once
-#include "Session.h"
 
 /*-----------------
 	IOCP Core
@@ -24,20 +23,8 @@ public:
 
 	HANDLE GetHandle() { return _iocpHandle; }
 
-	/*bool Register(IocpObjectRef iocpObject);
-	bool Dispatch(uint32 timeoutMs = INFINITE);*/
-
-	// TEMP
-	void HandleError(int32 errorCode);
-	bool Register(SOCKET& socket);
-	bool Register(shared_ptr<Session> session);
-	bool Dispatch();
-
-	void RegisterAccept(SOCKET& listenSocket);
-	void RegisterRecv(SessionRef session);
-	
-	void ProcessWorker(IocpEvent* iocpEvent, DWORD numOfBytes);
-	vector<IocpEvent*> _iocpEvents;
+	bool Register(IocpObjectRef iocpObject);
+	bool Dispatch(uint32 timeoutMs = INFINITE);
 
 	bool IsSocketValid(SOCKET socket) {
 		u_long mode = 0;
@@ -51,11 +38,7 @@ public:
 		}
 		return true;
 	}
-	
+
 private:
 	HANDLE _iocpHandle;
-
-	// TEMP
-	SessionManager* _sessionManager;
-	SOCKET _listenSocket = INVALID_SOCKET;
 };
