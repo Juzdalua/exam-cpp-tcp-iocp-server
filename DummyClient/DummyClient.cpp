@@ -4,6 +4,8 @@
 #include "SocketUtils.h"
 #include "Protocol.pb.h"
 
+int32 MAX_WORKER_COUNT = 2;
+
 class ServerSession : public Session
 {
 public:
@@ -121,6 +123,7 @@ void ChatPacket(ClientServiceRef service)
 
 int main()
 {
+	this_thread::sleep_for(1s);
 	SocketUtils::Init();
 
 	ClientServiceRef service = ClientServiceRef(
@@ -137,7 +140,7 @@ int main()
 
 	mutex m;
 	vector<thread> workers;
-	for (int32 i = 0; i < 2; i++)
+	for (int32 i = 0; i < MAX_WORKER_COUNT; i++)
 	{
 		workers.push_back(thread([&]()
 			{

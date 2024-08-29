@@ -5,7 +5,7 @@
 #include "Service.h"
 
 int32 MAX_CLIENT_COUNT = 1;
-int32 MAX_WORKER_COUNT = 1;
+int32 MAX_WORKER_COUNT = 2;
 
 int main()
 {

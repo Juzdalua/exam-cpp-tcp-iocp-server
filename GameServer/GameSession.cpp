@@ -53,7 +53,7 @@ void GamePacketSession::OnRecvPacket(BYTE* buffer, int32 len)
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
 	
 	cout << "Packet Id: " << header->id << ", SIze: " << header->size << endl;
-	cout << &buffer[4] << header->size << endl;
+	cout << &buffer[4] << endl;
 
 	SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
 	reinterpret_cast<PacketHeader*>(sendBuffer->Buffer())->id = reinterpret_cast<PacketHeader*>(buffer)->id;

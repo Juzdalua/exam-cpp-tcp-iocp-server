@@ -244,10 +244,9 @@ void Session::ProcessRecv(int32 numOfBytes)
 		Disconnect(L"OnWrite Overflow");
 		return;
 	}
-
 	int32 dataSize = _recvBuffer.DataSize();
 	int32 processLen = OnRecv(_recvBuffer.ReadPos(), dataSize);
-
+	
 	if (processLen < 0 || dataSize < processLen || _recvBuffer.OnRead(processLen) == false)
 	{
 		Disconnect(L"OnRead Overflow");
