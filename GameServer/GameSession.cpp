@@ -15,7 +15,7 @@ void GameSession::OnDisconnected()
 int32 GameSession::OnRecv(BYTE* buffer, int32 len)
 {
 	// Echo
-	cout << "OnRecv Len = " << len << endl;
+	cout << "OnRecv Len = " << len << ", OnRecv Data = " << buffer << endl;
 
 	SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
 	sendBuffer->CopyData(buffer, len);

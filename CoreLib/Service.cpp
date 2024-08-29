@@ -61,14 +61,17 @@ bool ClientService::Start()
 {
 	if (CanStart() == false)
 		return false;
+	cout << "===== Set Session Done =====" << endl;
 
 	const int32 sessionCount = GetMaxSessionCount();
 	for (int32 i = 0; i < sessionCount; i++)
 	{
 		SessionRef session = CreateSession();
+		cout << "===== Create Session =====" << endl;
 		if (session->Connect() == false)
 			return false;
 	}
+	cout << "===== Client Accecc Done! =====" << endl;
 
 	return true;
 }

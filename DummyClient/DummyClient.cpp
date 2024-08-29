@@ -1,90 +1,93 @@
 ﻿#include "pch.h"
-#include <iostream>
+#include "Service.h"
+#include "IocpCore.h"
+#include "SocketUtils.h"
+
+
+
+class ServerSession : public Session
+{
+public:
+	ServerSession()
+	{
+	}
+	virtual ~ServerSession()
+	{
+	}
+
+	virtual void OnConnected() override
+	{
+		cout << "===== Connected To Server =====" << endl;
+
+		SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
+		char initSendData[] = "Ping";
+		sendBuffer->CopyData(initSendData, sizeof(initSendData));
+		Send(sendBuffer);
+	}
+
+	virtual int32 OnRecv(BYTE* buffer, int32 len) override
+	{
+		cout << "OnRecv Len = " << len << ", OnRecv Data = " << buffer << endl;
+		this_thread::sleep_for(1s);
+
+		return len;
+	}
+
+	virtual void OnSend(int32 len) override
+	{
+		cout << "OnSend Len = " << len << endl;
+	}
+
+	virtual void OnDisconnected() override
+	{
+		cout << "Disconnected" << endl;
+	}
+};
 
 int main()
 {
-    // 1. Socket 초기화
-    WSAData wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-        return 0;
+	this_thread::sleep_for(1s);
+	SocketUtils::Init();
 
-    /*
-        af: Address Family (AF_INET = IPv4, AF_INTE6 = IPv6)
-        type: TCP(SOCK_STREAM) vs UDP(SOCK_DGRAM)
-        protocol: 0
-        return: descriptor
-    */
-    SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (clientSocket == INVALID_SOCKET)
-    {
-        int errCode = WSAGetLastError();
-        cout << "1. Socket ErrorCode: " << errCode << endl;
-        return 0;
-    }
+	ClientServiceRef service = ClientServiceRef(
+		new ClientService(
+			NetAddress(L"127.0.0.1", 7777),
+			IocpCoreRef(new IocpCore()),
+			[&]() {return shared_ptr<ServerSession>(new ServerSession());},
+			1
+		)
+	);
 
-    // 2. IP, PORT 설정
-    char IP[] = "127.0.0.1";
-    u_short PORT = 7777;
+	ASSERT_CRASH(service->Start());
 
-    SOCKADDR_IN serverAddr; // IPv4
-    memset(&serverAddr, 0, sizeof(serverAddr));
+	mutex m;
+	vector<thread> workers;
+	for (int32 i = 0; i < 2; i++)
+	{
+		workers.push_back(thread([&]()
+			{
+				while (true) {
+					lock_guard<mutex> guard(m);
+					service->GetIocpCore()->Dispatch();
+				}
+			}));
+	}
 
-    serverAddr.sin_family = AF_INET;
+	while (true)
+	{
+		char sendData[100];
+		cin >> sendData;
 
-    // serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1"); <- deprecated
-    inet_pton(AF_INET, IP, &serverAddr.sin_addr);
+		SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
+		sendBuffer->CopyData(sendData, sizeof(sendData));
+		service->Broadcast(sendBuffer);
+	}
+	
+	for (thread& t : workers)
+	{
+		if (t.joinable())
+			t.join();
+	}
 
-    serverAddr.sin_port = htons(PORT);
-    /*
-        host to network short
-        Little-Endian vs Big-Endian
-        little: [0x78][0x56][0x34][0x12]
-        big: [0x12][0x34][0x56][0x78] -> network 표준
-    */
-
-    // 3. Socket 연결
-    if (connect(clientSocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
-    {
-        int errCode = WSAGetLastError();
-        cout << "2. Socket ErrorCode: " << errCode << endl;
-        return 0;
-    }
-
-    cout << "Connected To Server!" << endl;
-
-    // 4. 데이터 송수신
-    while (true)
-    {
-        char sendBuffer[100];
-        cin >> sendBuffer;
-
-        int resultCode = send(clientSocket, sendBuffer, sizeof(sendBuffer), 0);
-        if (resultCode == SOCKET_ERROR)
-        {
-            int errCode = WSAGetLastError();
-            cout << "Send ErrorCode: " << errCode << endl;
-            return 0;
-        }
-
-        cout << "Send Data! Len = " << sizeof(sendBuffer) << endl;
-
-        // Echo Receiver
-        char recvBuffer[1000];
-        int recvLen = recv(clientSocket, recvBuffer, sizeof(recvBuffer), 0);
-        if (recvLen <= 0)
-        {
-            int errCode = WSAGetLastError();
-            cout << "Recv ErrorCode: " << errCode << endl;
-            return 0;
-        }
-
-        cout << "Recv Data! Len = " << recvLen << endl;
-        cout << "Recv Data! Data = " << recvBuffer << endl;
-
-        this_thread::sleep_for(1s);
-    }
-
-    // 5. Socket 종료
-    closesocket(clientSocket);
-    WSACleanup();
+	SocketUtils::Clear();
 }
