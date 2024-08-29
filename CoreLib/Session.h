@@ -99,6 +99,8 @@ struct PacketHeader
 	uint16 id; // 프로토콜 ID (ex 1=로그인, 2=이동요청)
 };
 
+// [header(4)][data...][header(4)][data...]
+// [size(2)][id(2)][data...][size(2)][id(2)][data]
 class PacketSession : public Session
 {
 public:

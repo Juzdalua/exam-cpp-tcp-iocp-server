@@ -13,4 +13,5 @@
 #include "CorePch.h"
 
 using GameSessionRef = shared_ptr<class GameSession>;
+using GamePacketSessionRef = shared_ptr<class GamePacketSession>;
 using PlayerRef = shared_ptr<class Player>;

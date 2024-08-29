@@ -308,9 +308,49 @@ PacketSession::~PacketSession()
 {
 }
 
-// [size(2)][id(2)][data]
+/*
+	[header(4)] [data]
+	[size(2)][id(2)][data]
+	size = sizeof(data) + sizeof(header) 
+	-> dataSize = len - HeaderSize(4byte)
+
+	10바이트의 데이터가 전송되면, [10][id][10byte data] -> 총 14byte가 전송된다.
+*/
 int32 PacketSession::OnRecv(BYTE* buffer, int32 len)
 {
-	OnRecvPacket(&buffer[0], len);
-	return len;
+	int32 processLen = 0;
+
+	/*if (processLen == 0)
+	{ 
+		int32 dataSize = len;
+		if (dataSize < sizeof(PacketHeader))
+			return;
+		PacketHeader header = *(reinterpret_cast<PacketHeader*>(&buffer[0]));
+		if (dataSize < header.size)
+			return;
+		OnRecvPacket(&buffer[0], header.size);
+	}*/
+
+	while (true)
+	{
+		int32 dataSize = len - processLen;
+
+		// 최소 4바이트(헤더 크기)만큼은 있어야한다. => 헤더 파싱
+		if (dataSize < sizeof(PacketHeader))
+			break;
+		
+		// *((PacketHeader*)&buffer[0])
+		PacketHeader header = *(reinterpret_cast<PacketHeader*>(&buffer[processLen]));
+
+		// 헤더에 기록된 패킷 크기를 파싱할 수 있어야 한다.
+		if (dataSize < header.size)
+			break;
+
+		// 패킷 조립 성공
+		OnRecvPacket(&buffer[processLen], header.size);
+
+		processLen += header.size;
+	}
+	
+	return processLen;
 }

@@ -27,9 +27,56 @@ public:
 	virtual int32 OnRecv(BYTE* buffer, int32 len) override
 	{
 		cout << "OnRecv Len = " << len << ", OnRecv Data = " << buffer << endl;
-		this_thread::sleep_for(1s);
 
 		return len;
+	}
+
+	virtual void OnSend(int32 len) override
+	{
+		cout << "OnSend Len = " << len << endl;
+	}
+
+	virtual void OnDisconnected() override
+	{
+		cout << "Disconnected" << endl;
+	}
+};
+
+class ServerPacketSession : public PacketSession
+{
+public:
+	ServerPacketSession()
+	{
+	}
+	virtual ~ServerPacketSession()
+	{
+	}
+
+	virtual void OnConnected() override
+	{
+		cout << "===== Connected To Server =====" << endl;
+
+		SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
+		char initSendData[] = "Ping";
+
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(sendBuffer->Buffer());
+		header->id = 1;
+		header->size = sizeof(initSendData) + sizeof(PacketHeader);
+
+		sendBuffer->CopyPacket(&sendBuffer->Buffer()[4], &initSendData, sizeof(initSendData));
+		
+		Send(sendBuffer);
+	}
+
+	virtual void OnRecvPacket(BYTE* buffer, int32 len) override
+	{
+		PacketSessionRef session = GetPacketSessionRef();
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+
+		char recvBuffer[4096];
+		memcpy(recvBuffer, &buffer[4], header->size - sizeof(PacketHeader));
+		cout << "Packet Id: " << header->id << ", SIze: " << header->size << endl;
+		cout << recvBuffer << endl;
 	}
 
 	virtual void OnSend(int32 len) override
@@ -56,16 +103,32 @@ void Chat(ClientServiceRef service)
 	}
 }
 
+void ChatPacket(ClientServiceRef service)
+{
+	while (true)
+	{
+		char sendData[100];
+		cin >> sendData;
+
+		SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(sendBuffer->Buffer());
+		header->id = 1;
+		header->size = sizeof(sendData) + sizeof(PacketHeader);
+		sendBuffer->CopyPacket(&sendBuffer->Buffer()[4], &sendData, sizeof(sendData));
+		service->Broadcast(sendBuffer);
+	}
+}
+
 int main()
 {
-	this_thread::sleep_for(1s);
 	SocketUtils::Init();
 
 	ClientServiceRef service = ClientServiceRef(
 		new ClientService(
 			NetAddress(L"127.0.0.1", 7777),
 			IocpCoreRef(new IocpCore()),
-			[&]() {return shared_ptr<ServerSession>(new ServerSession());},
+			//[&]() {return shared_ptr<ServerSession>(new ServerSession());},
+			[&]() {return shared_ptr<ServerPacketSession>(new ServerPacketSession());},
 			1
 		)
 	);
@@ -86,7 +149,8 @@ int main()
 	}
 
 	// Chat
-	Chat(service);
+	//Chat(service);
+	ChatPacket(service);
 
 	// Room
 	/*Protocol::C_CHAT chatPkt;
