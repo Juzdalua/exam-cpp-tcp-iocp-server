@@ -2,8 +2,7 @@
 #include "Service.h"
 #include "IocpCore.h"
 #include "SocketUtils.h"
-
-
+#include "Protocol.pb.h"
 
 class ServerSession : public Session
 {
@@ -44,6 +43,19 @@ public:
 	}
 };
 
+void Chat(ClientServiceRef service)
+{
+	while (true)
+	{
+		char sendData[100];
+		cin >> sendData;
+
+		SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
+		sendBuffer->CopyData(sendData, sizeof(sendData));
+		service->Broadcast(sendBuffer);
+	}
+}
+
 int main()
 {
 	this_thread::sleep_for(1s);
@@ -73,15 +85,22 @@ int main()
 			}));
 	}
 
+	// Chat
+	Chat(service);
+
+	// Room
+	/*Protocol::C_CHAT chatPkt;
+	chatPkt.set_msg(u8"Hello World");
+
+	SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
+	sendBuffer->CopyData(&chatPkt, chatPkt.ByteSizeLong());
+	service->Broadcast(sendBuffer);
+
 	while (true)
 	{
-		char sendData[100];
-		cin >> sendData;
-
-		SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
-		sendBuffer->CopyData(sendData, sizeof(sendData));
 		service->Broadcast(sendBuffer);
-	}
+		this_thread::sleep_for(1s);
+	}*/
 	
 	for (thread& t : workers)
 	{
