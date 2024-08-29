@@ -3,7 +3,11 @@
 #include "GameSession.h"
 
 GameSessionManager GSessionManager;
+GamePacketSessionManager GPacketSessionManager;;
 
+/*---------------
+	Game Session
+---------------*/
 void GameSessionManager::Add(GameSessionRef session)
 {
 	//WRITE_LOCK;
@@ -23,6 +27,33 @@ void GameSessionManager::Broadcast(SendBufferRef sendBuffer)
 	//WRITE_LOCK;
 	lock_guard<mutex> lock(_lock);
 	for (GameSessionRef session : _sessions)
+	{
+		session->Send(sendBuffer);
+	}
+}
+
+/*----------------------
+	Game Packet Session
+----------------------*/
+void GamePacketSessionManager::Add(GamePacketSessionRef session)
+{
+	//WRITE_LOCK;
+	lock_guard<mutex> lock(_lock);
+	_sessions.insert(session);
+}
+
+void GamePacketSessionManager::Remove(GamePacketSessionRef session)
+{
+	//WRITE_LOCK;
+	lock_guard<mutex> lock(_lock);
+	_sessions.erase(session);
+}
+
+void GamePacketSessionManager::Broadcast(SendBufferRef sendBuffer)
+{
+	//WRITE_LOCK;
+	lock_guard<mutex> lock(_lock);
+	for (GamePacketSessionRef session : _sessions)
 	{
 		session->Send(sendBuffer);
 	}

@@ -5,7 +5,7 @@
 #include "Service.h"
 
 int32 MAX_CLIENT_COUNT = 1;
-int32 MAX_WORKER_COUNT = 1;
+int32 MAX_WORKER_COUNT = 2;
 
 int main()
 {
@@ -15,7 +15,8 @@ int main()
 		new ServerService(
 			NetAddress(L"127.0.0.1", 7777),
 			IocpCoreRef(new IocpCore()),
-			[&]() {return shared_ptr<GameSession>(new GameSession());},
+			//[&]() {return shared_ptr<GameSession>(new GameSession());},
+			[&]() {return shared_ptr<GamePacketSession>(new GamePacketSession());},
 			MAX_CLIENT_COUNT
 		)
 	);
