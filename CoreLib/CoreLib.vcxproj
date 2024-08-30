@@ -72,15 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)Libraries\Libs\CoreLib\$(Configuration)\</OutDir>
+    <IncludePath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\include\jdbc;$(SolutionDir)Common\MySQL\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\lib64\debug\vs14;$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)Libraries\Libs\CoreLib\$(Configuration)\</OutDir>
+    <IncludePath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\include\jdbc;$(SolutionDir)Common\MySQL\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\lib64\debug\vs14;$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Libraries\Libs\CoreLib\$(Configuration)\</OutDir>
+    <IncludePath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\include\jdbc;$(SolutionDir)Common\MySQL\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\lib64\debug\vs14;$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Libraries\Libs\CoreLib\$(Configuration)\</OutDir>
+    <IncludePath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\include\jdbc;$(SolutionDir)Common\MySQL\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\lib64\debug\vs14;$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -151,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConnectionPool.h" />
     <ClInclude Include="CoreGlobal.h" />
     <ClInclude Include="CoreMacro.h" />
     <ClInclude Include="CorePch.h" />
@@ -169,6 +178,7 @@
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConnectionPool.cpp" />
     <ClCompile Include="CoreGlobal.cpp" />
     <ClCompile Include="CoreLib.cpp" />
     <ClCompile Include="CorePch.cpp" />

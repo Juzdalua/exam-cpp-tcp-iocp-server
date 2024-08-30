@@ -7,6 +7,9 @@
     <Filter Include="Network">
       <UniqueIdentifier>{9905a4a0-83db-439f-a7f5-bdf4c49ac30a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB">
+      <UniqueIdentifier>{55e8e3b5-ebc0-4858-812c-a9750e2505c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -57,6 +60,9 @@
     <ClInclude Include="ENV.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="ConnectionPool.h">
+      <Filter>DB</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CoreLib.cpp">
@@ -100,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="ENV.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectionPool.cpp">
+      <Filter>DB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

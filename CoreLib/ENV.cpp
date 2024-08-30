@@ -7,23 +7,23 @@
 
 void ENV::loadEnvFile(const string& filename)
 {
-	std::ifstream envFile(filename);
-	std::string line;
+	ifstream envFile(filename);
+	string line;
 
 	if (!envFile.is_open()) {
-		std::cerr << "----- Failed to open .env file. -----" << std::endl;
+		cerr << "----- Failed to open .env file. -----" << endl;
 		return;
 	}
 
-	while (std::getline(envFile, line)) {
+	while (getline(envFile, line)) {
 		// 주석이나 빈 라인은 무시
 		if (line.empty() || line[0] == '#') continue;
 
-		std::istringstream lineStream(line);
-		std::string key;
-		if (std::getline(lineStream, key, '=')) {
-			std::string value;
-			if (std::getline(lineStream, value)) {
+		istringstream lineStream(line);
+		string key;
+		if (getline(lineStream, key, '=')) {
+			string value;
+			if (getline(lineStream, value)) {
 				// 환경 변수 설정
 				_putenv_s(key.c_str(), value.c_str());
 			}

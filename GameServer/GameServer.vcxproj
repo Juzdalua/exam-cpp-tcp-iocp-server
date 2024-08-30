@@ -71,23 +71,23 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)CoreLib\;$(SolutionDir)Libraries\Include\</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\include\jdbc;C:\Program Files\MySQL\MySQL Server 8.0\include;$(SolutionDir)CoreLib\;$(SolutionDir)Libraries\Include\</IncludePath>
+    <LibraryPath>C:\Program Files\MySQL\MySQL Server 8.0\lib;$(SolutionDir)Libraries\Libs\;C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\lib64\debug\vs14;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)CoreLib\;$(SolutionDir)Libraries\Include\</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\include\jdbc;C:\Program Files\MySQL\MySQL Server 8.0\include;$(SolutionDir)CoreLib\;$(SolutionDir)Libraries\Include\</IncludePath>
+    <LibraryPath>C:\Program Files\MySQL\MySQL Server 8.0\lib;$(SolutionDir)Libraries\Libs\;C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\lib64\debug\vs14;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)CoreLib\;$(SolutionDir)Libraries\Include\</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\include\jdbc;C:\Program Files\MySQL\MySQL Server 8.0\include;$(SolutionDir)CoreLib\;$(SolutionDir)Libraries\Include\</IncludePath>
+    <LibraryPath>C:\Program Files\MySQL\MySQL Server 8.0\lib;$(SolutionDir)Libraries\Libs\;C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\lib64\debug\vs14;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)CoreLib\;$(SolutionDir)Libraries\Include\</IncludePath>
-    <LibraryPath>$(SolutionDir)Libraries\Libs\;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\include\jdbc;C:\Program Files\MySQL\MySQL Server 8.0\include;$(SolutionDir)CoreLib\;$(SolutionDir)Libraries\Include\</IncludePath>
+    <LibraryPath>C:\Program Files\MySQL\MySQL Server 8.0\lib;$(SolutionDir)Libraries\Libs\;C:\Users\Jun\Desktop\workspace\exam-cpp-tcp-iocp-server\ServerExam\Common\MySQL\Debug\lib64\debug\vs14;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -102,6 +102,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\MySQL\MySQL Server 8.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -120,6 +122,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\MySQL\MySQL Server 8.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -134,6 +138,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\MySQL\MySQL Server 8.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -152,6 +158,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files\MySQL\MySQL Server 8.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
