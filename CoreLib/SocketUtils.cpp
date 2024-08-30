@@ -24,6 +24,7 @@ void SocketUtils::Init()
 void SocketUtils::Clear()
 {
 	WSACleanup();
+	cout << "CLEAR" << endl;
 }
 
 bool SocketUtils::BindWindowsFunction(SOCKET socket, GUID guid, LPVOID* fn)

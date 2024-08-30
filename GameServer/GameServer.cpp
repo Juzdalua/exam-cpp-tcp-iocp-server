@@ -1,14 +1,21 @@
 ﻿#include "pch.h"
+#include "ConnectionPool.h"
 #include "SocketUtils.h"
 #include "IocpCore.h"
 #include "GameSession.h"
 #include "Service.h"
 
+CoreGlobal GCoreGlobal;
 int32 MAX_CLIENT_COUNT = 1;
 int32 MAX_WORKER_COUNT = 2;
 
 int main()
 {
+	unique_ptr<sql::ResultSet> result = executeQuery(*CP, "Select * FROM user;");
+	while (result->next()) {
+		cout << result->getString(1) << " " << result->getString(2) << endl;
+	}
+
 	SocketUtils::Init();
 
 	ServerServiceRef service = ServerServiceRef(
@@ -22,7 +29,7 @@ int main()
 	);
 
 	ASSERT_CRASH(service->Start());
-	
+
 	// Worker Threads
 	mutex m;
 	vector<thread> workers;
@@ -49,7 +56,7 @@ int main()
 }
 
 /*
-	Listener -> Socket Set -> Register Accept (AcceptEx) 
+	Listener -> Socket Set -> Register Accept (AcceptEx)
 	Process Accept -> Client Session Set -> Process Connect -> Register Recv (WSARecv)
 	Process Recv -> GameSession Echo Set -> Send with echo -> Register Recv (WSARecv)
 	SendBuffer Set -> Send (SendQueue Set) -> RegisterSend (WSASend) -> ProcessSend -> Register Send (WSASend)
