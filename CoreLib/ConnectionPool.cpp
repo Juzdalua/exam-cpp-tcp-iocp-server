@@ -2,38 +2,42 @@
 #include "ConnectionPool.h"
 
 // ConnectionPool 생성자
-ConnectionPool::ConnectionPool(size_t size) {
+ConnectionPool::ConnectionPool(int32 size) 
+{
     ENV::loadEnvFile("../CoreLib/.env");
+
     driver = get_driver_instance();
 
     try {
         for (size_t i = 0; i < size; ++i) {
-            std::unique_ptr<sql::Connection> conn(driver->connect(
+            unique_ptr<sql::Connection> conn(driver->connect(
                 ENV::getEnvVariable("DATABASE_HOST"),
                 ENV::getEnvVariable("DATABASE_USER"),
                 ENV::getEnvVariable("DATABASE_PASSWORD")
             ));
             conn->setSchema(ENV::getEnvVariable("DATABASE_SCHEMA"));
-            pool.push_back(std::move(conn));
+            pool.push_back(move(conn));
         }
     }
     catch (sql::SQLException& e) {
-        std::cerr << "SQLException: " << e.what() << std::endl;
-        std::cerr << "Error code: " << e.getErrorCode() << std::endl;
-        std::cerr << "SQL state: " << e.getSQLState() << std::endl;
+        cerr << "SQLException: " << e.what() << endl;
+        cerr << "Error code: " << e.getErrorCode() << endl;
+        cerr << "SQL state: " << e.getSQLState() << endl;
     }
 }
 
 // ConnectionPool 소멸자
 ConnectionPool::~ConnectionPool() {
     // unique_ptr의 소멸자에서 delete가 호출되어 모든 커넥션을 자동으로 해제합니다.
+    cout << "Disconnect DB" << endl;
+    pool.clear();
 }
 
 // 커넥션을 가져오는 메서드
-std::unique_ptr<sql::Connection> ConnectionPool::getConnection() {
-    std::lock_guard<std::mutex> lock(mtx);
+unique_ptr<sql::Connection> ConnectionPool::getConnection() {
+    lock_guard<mutex> lock(mtx);
     if (!pool.empty()) {
-        auto conn = std::move(pool.back());
+        auto conn = move(pool.back());
         pool.pop_back();
         return conn;
     }
@@ -41,37 +45,42 @@ std::unique_ptr<sql::Connection> ConnectionPool::getConnection() {
 }
 
 // 커넥션을 반환하는 메서드
-void ConnectionPool::releaseConnection(std::unique_ptr<sql::Connection> conn) {
-    std::lock_guard<std::mutex> lock(mtx);
-    pool.push_back(std::move(conn));
+void ConnectionPool::releaseConnection(unique_ptr<sql::Connection> conn) {
+    lock_guard<mutex> lock(mtx);
+    pool.push_back(move(conn));
 }
 
 // 쿼리문을 받아서 실행하는 함수
-void executeQuery(ConnectionPool& pool, const std::string& query) {
+void executeQuery(ConnectionPool& pool, const string& query) {
     try {
         auto conn = pool.getConnection();
         if (conn) {
             // Prepare the statement
-            std::unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(query));
+            unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(query));
 
             // Execute the query
-            std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+            unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
 
             // Process results
             while (res->next()) {
-                std::cout << res->getString(1) << " " << res->getString(2) << std::endl;
+                cout << res->getString(1) << " " << res->getString(2) << endl;
             }
 
             // Release the connection
-            pool.releaseConnection(std::move(conn));
+            pool.releaseConnection(move(conn));
         }
         else {
-            std::cerr << "Failed to get a connection from the pool." << std::endl;
+            cerr << "Failed to get a connection from the pool." << endl;
         }
     }
     catch (sql::SQLException& e) {
-        std::cerr << "SQLException: " << e.what() << std::endl;
-        std::cerr << "Error code: " << e.getErrorCode() << std::endl;
-        std::cerr << "SQL state: " << e.getSQLState() << std::endl;
+        cerr << "SQLException: " << e.what() << endl;
+        cerr << "Error code: " << e.getErrorCode() << endl;
+        cerr << "SQL state: " << e.getSQLState() << endl;
     }
+}
+
+void worker(ConnectionPool& pool) {
+    string query = "SELECT * FROM user";
+    executeQuery(pool, query);
 }

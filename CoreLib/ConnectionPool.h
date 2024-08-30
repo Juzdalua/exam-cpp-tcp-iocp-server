@@ -7,18 +7,18 @@
 
 class ConnectionPool {
 public:
-    ConnectionPool(size_t size);
+    ConnectionPool(int32 size);
     ~ConnectionPool();
 
-    std::unique_ptr<sql::Connection> getConnection();
-    void releaseConnection(std::unique_ptr<sql::Connection> conn);
+    unique_ptr<sql::Connection> getConnection();
+    void releaseConnection(unique_ptr<sql::Connection> conn);
 
 private:
-    std::vector<std::unique_ptr<sql::Connection>> pool;
+    vector<unique_ptr<sql::Connection>> pool;
     sql::Driver* driver;
-    std::mutex mtx;
+    mutex mtx;
 };
 
 // 쿼리문을 받아서 실행하는 함수
-void executeQuery(ConnectionPool& pool, const std::string& query);
-
+void executeQuery(ConnectionPool& pool, const string& query);
+void worker(ConnectionPool& pool);

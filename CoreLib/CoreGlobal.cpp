@@ -1,17 +1,26 @@
 #include "pch.h"
 #include "CoreGlobal.h"
 #include "SocketUtils.h"
+#include "ConnectionPool.h"
 
-CoreGlobal GCoreGlobal;
+extern CoreGlobal GCoreGlobal;
+ConnectionManager* GConnectionManager = nullptr;
+ConnectionPool* CP = nullptr;
 
 CoreGlobal::CoreGlobal()
 {
-	cout << "Core Global()" << endl;
-	//SocketUtils::Init();
+	// Socket
+	SocketUtils::Init();
+
+	// DB
+	CP = new ConnectionPool(5);
 }
 
 CoreGlobal::~CoreGlobal()
 {
-	cout << "~Core Global()" << endl;
-	//SocketUtils::Clear();
+	// Socket
+	SocketUtils::Clear();
+
+	// DB
+	delete CP;
 }
