@@ -3,12 +3,17 @@
 #include "IocpCore.h"
 #include "GameSession.h"
 #include "Service.h"
+#include "ENV.h"
 
 int32 MAX_CLIENT_COUNT = 1;
 int32 MAX_WORKER_COUNT = 2;
 
 int main()
 {
+	ENV::loadEnvFile("../CoreLib/.env");
+	string id = ENV::getEnvVariable("ID");
+	string pwd = ENV::getEnvVariable("PASSWORD");
+
 	SocketUtils::Init();
 
 	ServerServiceRef service = ServerServiceRef(

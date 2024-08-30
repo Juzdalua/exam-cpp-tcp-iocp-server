@@ -4,6 +4,7 @@
 #include "CoreMacro.h"
 #include "CoreGlobal.h"
 
+#include <string>
 #include <array>
 #include <vector>
 #include <list>
