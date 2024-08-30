@@ -1,6 +1,7 @@
 #pragma once
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>
+#include <cppconn/statement.h>
 #include <cppconn/prepared_statement.h>
 #include <cppconn/resultset.h>
 #include "ENV.h"
@@ -20,5 +21,4 @@ private:
 };
 
 // 쿼리문을 받아서 실행하는 함수
-void executeQuery(ConnectionPool& pool, const string& query);
-void worker(ConnectionPool& pool);
+unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& query);

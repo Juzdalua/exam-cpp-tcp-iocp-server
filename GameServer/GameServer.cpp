@@ -11,7 +11,10 @@ int32 MAX_WORKER_COUNT = 2;
 
 int main()
 {
-	//executeQuery(*CP, "Select * FROM user;");
+	unique_ptr<sql::ResultSet> result = executeQuery(*CP, "Select * FROM user;");
+	while (result->next()) {
+		cout << result->getString(1) << " " << result->getString(2) << endl;
+	}
 
 	SocketUtils::Init();
 
@@ -26,7 +29,7 @@ int main()
 	);
 
 	ASSERT_CRASH(service->Start());
-	
+
 	// Worker Threads
 	mutex m;
 	vector<thread> workers;
@@ -53,7 +56,7 @@ int main()
 }
 
 /*
-	Listener -> Socket Set -> Register Accept (AcceptEx) 
+	Listener -> Socket Set -> Register Accept (AcceptEx)
 	Process Accept -> Client Session Set -> Process Connect -> Register Recv (WSARecv)
 	Process Recv -> GameSession Echo Set -> Send with echo -> Register Recv (WSARecv)
 	SendBuffer Set -> Send (SendQueue Set) -> RegisterSend (WSASend) -> ProcessSend -> Register Send (WSASend)

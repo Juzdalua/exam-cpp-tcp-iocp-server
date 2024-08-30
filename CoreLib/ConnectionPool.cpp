@@ -51,7 +51,7 @@ void ConnectionPool::releaseConnection(unique_ptr<sql::Connection> conn) {
 }
 
 // 쿼리문을 받아서 실행하는 함수
-void executeQuery(ConnectionPool& pool, const string& query) {
+unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& query) {
     try {
         auto conn = pool.getConnection();
         if (conn) {
@@ -62,12 +62,13 @@ void executeQuery(ConnectionPool& pool, const string& query) {
             unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
 
             // Process results
-            while (res->next()) {
+            /*while (res->next()) {
                 cout << res->getString(1) << " " << res->getString(2) << endl;
-            }
+            }*/
 
             // Release the connection
             pool.releaseConnection(move(conn));
+            return res;
         }
         else {
             cerr << "Failed to get a connection from the pool." << endl;
@@ -78,9 +79,4 @@ void executeQuery(ConnectionPool& pool, const string& query) {
         cerr << "Error code: " << e.getErrorCode() << endl;
         cerr << "SQL state: " << e.getSQLState() << endl;
     }
-}
-
-void worker(ConnectionPool& pool) {
-    string query = "SELECT * FROM user";
-    executeQuery(pool, query);
 }
