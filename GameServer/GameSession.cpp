@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "GameSession.h"
 #include "GameSessionManager.h"
+#include "Protocol.pb.h"
 
 /*---------------
 	Game Session
+	Without Header
 ---------------*/
 void GameSession::OnConnected()
 {
@@ -36,6 +38,7 @@ void GameSession::OnSend(int32 len)
 
 /*----------------------
 	Game Packet Session
+	With PacketHeader
 ----------------------*/
 void GamePacketSession::OnConnected()
 {
@@ -69,4 +72,61 @@ void GamePacketSession::OnRecvPacket(BYTE* buffer, int32 len)
 void GamePacketSession::OnSend(int32 len)
 {
 
+}
+
+/*-------------------
+	Game Protobuf Session
+	With PakcetHeader
+-------------------*/
+void GameProtobufSession::OnConnected()
+{
+	GProtobufSessionManager.Add(static_pointer_cast<GameProtobufSession>(shared_from_this()));
+}
+
+void GameProtobufSession::OnDisconnected()
+{
+	GProtobufSessionManager.Remove(static_pointer_cast<GameProtobufSession>(shared_from_this()));
+}
+
+void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
+{
+	PacketSessionRef session = GetPacketSessionRef();
+	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
+
+	cout << "Packet Id: " << recvHeader->id << ", SIze: " << recvHeader->size << endl;
+	
+	switch (recvHeader->id)
+	{
+	case PKT_C_TEST:
+		Protocol::C_CHAT pkt;
+		pkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+		cout << pkt.msg() << endl;
+		break;
+	}
+
+	Protocol::S_CHAT pkt;
+	pkt.set_msg("Pong");
+	uint16 packetId = PKT_S_TEST;
+
+	const uint16 dataSize = static_cast<uint16>(pkt.ByteSizeLong());
+	const uint16 packetSize = dataSize + sizeof(PacketHeader);
+
+	SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(sendBuffer->Buffer());
+	header->size = packetSize;
+	header->id = packetId;
+
+	ASSERT_CRASH(pkt.SerializeToArray(&header[1], dataSize));
+	sendBuffer->SetWriteSizeWithDataSize(dataSize);
+
+	Send(sendBuffer);
+	//GProtobufSessionManager.Broadcast(sendBuffer);
+
+	// TODO: PacketId 대역 체크
+	//ClientPacketHandler::HandlePacket(session, buffer, len);
+}
+
+void GameProtobufSession::OnSend(int32 len)
+{
+	cout << "OnSend Len = " << len << endl;
 }

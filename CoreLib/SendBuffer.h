@@ -12,6 +12,8 @@ public:
 	void CopyData(void* data, int32 len);
 	void CopyPacket(BYTE* pos, void* data, int32 len);
 
+	void SetWriteSizeWithDataSize(int32 len){ _writeSize = len + sizeof(PacketHeader); }
+
 private:
 	vector<BYTE>	_buffer;
 	int32			_writeSize = 0;

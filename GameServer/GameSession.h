@@ -3,6 +3,7 @@
 
 /*---------------
 	Game Session
+	Without PakcetHeader
 ---------------*/
 class GameSession : public Session
 {
@@ -25,6 +26,7 @@ public:
 
 /*----------------------
 	Game Packet Session
+	With PakcetHeader
 ----------------------*/
 class GamePacketSession : public PacketSession
 {
@@ -39,6 +41,41 @@ public:
 	virtual void OnDisconnected() override;
 	virtual void OnRecvPacket(BYTE* buffer, int32 len) override;
 	virtual void OnSend(int32 len) override;
+
+public:
+	vector<PlayerRef> _players;
+};
+
+/*-------------------
+	Game Protobuf Session
+	With PakcetHeader
+-------------------*/
+enum : uint16
+{
+	PKT_C_TEST = 0001,
+	PKT_S_TEST = 0002,
+	PKT_C_LOGIN = 1000,
+	PKT_S_LOGIN = 1001,
+	PKT_C_ENTER_GAME = 1002,
+	PKT_S_ENTER_GAME = 1003,
+	PKT_C_CHAT = 1004,
+	PKT_S_CHAT = 1005,
+};
+
+class GameProtobufSession : public PacketSession
+{
+public:
+	virtual ~GameProtobufSession()
+	{
+		cout << "~GameProtobufSession" << endl;
+	}
+
+public:
+	virtual void OnConnected() override;
+	virtual void OnDisconnected() override;
+	virtual void OnRecvPacket(BYTE* buffer, int32 len) override;
+	virtual void OnSend(int32 len) override;
+
 
 public:
 	vector<PlayerRef> _players;

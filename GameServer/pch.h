@@ -16,4 +16,5 @@
 
 using GameSessionRef = shared_ptr<class GameSession>;
 using GamePacketSessionRef = shared_ptr<class GamePacketSession>;
+using GameProtobufSessionRef = shared_ptr<class GameProtobufSession>;
 using PlayerRef = shared_ptr<class Player>;
