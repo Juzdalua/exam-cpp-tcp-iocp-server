@@ -49,17 +49,185 @@ namespace Protocol {
 class Account;
 struct AccountDefaultTypeInternal;
 extern AccountDefaultTypeInternal _Account_default_instance_;
+class ErrorObj;
+struct ErrorObjDefaultTypeInternal;
+extern ErrorObjDefaultTypeInternal _ErrorObj_default_instance_;
 class Player;
 struct PlayerDefaultTypeInternal;
 extern PlayerDefaultTypeInternal _Player_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Protocol::Account* Arena::CreateMaybeMessage<::Protocol::Account>(Arena*);
+template<> ::Protocol::ErrorObj* Arena::CreateMaybeMessage<::Protocol::ErrorObj>(Arena*);
 template<> ::Protocol::Player* Arena::CreateMaybeMessage<::Protocol::Player>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
 // ===================================================================
+
+class ErrorObj final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.ErrorObj) */ {
+ public:
+  inline ErrorObj() : ErrorObj(nullptr) {}
+  ~ErrorObj() override;
+  explicit PROTOBUF_CONSTEXPR ErrorObj(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ErrorObj(const ErrorObj& from);
+  ErrorObj(ErrorObj&& from) noexcept
+    : ErrorObj() {
+    *this = ::std::move(from);
+  }
+
+  inline ErrorObj& operator=(const ErrorObj& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ErrorObj& operator=(ErrorObj&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ErrorObj& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ErrorObj* internal_default_instance() {
+    return reinterpret_cast<const ErrorObj*>(
+               &_ErrorObj_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    0;
+
+  friend void swap(ErrorObj& a, ErrorObj& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ErrorObj* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ErrorObj* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ErrorObj* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ErrorObj>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const ErrorObj& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const ErrorObj& from) {
+    ErrorObj::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ErrorObj* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.ErrorObj";
+  }
+  protected:
+  explicit ErrorObj(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kErrorMsgFieldNumber = 2,
+    kErrorCodeFieldNumber = 1,
+  };
+  // string errorMsg = 2;
+  void clear_errormsg();
+  const std::string& errormsg() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_errormsg(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_errormsg();
+  PROTOBUF_NODISCARD std::string* release_errormsg();
+  void set_allocated_errormsg(std::string* errormsg);
+  private:
+  const std::string& _internal_errormsg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_errormsg(const std::string& value);
+  std::string* _internal_mutable_errormsg();
+  public:
+
+  // int64 errorCode = 1;
+  void clear_errorcode();
+  int64_t errorcode() const;
+  void set_errorcode(int64_t value);
+  private:
+  int64_t _internal_errorcode() const;
+  void _internal_set_errorcode(int64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.ErrorObj)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errormsg_;
+    int64_t errorcode_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Struct_2eproto;
+};
+// -------------------------------------------------------------------
 
 class Account final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.Account) */ {
@@ -109,7 +277,7 @@ class Account final :
                &_Account_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    0;
+    1;
 
   friend void swap(Account& a, Account& b) {
     a.Swap(&b);
@@ -289,7 +457,7 @@ class Player final :
                &_Player_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   friend void swap(Player& a, Player& b) {
     a.Swap(&b);
@@ -412,6 +580,80 @@ class Player final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
+// ErrorObj
+
+// int64 errorCode = 1;
+inline void ErrorObj::clear_errorcode() {
+  _impl_.errorcode_ = int64_t{0};
+}
+inline int64_t ErrorObj::_internal_errorcode() const {
+  return _impl_.errorcode_;
+}
+inline int64_t ErrorObj::errorcode() const {
+  // @@protoc_insertion_point(field_get:Protocol.ErrorObj.errorCode)
+  return _internal_errorcode();
+}
+inline void ErrorObj::_internal_set_errorcode(int64_t value) {
+  
+  _impl_.errorcode_ = value;
+}
+inline void ErrorObj::set_errorcode(int64_t value) {
+  _internal_set_errorcode(value);
+  // @@protoc_insertion_point(field_set:Protocol.ErrorObj.errorCode)
+}
+
+// string errorMsg = 2;
+inline void ErrorObj::clear_errormsg() {
+  _impl_.errormsg_.ClearToEmpty();
+}
+inline const std::string& ErrorObj::errormsg() const {
+  // @@protoc_insertion_point(field_get:Protocol.ErrorObj.errorMsg)
+  return _internal_errormsg();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ErrorObj::set_errormsg(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.errormsg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.ErrorObj.errorMsg)
+}
+inline std::string* ErrorObj::mutable_errormsg() {
+  std::string* _s = _internal_mutable_errormsg();
+  // @@protoc_insertion_point(field_mutable:Protocol.ErrorObj.errorMsg)
+  return _s;
+}
+inline const std::string& ErrorObj::_internal_errormsg() const {
+  return _impl_.errormsg_.Get();
+}
+inline void ErrorObj::_internal_set_errormsg(const std::string& value) {
+  
+  _impl_.errormsg_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ErrorObj::_internal_mutable_errormsg() {
+  
+  return _impl_.errormsg_.Mutable(GetArenaForAllocation());
+}
+inline std::string* ErrorObj::release_errormsg() {
+  // @@protoc_insertion_point(field_release:Protocol.ErrorObj.errorMsg)
+  return _impl_.errormsg_.Release();
+}
+inline void ErrorObj::set_allocated_errormsg(std::string* errormsg) {
+  if (errormsg != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.errormsg_.SetAllocated(errormsg, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.errormsg_.IsDefault()) {
+    _impl_.errormsg_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.ErrorObj.errorMsg)
+}
+
+// -------------------------------------------------------------------
+
 // Account
 
 // uint64 id = 1;
@@ -611,6 +853,8 @@ inline void Player::set_allocated_name(std::string* name) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 

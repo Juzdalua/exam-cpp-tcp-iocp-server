@@ -20,7 +20,7 @@ unique_ptr<Account> AccountService::GetAccountById(uint64 accountId)
 	cout << params[0] << endl;
 
 	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
-	
+
 	if (res->next())
 	{
 		uint64 id = res->getUInt64("id");
@@ -42,7 +42,7 @@ unique_ptr<Account> AccountService::GetAccountByName(string accountName)
 			FROM
 				account
 			WHERE
-				name = ?
+				name = ?;
 		)";
 	vector<string>params;
 	params.push_back(accountName);
@@ -58,4 +58,27 @@ unique_ptr<Account> AccountService::GetAccountByName(string accountName)
 		return  make_unique<Account>(id, hashedPwd);
 	}
 	return nullptr;
+}
+
+bool AccountService::CreateAccount(string name, string password)
+{
+	try
+	{
+		string query = R"(
+		INSERT INTO account (name, password) VALUES
+			(?, ?);
+	)";
+
+		vector<string>params;
+		params.push_back(name);
+		params.push_back(password);
+
+		unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+		return true;
+	}
+	catch (const std::exception&)
+	{
+		return false;
+	}
 }
