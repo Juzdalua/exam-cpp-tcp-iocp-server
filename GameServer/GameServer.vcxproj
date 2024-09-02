@@ -166,6 +166,7 @@
     <ClCompile Include="Account.cpp" />
     <ClCompile Include="AccountController.cpp" />
     <ClCompile Include="AccountService.cpp" />
+    <ClCompile Include="ClientPacketHandler.cpp" />
     <ClCompile Include="Enum.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -200,6 +201,7 @@
     <ClInclude Include="Account.h" />
     <ClInclude Include="AccountController.h" />
     <ClInclude Include="AccountService.h" />
+    <ClInclude Include="ClientPacketHandler.h" />
     <ClInclude Include="Enum.pb.h" />
     <ClInclude Include="GameSession.h" />
     <ClInclude Include="GameSessionManager.h" />

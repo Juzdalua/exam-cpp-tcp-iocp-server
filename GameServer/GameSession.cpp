@@ -92,22 +92,9 @@ void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 {
 	PacketSessionRef session = GetPacketSessionRef();
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
-
 	cout << "Packet Id: " << recvHeader->id << ", SIze: " << recvHeader->size << endl;
 
-	switch (recvHeader->id)
-	{
-	case PKT_C_TEST:
-		Protocol::C_CHAT pkt;
-		pkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
-		cout << pkt.msg() << endl;
-		break;
-	}
-
-	Protocol::S_CHAT pkt;
-	pkt.set_msg("Pong");
-	uint16 packetId = PKT_S_TEST;
-	SendProtobuf(pkt, packetId, this);
+	ClientPacketHandler::HandlePacket(buffer, len, static_pointer_cast<GameProtobufSession>(shared_from_this()));
 
 	//GProtobufSessionManager.Broadcast(sendBuffer);
 }
