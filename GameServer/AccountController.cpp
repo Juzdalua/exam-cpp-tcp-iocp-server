@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AccountController.h"
 #include "AccountService.h"
+#include "PlayerService.h"
 
 unique_ptr<Account> AccountController::GetAccountById(uint64 accountId)
 {
@@ -20,7 +21,20 @@ unique_ptr<Account> AccountController::GetAccountByName(string accountName)
 	return account;
 }
 
-bool AccountController::CreateAccount(string name, string password)
+pair<shared_ptr<Account>, shared_ptr<Player>> AccountController::GetAccountAndPlayerByName(string accountName)
 {
-	return AccountService::CreateAccount(name, password);
+	pair<shared_ptr<Account>, shared_ptr<Player>> pariAccountPlayer = AccountService::GetAccountAndPlayerByName1(accountName);
+	if (pariAccountPlayer.first == nullptr)
+		return make_pair(nullptr, nullptr);
+
+	return pariAccountPlayer;
+}
+
+bool AccountController::CreateAccount(uint64 accountId, string name, string password)
+{
+	unique_ptr<Player> player = PlayerService::GetPlayerByAccountId(accountId);
+	if (player == nullptr)
+		return AccountService::CreateAccountAndPlayer(name, password);
+	else
+		return AccountService::CreateAccount(name, password);
 }

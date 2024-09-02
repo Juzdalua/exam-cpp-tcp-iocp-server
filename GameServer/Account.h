@@ -1,17 +1,19 @@
 #pragma once
+
 class Account
 {
 public:
-	Account();
-	Account(uint64 id, const std::string& hashedPwd)
-		: _id(id), password(hashedPwd) {}
+	Account() = default;
+	Account(uint64 id, const string& name, const string& hashedPwd)
+		: accountId(id), password(hashedPwd) {}
 
 public:
-	uint64 GetAccountId() { return _id; };
+	uint64 GetAccountId() { return accountId; };
 	string GetHashedPwd() { return password; };
 
 private:
-	uint64 _id;
+	uint64 accountId;
+	string name;
 	string  password;
 };
 
