@@ -54,7 +54,7 @@ void GamePacketSession::OnRecvPacket(BYTE* buffer, int32 len)
 {
 	PacketSessionRef session = GetPacketSessionRef();
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-	
+
 	cout << "Packet Id: " << header->id << ", SIze: " << header->size << endl;
 	cout << &buffer[4] << endl;
 
@@ -94,7 +94,7 @@ void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
 
 	cout << "Packet Id: " << recvHeader->id << ", SIze: " << recvHeader->size << endl;
-	
+
 	switch (recvHeader->id)
 	{
 	case PKT_C_TEST:
@@ -107,26 +107,13 @@ void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 	Protocol::S_CHAT pkt;
 	pkt.set_msg("Pong");
 	uint16 packetId = PKT_S_TEST;
+	SendProtobuf(pkt, packetId, this);
 
-	const uint16 dataSize = static_cast<uint16>(pkt.ByteSizeLong());
-	const uint16 packetSize = dataSize + sizeof(PacketHeader);
-
-	SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
-	PacketHeader* header = reinterpret_cast<PacketHeader*>(sendBuffer->Buffer());
-	header->size = packetSize;
-	header->id = packetId;
-
-	ASSERT_CRASH(pkt.SerializeToArray(&header[1], dataSize));
-	sendBuffer->SetWriteSizeWithDataSize(dataSize);
-
-	Send(sendBuffer);
 	//GProtobufSessionManager.Broadcast(sendBuffer);
-
-	// TODO: PacketId 대역 체크
-	//ClientPacketHandler::HandlePacket(session, buffer, len);
 }
 
 void GameProtobufSession::OnSend(int32 len)
 {
 	cout << "OnSend Len = " << len << endl;
 }
+

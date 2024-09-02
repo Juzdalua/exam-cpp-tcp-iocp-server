@@ -80,3 +80,18 @@ public:
 public:
 	vector<PlayerRef> _players;
 };
+
+template<typename T>
+void SendProtobuf(T& pkt, uint16 packetId, GameProtobufSession* session) {
+	const uint16 dataSize = static_cast<uint16>(pkt.ByteSizeLong());
+	const uint16 packetSize = dataSize + sizeof(PacketHeader);
+
+	SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(sendBuffer->Buffer());
+	header->size = packetSize;
+	header->id = packetId;
+
+	ASSERT_CRASH(pkt.SerializeToArray(&header[1], dataSize));
+	sendBuffer->SetWriteSizeWithDataSize(dataSize);
+	session->Send(sendBuffer);
+};

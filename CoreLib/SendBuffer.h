@@ -1,4 +1,5 @@
 #pragma once
+
 class SendBuffer : enable_shared_from_this<SendBuffer>
 {
 public:
