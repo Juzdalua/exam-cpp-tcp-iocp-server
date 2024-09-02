@@ -199,10 +199,9 @@ class C_LOGIN final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kAccountFieldNumber = 2,
-    kTypeFieldNumber = 1,
+    kAccountFieldNumber = 1,
   };
-  // .Protocol.Account account = 2;
+  // .Protocol.Account account = 1;
   bool has_account() const;
   private:
   bool _internal_has_account() const;
@@ -220,15 +219,6 @@ class C_LOGIN final :
       ::Protocol::Account* account);
   ::Protocol::Account* unsafe_arena_release_account();
 
-  // .Protocol.LoginType type = 1;
-  void clear_type();
-  ::Protocol::LoginType type() const;
-  void set_type(::Protocol::LoginType value);
-  private:
-  ::Protocol::LoginType _internal_type() const;
-  void _internal_set_type(::Protocol::LoginType value);
-  public:
-
   // @@protoc_insertion_point(class_scope:Protocol.C_LOGIN)
  private:
   class _Internal;
@@ -238,7 +228,6 @@ class C_LOGIN final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::Protocol::Account* account_;
-    int type_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -367,9 +356,24 @@ class S_LOGIN final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kErrorFieldNumber = 3,
     kPlayerFieldNumber = 2,
     kSuccessFieldNumber = 1,
   };
+  // string error = 3;
+  void clear_error();
+  const std::string& error() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_error(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_error();
+  PROTOBUF_NODISCARD std::string* release_error();
+  void set_allocated_error(std::string* error);
+  private:
+  const std::string& _internal_error() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_error(const std::string& value);
+  std::string* _internal_mutable_error();
+  public:
+
   // .Protocol.Player player = 2;
   bool has_player() const;
   private:
@@ -405,6 +409,7 @@ class S_LOGIN final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr error_;
     ::Protocol::Player* player_;
     bool success_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -1036,27 +1041,7 @@ class S_CHAT final :
 #endif  // __GNUC__
 // C_LOGIN
 
-// .Protocol.LoginType type = 1;
-inline void C_LOGIN::clear_type() {
-  _impl_.type_ = 0;
-}
-inline ::Protocol::LoginType C_LOGIN::_internal_type() const {
-  return static_cast< ::Protocol::LoginType >(_impl_.type_);
-}
-inline ::Protocol::LoginType C_LOGIN::type() const {
-  // @@protoc_insertion_point(field_get:Protocol.C_LOGIN.type)
-  return _internal_type();
-}
-inline void C_LOGIN::_internal_set_type(::Protocol::LoginType value) {
-  
-  _impl_.type_ = value;
-}
-inline void C_LOGIN::set_type(::Protocol::LoginType value) {
-  _internal_set_type(value);
-  // @@protoc_insertion_point(field_set:Protocol.C_LOGIN.type)
-}
-
-// .Protocol.Account account = 2;
+// .Protocol.Account account = 1;
 inline bool C_LOGIN::_internal_has_account() const {
   return this != internal_default_instance() && _impl_.account_ != nullptr;
 }
@@ -1248,6 +1233,56 @@ inline void S_LOGIN::set_allocated_player(::Protocol::Player* player) {
   }
   _impl_.player_ = player;
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_LOGIN.player)
+}
+
+// string error = 3;
+inline void S_LOGIN::clear_error() {
+  _impl_.error_.ClearToEmpty();
+}
+inline const std::string& S_LOGIN::error() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_LOGIN.error)
+  return _internal_error();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_LOGIN::set_error(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.error_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_LOGIN.error)
+}
+inline std::string* S_LOGIN::mutable_error() {
+  std::string* _s = _internal_mutable_error();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_LOGIN.error)
+  return _s;
+}
+inline const std::string& S_LOGIN::_internal_error() const {
+  return _impl_.error_.Get();
+}
+inline void S_LOGIN::_internal_set_error(const std::string& value) {
+  
+  _impl_.error_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_LOGIN::_internal_mutable_error() {
+  
+  return _impl_.error_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_LOGIN::release_error() {
+  // @@protoc_insertion_point(field_release:Protocol.S_LOGIN.error)
+  return _impl_.error_.Release();
+}
+inline void S_LOGIN::set_allocated_error(std::string* error) {
+  if (error != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.error_.SetAllocated(error, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.error_.IsDefault()) {
+    _impl_.error_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_LOGIN.error)
 }
 
 // -------------------------------------------------------------------

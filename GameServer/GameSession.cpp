@@ -94,7 +94,6 @@ void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 	cout << "Packet Id: " << recvHeader->id << ", SIze: " << recvHeader->size << endl;
 
 	GameProtobufSessionRef session = GetProtobufSessionRef();
-	//ClientPacketHandler::HandlePacket(buffer, len, static_pointer_cast<GameProtobufSession>(shared_from_this()));
 	ClientPacketHandler::HandlePacket(buffer, len, session);
 
 	//GProtobufSessionManager.Broadcast(sendBuffer);

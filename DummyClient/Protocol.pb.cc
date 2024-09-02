@@ -24,7 +24,6 @@ namespace Protocol {
 PROTOBUF_CONSTEXPR C_LOGIN::C_LOGIN(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.account_)*/nullptr
-  , /*decltype(_impl_.type_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct C_LOGINDefaultTypeInternal {
   PROTOBUF_CONSTEXPR C_LOGINDefaultTypeInternal()
@@ -37,7 +36,8 @@ struct C_LOGINDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C_LOGINDefaultTypeInternal _C_LOGIN_default_instance_;
 PROTOBUF_CONSTEXPR S_LOGIN::S_LOGIN(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.player_)*/nullptr
+    /*decltype(_impl_.error_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.player_)*/nullptr
   , /*decltype(_impl_.success_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S_LOGINDefaultTypeInternal {
@@ -114,7 +114,6 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::Protocol::C_LOGIN, _impl_.type_),
   PROTOBUF_FIELD_OFFSET(::Protocol::C_LOGIN, _impl_.account_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _internal_metadata_),
@@ -124,6 +123,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _impl_.success_),
   PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _impl_.player_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_LOGIN, _impl_.error_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_ENTER_GAME, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -156,7 +156,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::C_LOGIN)},
-  { 8, -1, -1, sizeof(::Protocol::S_LOGIN)},
+  { 7, -1, -1, sizeof(::Protocol::S_LOGIN)},
   { 16, -1, -1, sizeof(::Protocol::C_ENTER_GAME)},
   { 23, -1, -1, sizeof(::Protocol::S_ENTER_GAME)},
   { 30, -1, -1, sizeof(::Protocol::C_CHAT)},
@@ -174,14 +174,13 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\016Protocol.proto\022\010Protocol\032\nEnum.proto\032\014"
-  "Struct.proto\"P\n\007C_LOGIN\022!\n\004type\030\001 \001(\0162\023."
-  "Protocol.LoginType\022\"\n\007account\030\002 \001(\0132\021.Pr"
-  "otocol.Account\"<\n\007S_LOGIN\022\017\n\007success\030\001 \001"
-  "(\010\022 \n\006player\030\002 \001(\0132\020.Protocol.Player\" \n\014"
-  "C_ENTER_GAME\022\020\n\010playerId\030\001 \001(\004\"\037\n\014S_ENTE"
-  "R_GAME\022\017\n\007success\030\001 \001(\010\"\025\n\006C_CHAT\022\013\n\003msg"
-  "\030\001 \001(\t\"\'\n\006S_CHAT\022\020\n\010playerId\030\001 \001(\004\022\013\n\003ms"
-  "g\030\002 \001(\tb\006proto3"
+  "Struct.proto\"-\n\007C_LOGIN\022\"\n\007account\030\001 \001(\013"
+  "2\021.Protocol.Account\"K\n\007S_LOGIN\022\017\n\007succes"
+  "s\030\001 \001(\010\022 \n\006player\030\002 \001(\0132\020.Protocol.Playe"
+  "r\022\r\n\005error\030\003 \001(\t\" \n\014C_ENTER_GAME\022\020\n\010play"
+  "erId\030\001 \001(\004\"\037\n\014S_ENTER_GAME\022\017\n\007success\030\001 "
+  "\001(\010\"\025\n\006C_CHAT\022\013\n\003msg\030\001 \001(\t\"\'\n\006S_CHAT\022\020\n\010"
+  "playerId\030\001 \001(\004\022\013\n\003msg\030\002 \001(\tb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -189,7 +188,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 335, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 315, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
     &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 6,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
@@ -232,14 +231,12 @@ C_LOGIN::C_LOGIN(const C_LOGIN& from)
   C_LOGIN* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.account_){nullptr}
-    , decltype(_impl_.type_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   if (from._internal_has_account()) {
     _this->_impl_.account_ = new ::Protocol::Account(*from._impl_.account_);
   }
-  _this->_impl_.type_ = from._impl_.type_;
   // @@protoc_insertion_point(copy_constructor:Protocol.C_LOGIN)
 }
 
@@ -249,7 +246,6 @@ inline void C_LOGIN::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.account_){nullptr}
-    , decltype(_impl_.type_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -282,7 +278,6 @@ void C_LOGIN::Clear() {
     delete _impl_.account_;
   }
   _impl_.account_ = nullptr;
-  _impl_.type_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -292,18 +287,9 @@ const char* C_LOGIN::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .Protocol.LoginType type = 1;
+      // .Protocol.Account account = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-          _internal_set_type(static_cast<::Protocol::LoginType>(val));
-        } else
-          goto handle_unusual;
-        continue;
-      // .Protocol.Account account = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_account(), ptr);
           CHK_(ptr);
         } else
@@ -338,17 +324,10 @@ uint8_t* C_LOGIN::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .Protocol.LoginType type = 1;
-  if (this->_internal_type() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteEnumToArray(
-      1, this->_internal_type(), target);
-  }
-
-  // .Protocol.Account account = 2;
+  // .Protocol.Account account = 1;
   if (this->_internal_has_account()) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, _Internal::account(this),
+      InternalWriteMessage(1, _Internal::account(this),
         _Internal::account(this).GetCachedSize(), target, stream);
   }
 
@@ -368,17 +347,11 @@ size_t C_LOGIN::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .Protocol.Account account = 2;
+  // .Protocol.Account account = 1;
   if (this->_internal_has_account()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *_impl_.account_);
-  }
-
-  // .Protocol.LoginType type = 1;
-  if (this->_internal_type() != 0) {
-    total_size += 1 +
-      ::_pbi::WireFormatLite::EnumSize(this->_internal_type());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -403,9 +376,6 @@ void C_LOGIN::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOB
     _this->_internal_mutable_account()->::Protocol::Account::MergeFrom(
         from._internal_account());
   }
-  if (from._internal_type() != 0) {
-    _this->_internal_set_type(from._internal_type());
-  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -423,12 +393,7 @@ bool C_LOGIN::IsInitialized() const {
 void C_LOGIN::InternalSwap(C_LOGIN* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(C_LOGIN, _impl_.type_)
-      + sizeof(C_LOGIN::_impl_.type_)
-      - PROTOBUF_FIELD_OFFSET(C_LOGIN, _impl_.account_)>(
-          reinterpret_cast<char*>(&_impl_.account_),
-          reinterpret_cast<char*>(&other->_impl_.account_));
+  swap(_impl_.account_, other->_impl_.account_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata C_LOGIN::GetMetadata() const {
@@ -464,11 +429,20 @@ S_LOGIN::S_LOGIN(const S_LOGIN& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   S_LOGIN* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.player_){nullptr}
+      decltype(_impl_.error_){}
+    , decltype(_impl_.player_){nullptr}
     , decltype(_impl_.success_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.error_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.error_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_error().empty()) {
+    _this->_impl_.error_.Set(from._internal_error(), 
+      _this->GetArenaForAllocation());
+  }
   if (from._internal_has_player()) {
     _this->_impl_.player_ = new ::Protocol::Player(*from._impl_.player_);
   }
@@ -481,10 +455,15 @@ inline void S_LOGIN::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.player_){nullptr}
+      decltype(_impl_.error_){}
+    , decltype(_impl_.player_){nullptr}
     , decltype(_impl_.success_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.error_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.error_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 S_LOGIN::~S_LOGIN() {
@@ -498,6 +477,7 @@ S_LOGIN::~S_LOGIN() {
 
 inline void S_LOGIN::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.error_.Destroy();
   if (this != internal_default_instance()) delete _impl_.player_;
 }
 
@@ -511,6 +491,7 @@ void S_LOGIN::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.error_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && _impl_.player_ != nullptr) {
     delete _impl_.player_;
   }
@@ -538,6 +519,16 @@ const char* S_LOGIN::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) 
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_player(), ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string error = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_error();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.S_LOGIN.error"));
         } else
           goto handle_unusual;
         continue;
@@ -583,6 +574,16 @@ uint8_t* S_LOGIN::_InternalSerialize(
         _Internal::player(this).GetCachedSize(), target, stream);
   }
 
+  // string error = 3;
+  if (!this->_internal_error().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_error().data(), static_cast<int>(this->_internal_error().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.S_LOGIN.error");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_error(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -598,6 +599,13 @@ size_t S_LOGIN::ByteSizeLong() const {
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // string error = 3;
+  if (!this->_internal_error().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_error());
+  }
 
   // .Protocol.Player player = 2;
   if (this->_internal_has_player()) {
@@ -629,6 +637,9 @@ void S_LOGIN::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOB
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_error().empty()) {
+    _this->_internal_set_error(from._internal_error());
+  }
   if (from._internal_has_player()) {
     _this->_internal_mutable_player()->::Protocol::Player::MergeFrom(
         from._internal_player());
@@ -652,7 +663,13 @@ bool S_LOGIN::IsInitialized() const {
 
 void S_LOGIN::InternalSwap(S_LOGIN* other) {
   using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.error_, lhs_arena,
+      &other->_impl_.error_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(S_LOGIN, _impl_.success_)
       + sizeof(S_LOGIN::_impl_.success_)

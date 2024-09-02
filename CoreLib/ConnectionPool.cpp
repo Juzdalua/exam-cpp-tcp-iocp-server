@@ -51,12 +51,23 @@ void ConnectionPool::releaseConnection(unique_ptr<sql::Connection> conn) {
 }
 
 // 쿼리문을 받아서 실행하는 함수
-unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& query) {
+unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& query, vector<string>& params) {
     try {
         auto conn = pool.getConnection();
         if (conn) {
             // Prepare the statement
             unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(query));
+
+            for (int32 i = 0; i < params.size(); ++i) {
+                pstmt->setString(i + 1, params[i]);
+            }
+
+            cout << "Executing Query: " << query << endl;
+            cout << "Parameters: ";
+            for (const auto& param : params) {
+                cout << param << " ";
+            }
+            cout << endl;
 
             // Execute the query
             unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
