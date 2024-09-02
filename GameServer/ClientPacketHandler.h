@@ -15,6 +15,6 @@ enum : uint16
 class ClientPacketHandler
 {
 public:
-	static bool HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef session);
+	static bool HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 };
 

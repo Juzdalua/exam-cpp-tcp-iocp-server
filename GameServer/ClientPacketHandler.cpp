@@ -3,7 +3,7 @@
 #include "Protocol.pb.h"
 #include "GameSession.h"
 
-bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef session)
+bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
 

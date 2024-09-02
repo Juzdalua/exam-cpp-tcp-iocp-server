@@ -59,19 +59,20 @@ public:
 		cout << "~GameProtobufSession" << endl;
 	}
 
+	GameProtobufSessionRef GetProtobufSessionRef() { return static_pointer_cast<GameProtobufSession>(shared_from_this()); }
+
 public:
 	virtual void OnConnected() override;
 	virtual void OnDisconnected() override;
 	virtual void OnRecvPacket(BYTE* buffer, int32 len) override;
 	virtual void OnSend(int32 len) override;
 
-
 public:
 	vector<PlayerRef> _players;
 };
 
 template<typename T>
-void SendProtobuf(T& pkt, uint16 packetId, GameProtobufSessionRef session) {
+void SendProtobuf(T& pkt, uint16 packetId, GameProtobufSessionRef& session) {
 	const uint16 dataSize = static_cast<uint16>(pkt.ByteSizeLong());
 	const uint16 packetSize = dataSize + sizeof(PacketHeader);
 
