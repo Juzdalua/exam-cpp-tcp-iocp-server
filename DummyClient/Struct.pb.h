@@ -182,10 +182,25 @@ class Account final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kPasswordFieldNumber = 2,
+    kNameFieldNumber = 2,
+    kPasswordFieldNumber = 3,
     kIdFieldNumber = 1,
   };
-  // string password = 2;
+  // string name = 2;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // string password = 3;
   void clear_password();
   const std::string& password() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -216,6 +231,7 @@ class Account final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
     uint64_t id_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -418,7 +434,57 @@ inline void Account::set_id(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.Account.id)
 }
 
-// string password = 2;
+// string name = 2;
+inline void Account::clear_name() {
+  _impl_.name_.ClearToEmpty();
+}
+inline const std::string& Account::name() const {
+  // @@protoc_insertion_point(field_get:Protocol.Account.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Account::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.Account.name)
+}
+inline std::string* Account::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:Protocol.Account.name)
+  return _s;
+}
+inline const std::string& Account::_internal_name() const {
+  return _impl_.name_.Get();
+}
+inline void Account::_internal_set_name(const std::string& value) {
+  
+  _impl_.name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Account::_internal_mutable_name() {
+  
+  return _impl_.name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* Account::release_name() {
+  // @@protoc_insertion_point(field_release:Protocol.Account.name)
+  return _impl_.name_.Release();
+}
+inline void Account::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.name_.SetAllocated(name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.Account.name)
+}
+
+// string password = 3;
 inline void Account::clear_password() {
   _impl_.password_.ClearToEmpty();
 }

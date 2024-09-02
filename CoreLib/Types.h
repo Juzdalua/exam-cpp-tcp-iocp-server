@@ -20,3 +20,4 @@ using ListenerRef = std::shared_ptr<class Listener>;
 using ServerServiceRef = std::shared_ptr<class ServerService>;
 using ClientServiceRef = std::shared_ptr<class ClientService>;
 using SendBufferRef = std::shared_ptr<class SendBuffer>;
+
