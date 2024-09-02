@@ -19,3 +19,8 @@ unique_ptr<Account> AccountController::GetAccountByName(string accountName)
 
 	return account;
 }
+
+bool AccountController::CreateAccount(string name, string password)
+{
+	return AccountService::CreateAccount(name, password);
+}

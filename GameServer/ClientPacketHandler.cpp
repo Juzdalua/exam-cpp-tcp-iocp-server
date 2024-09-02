@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ClientPacketHandler.h"
-#include "Protocol.pb.h"
 #include "GameSession.h"
+#include "Protocol.pb.h"
 #include "AccountController.h"
 
 bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
@@ -26,6 +26,9 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 	return false;
 }
 
+/*--------------------
+	Test Ping-Pong
+--------------------*/
 bool ClientPacketHandler::HandleTest(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
 	Protocol::C_CHAT recvPkt;
@@ -40,12 +43,44 @@ bool ClientPacketHandler::HandleTest(BYTE* buffer, int32 len, GameProtobufSessio
 	return true;
 }
 
+/*--------------------
+	Signup
+--------------------*/
 bool ClientPacketHandler::HandleSignup(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
-	
-	return true;
+	Protocol::C_SIGNUP recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	unique_ptr<Account> account = AccountController::GetAccountByName(recvPkt.account().name());
+	if (account == nullptr)
+	{
+		bool res = AccountController::CreateAccount(recvPkt.account().name(), recvPkt.account().password());
+		if (res)
+		{
+			Protocol::S_SIGNUP pkt;
+			pkt.set_success(true);
+			uint16 packetId = PKT_S_SIGNUP;
+			SendProtobuf(pkt, packetId, session);
+			return true;
+		}
+	}
+
+	auto errorPkt = new Protocol::ErrorObj();
+	errorPkt->set_errorcode(-PKT_C_SIGNUP);
+	errorPkt->set_errormsg("ID has exists");
+
+	Protocol::S_SIGNUP pkt;
+	pkt.set_success(false);
+	pkt.set_allocated_error(errorPkt);
+	uint16 packetId = PKT_S_SIGNUP;
+	SendProtobuf(pkt, packetId, session);
+
+	return false;
 }
 
+/*--------------------
+	Login
+--------------------*/
 bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
 	Protocol::C_LOGIN recvPkt;
@@ -53,10 +88,20 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 
 	const Protocol::Account& recvAccount = recvPkt.account();
 	std::cout << "Account ID: " << recvAccount.id() << ", Name: " << recvAccount.name() << ", Password: " << recvAccount.password() << std::endl;
-	
+
 	unique_ptr<Account> account = AccountController::GetAccountByName(recvAccount.name());
 	if (account == nullptr) {
-		cout << "ID not exists";
+		auto errorPkt = new Protocol::ErrorObj();
+		errorPkt->set_errorcode(-PKT_C_LOGIN);
+		errorPkt->set_errormsg("ID not exists");
+
+		Protocol::S_LOGIN pkt;
+		pkt.set_success(false);
+		pkt.set_allocated_player(nullptr);
+		pkt.set_allocated_error(errorPkt); // 소유권을 protobuf에 넘긴다 -> 메모리 해제를 자동으로 함.
+		uint16 packetId = PKT_S_LOGIN;
+		SendProtobuf(pkt, packetId, session);
+
 		return false;
 	}
 
