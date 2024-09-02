@@ -530,21 +530,39 @@ class Player final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kNameFieldNumber = 2,
+    kPosXFieldNumber = 3,
+    kPosYFieldNumber = 4,
     kIdFieldNumber = 1,
+    kAccountIdFieldNumber = 2,
+    kMaxHPFieldNumber = 5,
+    kCurrentHPFieldNumber = 6,
   };
-  // string name = 2;
-  void clear_name();
-  const std::string& name() const;
+  // string posX = 3;
+  void clear_posx();
+  const std::string& posx() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_name(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_name();
-  PROTOBUF_NODISCARD std::string* release_name();
-  void set_allocated_name(std::string* name);
+  void set_posx(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_posx();
+  PROTOBUF_NODISCARD std::string* release_posx();
+  void set_allocated_posx(std::string* posx);
   private:
-  const std::string& _internal_name() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
-  std::string* _internal_mutable_name();
+  const std::string& _internal_posx() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_posx(const std::string& value);
+  std::string* _internal_mutable_posx();
+  public:
+
+  // string posY = 4;
+  void clear_posy();
+  const std::string& posy() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_posy(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_posy();
+  PROTOBUF_NODISCARD std::string* release_posy();
+  void set_allocated_posy(std::string* posy);
+  private:
+  const std::string& _internal_posy() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_posy(const std::string& value);
+  std::string* _internal_mutable_posy();
   public:
 
   // uint64 id = 1;
@@ -556,6 +574,33 @@ class Player final :
   void _internal_set_id(uint64_t value);
   public:
 
+  // uint64 accountId = 2;
+  void clear_accountid();
+  uint64_t accountid() const;
+  void set_accountid(uint64_t value);
+  private:
+  uint64_t _internal_accountid() const;
+  void _internal_set_accountid(uint64_t value);
+  public:
+
+  // float maxHP = 5;
+  void clear_maxhp();
+  float maxhp() const;
+  void set_maxhp(float value);
+  private:
+  float _internal_maxhp() const;
+  void _internal_set_maxhp(float value);
+  public:
+
+  // float currentHP = 6;
+  void clear_currenthp();
+  float currenthp() const;
+  void set_currenthp(float value);
+  private:
+  float _internal_currenthp() const;
+  void _internal_set_currenthp(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.Player)
  private:
   class _Internal;
@@ -564,8 +609,12 @@ class Player final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr posx_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr posy_;
     uint64_t id_;
+    uint64_t accountid_;
+    float maxhp_;
+    float currenthp_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -800,54 +849,164 @@ inline void Player::set_id(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.Player.id)
 }
 
-// string name = 2;
-inline void Player::clear_name() {
-  _impl_.name_.ClearToEmpty();
+// uint64 accountId = 2;
+inline void Player::clear_accountid() {
+  _impl_.accountid_ = uint64_t{0u};
 }
-inline const std::string& Player::name() const {
-  // @@protoc_insertion_point(field_get:Protocol.Player.name)
-  return _internal_name();
+inline uint64_t Player::_internal_accountid() const {
+  return _impl_.accountid_;
+}
+inline uint64_t Player::accountid() const {
+  // @@protoc_insertion_point(field_get:Protocol.Player.accountId)
+  return _internal_accountid();
+}
+inline void Player::_internal_set_accountid(uint64_t value) {
+  
+  _impl_.accountid_ = value;
+}
+inline void Player::set_accountid(uint64_t value) {
+  _internal_set_accountid(value);
+  // @@protoc_insertion_point(field_set:Protocol.Player.accountId)
+}
+
+// string posX = 3;
+inline void Player::clear_posx() {
+  _impl_.posx_.ClearToEmpty();
+}
+inline const std::string& Player::posx() const {
+  // @@protoc_insertion_point(field_get:Protocol.Player.posX)
+  return _internal_posx();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void Player::set_name(ArgT0&& arg0, ArgT... args) {
+void Player::set_posx(ArgT0&& arg0, ArgT... args) {
  
- _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:Protocol.Player.name)
+ _impl_.posx_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.Player.posX)
 }
-inline std::string* Player::mutable_name() {
-  std::string* _s = _internal_mutable_name();
-  // @@protoc_insertion_point(field_mutable:Protocol.Player.name)
+inline std::string* Player::mutable_posx() {
+  std::string* _s = _internal_mutable_posx();
+  // @@protoc_insertion_point(field_mutable:Protocol.Player.posX)
   return _s;
 }
-inline const std::string& Player::_internal_name() const {
-  return _impl_.name_.Get();
+inline const std::string& Player::_internal_posx() const {
+  return _impl_.posx_.Get();
 }
-inline void Player::_internal_set_name(const std::string& value) {
+inline void Player::_internal_set_posx(const std::string& value) {
   
-  _impl_.name_.Set(value, GetArenaForAllocation());
+  _impl_.posx_.Set(value, GetArenaForAllocation());
 }
-inline std::string* Player::_internal_mutable_name() {
+inline std::string* Player::_internal_mutable_posx() {
   
-  return _impl_.name_.Mutable(GetArenaForAllocation());
+  return _impl_.posx_.Mutable(GetArenaForAllocation());
 }
-inline std::string* Player::release_name() {
-  // @@protoc_insertion_point(field_release:Protocol.Player.name)
-  return _impl_.name_.Release();
+inline std::string* Player::release_posx() {
+  // @@protoc_insertion_point(field_release:Protocol.Player.posX)
+  return _impl_.posx_.Release();
 }
-inline void Player::set_allocated_name(std::string* name) {
-  if (name != nullptr) {
+inline void Player::set_allocated_posx(std::string* posx) {
+  if (posx != nullptr) {
     
   } else {
     
   }
-  _impl_.name_.SetAllocated(name, GetArenaForAllocation());
+  _impl_.posx_.SetAllocated(posx, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.name_.IsDefault()) {
-    _impl_.name_.Set("", GetArenaForAllocation());
+  if (_impl_.posx_.IsDefault()) {
+    _impl_.posx_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:Protocol.Player.name)
+  // @@protoc_insertion_point(field_set_allocated:Protocol.Player.posX)
+}
+
+// string posY = 4;
+inline void Player::clear_posy() {
+  _impl_.posy_.ClearToEmpty();
+}
+inline const std::string& Player::posy() const {
+  // @@protoc_insertion_point(field_get:Protocol.Player.posY)
+  return _internal_posy();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Player::set_posy(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.posy_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.Player.posY)
+}
+inline std::string* Player::mutable_posy() {
+  std::string* _s = _internal_mutable_posy();
+  // @@protoc_insertion_point(field_mutable:Protocol.Player.posY)
+  return _s;
+}
+inline const std::string& Player::_internal_posy() const {
+  return _impl_.posy_.Get();
+}
+inline void Player::_internal_set_posy(const std::string& value) {
+  
+  _impl_.posy_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Player::_internal_mutable_posy() {
+  
+  return _impl_.posy_.Mutable(GetArenaForAllocation());
+}
+inline std::string* Player::release_posy() {
+  // @@protoc_insertion_point(field_release:Protocol.Player.posY)
+  return _impl_.posy_.Release();
+}
+inline void Player::set_allocated_posy(std::string* posy) {
+  if (posy != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.posy_.SetAllocated(posy, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.posy_.IsDefault()) {
+    _impl_.posy_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.Player.posY)
+}
+
+// float maxHP = 5;
+inline void Player::clear_maxhp() {
+  _impl_.maxhp_ = 0;
+}
+inline float Player::_internal_maxhp() const {
+  return _impl_.maxhp_;
+}
+inline float Player::maxhp() const {
+  // @@protoc_insertion_point(field_get:Protocol.Player.maxHP)
+  return _internal_maxhp();
+}
+inline void Player::_internal_set_maxhp(float value) {
+  
+  _impl_.maxhp_ = value;
+}
+inline void Player::set_maxhp(float value) {
+  _internal_set_maxhp(value);
+  // @@protoc_insertion_point(field_set:Protocol.Player.maxHP)
+}
+
+// float currentHP = 6;
+inline void Player::clear_currenthp() {
+  _impl_.currenthp_ = 0;
+}
+inline float Player::_internal_currenthp() const {
+  return _impl_.currenthp_;
+}
+inline float Player::currenthp() const {
+  // @@protoc_insertion_point(field_get:Protocol.Player.currentHP)
+  return _internal_currenthp();
+}
+inline void Player::_internal_set_currenthp(float value) {
+  
+  _impl_.currenthp_ = value;
+}
+inline void Player::set_currenthp(float value) {
+  _internal_set_currenthp(value);
+  // @@protoc_insertion_point(field_set:Protocol.Player.currentHP)
 }
 
 #ifdef __GNUC__

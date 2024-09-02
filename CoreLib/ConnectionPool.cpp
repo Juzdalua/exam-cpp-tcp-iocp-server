@@ -91,3 +91,69 @@ unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& quer
         cerr << "SQL state: " << e.getSQLState() << endl;
     }
 }
+
+/*
+
+vector<string> queries = {
+    "INSERT INTO first_table (column1, column2) VALUES (?, ?)",
+    "INSERT INTO second_table (column1, column2) VALUES (?, ?)"
+};
+
+vector<vector<string>> params = {
+    {"value1", "value2"},  // 첫 번째 쿼리에 대한 파라미터
+    {"value3", "value4"}   // 두 번째 쿼리에 대한 파라미터
+};
+
+bool result = executeTransaction(pool, queries, params);
+
+*/
+bool executeTransaction(ConnectionPool& pool, const vector<string>& queries, const vector<vector<string>>& params) {
+    try {
+        auto conn = pool.getConnection();
+        if (conn) {
+            conn->setAutoCommit(false);  // 트랜잭션 시작
+
+            bool success = true;
+            try {
+                for (size_t i = 0; i < queries.size(); ++i) {
+                    unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(queries[i]));
+
+                    for (size_t j = 0; j < params[i].size(); ++j) {
+                        pstmt->setString(j + 1, params[i][j]);
+                    }
+
+                    cout << "Executing Query: " << queries[i] << endl;
+                    cout << "Parameters: ";
+                    for (const auto& param : params[i]) {
+                        cout << param << " ";
+                    }
+                    cout << endl;
+
+                    pstmt->executeUpdate();
+                }
+
+                conn->commit();  // 커밋
+            }
+            catch (sql::SQLException& e) {
+                conn->rollback();  // 롤백
+                cerr << "SQLException: " << e.what() << endl;
+                cerr << "Error code: " << e.getErrorCode() << endl;
+                cerr << "SQL state: " << e.getSQLState() << endl;
+                success = false;
+            }
+
+            pool.releaseConnection(move(conn));
+            return success;
+        }
+        else {
+            cerr << "Failed to get a connection from the pool." << endl;
+            return false;
+        }
+    }
+    catch (sql::SQLException& e) {
+        cerr << "SQLException: " << e.what() << endl;
+        cerr << "Error code: " << e.getErrorCode() << endl;
+        cerr << "SQL state: " << e.getSQLState() << endl;
+        return false;
+    }
+}
