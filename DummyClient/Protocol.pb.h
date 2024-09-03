@@ -1025,9 +1025,38 @@ class S_ENTER_GAME final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kSuccessFieldNumber = 1,
+    kPlayersFieldNumber = 3,
+    kToPlayerFieldNumber = 1,
+    kSuccessFieldNumber = 2,
   };
-  // bool success = 1;
+  // repeated .Protocol.Player players = 3;
+  int players_size() const;
+  private:
+  int _internal_players_size() const;
+  public:
+  void clear_players();
+  ::Protocol::Player* mutable_players(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::Player >*
+      mutable_players();
+  private:
+  const ::Protocol::Player& _internal_players(int index) const;
+  ::Protocol::Player* _internal_add_players();
+  public:
+  const ::Protocol::Player& players(int index) const;
+  ::Protocol::Player* add_players();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::Player >&
+      players() const;
+
+  // .Protocol.ToPlayer toPlayer = 1;
+  void clear_toplayer();
+  ::Protocol::ToPlayer toplayer() const;
+  void set_toplayer(::Protocol::ToPlayer value);
+  private:
+  ::Protocol::ToPlayer _internal_toplayer() const;
+  void _internal_set_toplayer(::Protocol::ToPlayer value);
+  public:
+
+  // bool success = 2;
   void clear_success();
   bool success() const;
   void set_success(bool value);
@@ -1044,6 +1073,8 @@ class S_ENTER_GAME final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::Player > players_;
+    int toplayer_;
     bool success_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -1948,7 +1979,27 @@ inline void C_ENTER_GAME::set_playerid(uint64_t value) {
 
 // S_ENTER_GAME
 
-// bool success = 1;
+// .Protocol.ToPlayer toPlayer = 1;
+inline void S_ENTER_GAME::clear_toplayer() {
+  _impl_.toplayer_ = 0;
+}
+inline ::Protocol::ToPlayer S_ENTER_GAME::_internal_toplayer() const {
+  return static_cast< ::Protocol::ToPlayer >(_impl_.toplayer_);
+}
+inline ::Protocol::ToPlayer S_ENTER_GAME::toplayer() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_GAME.toPlayer)
+  return _internal_toplayer();
+}
+inline void S_ENTER_GAME::_internal_set_toplayer(::Protocol::ToPlayer value) {
+  
+  _impl_.toplayer_ = value;
+}
+inline void S_ENTER_GAME::set_toplayer(::Protocol::ToPlayer value) {
+  _internal_set_toplayer(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_ENTER_GAME.toPlayer)
+}
+
+// bool success = 2;
 inline void S_ENTER_GAME::clear_success() {
   _impl_.success_ = false;
 }
@@ -1966,6 +2017,43 @@ inline void S_ENTER_GAME::_internal_set_success(bool value) {
 inline void S_ENTER_GAME::set_success(bool value) {
   _internal_set_success(value);
   // @@protoc_insertion_point(field_set:Protocol.S_ENTER_GAME.success)
+}
+
+// repeated .Protocol.Player players = 3;
+inline int S_ENTER_GAME::_internal_players_size() const {
+  return _impl_.players_.size();
+}
+inline int S_ENTER_GAME::players_size() const {
+  return _internal_players_size();
+}
+inline ::Protocol::Player* S_ENTER_GAME::mutable_players(int index) {
+  // @@protoc_insertion_point(field_mutable:Protocol.S_ENTER_GAME.players)
+  return _impl_.players_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::Player >*
+S_ENTER_GAME::mutable_players() {
+  // @@protoc_insertion_point(field_mutable_list:Protocol.S_ENTER_GAME.players)
+  return &_impl_.players_;
+}
+inline const ::Protocol::Player& S_ENTER_GAME::_internal_players(int index) const {
+  return _impl_.players_.Get(index);
+}
+inline const ::Protocol::Player& S_ENTER_GAME::players(int index) const {
+  // @@protoc_insertion_point(field_get:Protocol.S_ENTER_GAME.players)
+  return _internal_players(index);
+}
+inline ::Protocol::Player* S_ENTER_GAME::_internal_add_players() {
+  return _impl_.players_.Add();
+}
+inline ::Protocol::Player* S_ENTER_GAME::add_players() {
+  ::Protocol::Player* _add = _internal_add_players();
+  // @@protoc_insertion_point(field_add:Protocol.S_ENTER_GAME.players)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::Protocol::Player >&
+S_ENTER_GAME::players() const {
+  // @@protoc_insertion_point(field_list:Protocol.S_ENTER_GAME.players)
+  return _impl_.players_;
 }
 
 // -------------------------------------------------------------------

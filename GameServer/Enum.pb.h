@@ -76,6 +76,32 @@ inline bool ChatType_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ChatType>(
     ChatType_descriptor(), name, value);
 }
+enum ToPlayer : int {
+  TO_PLAYER_NONE = 0,
+  TO_PLAYER_OWNER = 1,
+  TO_PLAYER_ALL = 2,
+  ToPlayer_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  ToPlayer_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool ToPlayer_IsValid(int value);
+constexpr ToPlayer ToPlayer_MIN = TO_PLAYER_NONE;
+constexpr ToPlayer ToPlayer_MAX = TO_PLAYER_ALL;
+constexpr int ToPlayer_ARRAYSIZE = ToPlayer_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ToPlayer_descriptor();
+template<typename T>
+inline const std::string& ToPlayer_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ToPlayer>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ToPlayer_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ToPlayer_descriptor(), enum_t_value);
+}
+inline bool ToPlayer_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ToPlayer* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ToPlayer>(
+    ToPlayer_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -102,6 +128,11 @@ template <> struct is_proto_enum< ::Protocol::ChatType> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::ChatType>() {
   return ::Protocol::ChatType_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::ToPlayer> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::ToPlayer>() {
+  return ::Protocol::ToPlayer_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

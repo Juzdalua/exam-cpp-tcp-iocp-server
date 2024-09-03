@@ -147,7 +147,7 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	sendPlayer->set_maxhp(pairAccountPlayer.second->GetMaxHP());
 	sendPlayer->set_currenthp(pairAccountPlayer.second->GetCurrentHP());
 
-	// Set Player
+	// Set Player in Session
 	PlayerRef playerRef = make_shared<Player>(
 		pairAccountPlayer.second->GetPlayerId(),
 		pairAccountPlayer.second->GetAccountId(),
@@ -177,15 +177,45 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 	Protocol::C_ENTER_GAME recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
+	// Get Player in Session
 	PlayerRef player = session->_player;
 
-	GRoom.Enter(player); // WRITE_LOCK
-
+	// Broadcast new player info to all players in room
 	uint16 packetId = PKT_S_ENTER_GAME;
 	Protocol::S_ENTER_GAME pkt;
 	pkt.set_success(true);
+	pkt.set_toplayer(Protocol::TO_PLAYER_ALL);
+	{
+		Protocol::Player* repeatPlayer = pkt.add_players();
+		repeatPlayer->set_id(player->GetPlayerId());
+		repeatPlayer->set_accountid(player->GetAccountId());
+		repeatPlayer->set_posx(player->GetPosX());
+		repeatPlayer->set_posy(player->GetPosY());
+		repeatPlayer->set_maxhp(player->GetMaxHP());
+		repeatPlayer->set_currenthp(player->GetCurrentHP());
+	}
+	auto m = pkt.mutable_players();
+	m->Add();
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	// Send all players in room to new player
+	map<uint64, PlayerRef>* players = GRoom.GetPlayersInRoom();
+	for (const auto& pair : *players)
+	{
+		const PlayerRef _player = pair.second;
+
+		Protocol::Player* repeatedPlayer = pkt.add_players();
+		repeatedPlayer->set_id(_player->GetPlayerId());
+		repeatedPlayer->set_accountid(_player->GetAccountId());
+		repeatedPlayer->set_posx(_player->GetPosX());
+		repeatedPlayer->set_posy(_player->GetPosY());
+		repeatedPlayer->set_maxhp(_player->GetMaxHP());
+		repeatedPlayer->set_currenthp(_player->GetCurrentHP());
+	}
+	pkt.set_toplayer(Protocol::TO_PLAYER_OWNER);
+
 	session->Send(MakeSendBuffer(pkt, packetId));
-	// TODO - broadcast
+	GRoom.Enter(player); // WRITE_LOCK
 
 	return true;
 }
@@ -213,25 +243,27 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 	default:
 	case Protocol::CHAT_TYPE_NORMAL:
 	{
-		GRoom.Broadcast(MakeSendBuffer(pkt, packetId)); // WRITE_LOCK
+		GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 	}
 	break;
 
 	case Protocol::CHAT_TYPE_PARTY:
 	{
-		// Broadcast to party
+		// TODO check session -> Broadcast to party
+		GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 	}
 	break;
 
 	case Protocol::CHAT_TYPE_GUILD:
 	{
-		// Broadcast to guild
+		// TODO check session -> Broadcast to guild
+		GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 	}
 	break;
 
 	case Protocol::CHAT_TYPE_WHISPER:
 	{
-		// Send
+		// TODO check session -> Send
 	}
 	break;
 
