@@ -20,7 +20,6 @@ unique_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
 		)";
 	vector<string>params;
 	params.push_back(to_string(accountId));
-	cout << params[0] << endl;
 
 	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 

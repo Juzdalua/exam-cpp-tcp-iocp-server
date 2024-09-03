@@ -28,3 +28,14 @@ void Room::Broadcast(SendBufferRef sendBuffer)
 		p.second->GetOwnerSession()->Send(sendBuffer);
 	}
 }
+
+void Room::CheckPlayers()
+{
+	cout << "[Check Room Start / COUNT: "<< _players.size() << "]" << endl;
+	for (auto& pair : _players)
+	{
+		PlayerRef player = pair.second;
+		cout << "ID: " << player->GetPlayerId() << " / Position: (" << player->GetPosX() << ", "<< player->GetPosY() << ")" << endl;
+	}
+	cout << endl << "[Check Room END]" << endl;
+}

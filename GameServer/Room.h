@@ -9,6 +9,8 @@ public:
 
 	map<uint64, PlayerRef>* GetPlayersInRoom() {return &_players;}
 
+	void CheckPlayers();
+
 private:
 	//USE_LOCK;
 	mutex _lock;

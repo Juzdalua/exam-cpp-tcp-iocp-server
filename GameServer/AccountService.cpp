@@ -18,7 +18,6 @@ unique_ptr<Account> AccountService::GetAccountById(uint64 accountId)
 		)";
 	vector<string>params;
 	params.push_back(to_string(accountId));
-	cout << params[0] << endl;
 
 	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
@@ -48,7 +47,6 @@ unique_ptr<Account> AccountService::GetAccountByName(string accountName)
 		)";
 	vector<string>params;
 	params.push_back(accountName);
-	cout << params[0] << endl;
 
 	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
@@ -80,7 +78,6 @@ unique_ptr<Account> AccountService::GetAccountByPlayerId(uint64 playerId)
 		)";
 	vector<string>params;
 	params.push_back(to_string(playerId));
-	cout << params[0] << endl;
 
 	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
@@ -117,7 +114,6 @@ pair<shared_ptr<Account>, shared_ptr<Player>> AccountService::GetAccountAndPlaye
 		)";
 	vector<string>params;
 	params.push_back(accountName);
-	cout << params[0] << endl;
 
 	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
