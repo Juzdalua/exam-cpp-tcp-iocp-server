@@ -11,6 +11,28 @@ CoreGlobal GCoreGlobal;
 int32 MAX_CLIENT_COUNT = 1;
 int32 MAX_WORKER_COUNT = 2;
 
+	// System Server Message
+void SystemMessageFromServer() 
+{
+	while (true)
+	{
+		string input;
+		//getline(cin, input);
+		cin >> input;
+
+		uint16 packetId = PKT_S_CHAT;
+		Protocol::S_CHAT pkt;
+		pkt.set_type(Protocol::CHAT_TYPE_SYSTEM);
+		pkt.set_msg(input);
+		pkt.set_playername("");
+		pkt.set_playerid(0);
+
+		SendBufferRef sendBuffer = MakeSendBuffer(pkt, packetId);
+
+		GRoom.Broadcast(sendBuffer);
+	}
+}
+
 int main()
 {
 	/*unique_ptr<sql::ResultSet> result = executeQuery(*CP, "Select * FROM user;");
@@ -47,26 +69,6 @@ int main()
 			}));
 	}
 	cout << "===== Worker Thread Start =====" << endl;
-
-	// System Server Message
-	while (true) 
-	{
-		string input;
-		//getline(cin, input);
-		cin >> input;
-
-		uint16 packetId = PKT_S_CHAT;
-		Protocol::S_CHAT pkt;
-		pkt.set_type(Protocol::CHAT_TYPE_SYSTEM);
-		pkt.set_msg(input);
-		pkt.set_playername("");
-		pkt.set_playerid(0);
-
-		SendBufferRef sendBuffer = MakeSendBuffer(pkt, packetId);
-		
-		GRoom.Broadcast(sendBuffer);
-	}
-
 
 	for (thread& t : workers)
 	{
