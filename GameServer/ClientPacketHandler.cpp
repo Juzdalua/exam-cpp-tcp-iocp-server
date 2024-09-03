@@ -9,7 +9,7 @@
 bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
-
+	GRoom.CheckPlayers();
 	switch (recvHeader->id)
 	{
 	case PKT_C_TEST:
@@ -35,6 +35,7 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 	case PKT_C_MOVE:
 		ClientPacketHandler::HandleMove(buffer, len, session);
 		break;
+
 	}
 
 	return false;
@@ -53,7 +54,7 @@ bool ClientPacketHandler::HandleTest(BYTE* buffer, int32 len, GameProtobufSessio
 	Protocol::S_CHAT pkt;
 	pkt.set_msg("Pong");
 	session->Send(MakeSendBuffer(pkt, packetId));
-
+	
 	return true;
 }
 
@@ -101,7 +102,6 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
 	const Protocol::Account& recvAccount = recvPkt.account();
-	std::cout << "Account ID: " << recvAccount.id() << ", Name: " << recvAccount.name() << ", Password: " << recvAccount.password() << std::endl;
 
 	pair<shared_ptr<Account>, shared_ptr<Player>> pairAccountPlayer = AccountController::GetAccountAndPlayerByName(recvAccount.name());
 
@@ -282,5 +282,28 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 --------------------*/
 bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
-	return false;
+	Protocol::C_MOVE recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+	
+	// Update Session
+	session->_player->SetPosition(recvPkt.posx(), recvPkt.posy());
+
+	// Update DB
+	// TODO
+
+	// Broadcast players in room
+	auto sendPlayer = new Protocol::Player();
+	sendPlayer->set_id(session->_player->GetPlayerId());
+	sendPlayer->set_accountid(session->_player->GetAccountId());
+	sendPlayer->set_posx(session->_player->GetPosX());
+	sendPlayer->set_posy(session->_player->GetPosY());
+	sendPlayer->set_maxhp(session->_player->GetMaxHP());
+	sendPlayer->set_currenthp(session->_player->GetCurrentHP());
+
+	uint16 packetId = PKT_S_MOVE;
+	Protocol::S_MOVE pkt;
+	pkt.set_allocated_player(sendPlayer);
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	return true;
 }

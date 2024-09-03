@@ -11,6 +11,8 @@ public:
 	void SetOwnerSession(GameProtobufSessionRef session) { _ownerSession = session; }
 	GameProtobufSessionRef GetOwnerSession() { return _ownerSession; }
 
+	void SetPosition(float posX, float posY) { _posX = posX; _posY = posY; }
+
 public:
 	uint64 GetPlayerId() { return _playerId; }
 	uint64 GetAccountId() { return _accountId; }
