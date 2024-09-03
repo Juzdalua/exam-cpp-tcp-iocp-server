@@ -1173,9 +1173,26 @@ class C_CHAT final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kMsgFieldNumber = 1,
+    kPlayerNameFieldNumber = 3,
+    kMsgFieldNumber = 4,
+    kPlayerIdFieldNumber = 2,
+    kTypeFieldNumber = 1,
   };
-  // string msg = 1;
+  // string playerName = 3;
+  void clear_playername();
+  const std::string& playername() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_playername(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_playername();
+  PROTOBUF_NODISCARD std::string* release_playername();
+  void set_allocated_playername(std::string* playername);
+  private:
+  const std::string& _internal_playername() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_playername(const std::string& value);
+  std::string* _internal_mutable_playername();
+  public:
+
+  // string msg = 4;
   void clear_msg();
   const std::string& msg() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1189,6 +1206,24 @@ class C_CHAT final :
   std::string* _internal_mutable_msg();
   public:
 
+  // uint64 playerId = 2;
+  void clear_playerid();
+  uint64_t playerid() const;
+  void set_playerid(uint64_t value);
+  private:
+  uint64_t _internal_playerid() const;
+  void _internal_set_playerid(uint64_t value);
+  public:
+
+  // .Protocol.ChatType type = 1;
+  void clear_type();
+  ::Protocol::ChatType type() const;
+  void set_type(::Protocol::ChatType value);
+  private:
+  ::Protocol::ChatType _internal_type() const;
+  void _internal_set_type(::Protocol::ChatType value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.C_CHAT)
  private:
   class _Internal;
@@ -1197,7 +1232,10 @@ class C_CHAT final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr playername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
+    uint64_t playerid_;
+    int type_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1326,10 +1364,26 @@ class S_CHAT final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kMsgFieldNumber = 2,
-    kPlayerIdFieldNumber = 1,
+    kPlayerNameFieldNumber = 3,
+    kMsgFieldNumber = 4,
+    kPlayerIdFieldNumber = 2,
+    kTypeFieldNumber = 1,
   };
-  // string msg = 2;
+  // string playerName = 3;
+  void clear_playername();
+  const std::string& playername() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_playername(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_playername();
+  PROTOBUF_NODISCARD std::string* release_playername();
+  void set_allocated_playername(std::string* playername);
+  private:
+  const std::string& _internal_playername() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_playername(const std::string& value);
+  std::string* _internal_mutable_playername();
+  public:
+
+  // string msg = 4;
   void clear_msg();
   const std::string& msg() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1343,13 +1397,22 @@ class S_CHAT final :
   std::string* _internal_mutable_msg();
   public:
 
-  // uint64 playerId = 1;
+  // uint64 playerId = 2;
   void clear_playerid();
   uint64_t playerid() const;
   void set_playerid(uint64_t value);
   private:
   uint64_t _internal_playerid() const;
   void _internal_set_playerid(uint64_t value);
+  public:
+
+  // .Protocol.ChatType type = 1;
+  void clear_type();
+  ::Protocol::ChatType type() const;
+  void set_type(::Protocol::ChatType value);
+  private:
+  ::Protocol::ChatType _internal_type() const;
+  void _internal_set_type(::Protocol::ChatType value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.S_CHAT)
@@ -1360,8 +1423,10 @@ class S_CHAT final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr playername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
     uint64_t playerid_;
+    int type_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1907,7 +1972,97 @@ inline void S_ENTER_GAME::set_success(bool value) {
 
 // C_CHAT
 
-// string msg = 1;
+// .Protocol.ChatType type = 1;
+inline void C_CHAT::clear_type() {
+  _impl_.type_ = 0;
+}
+inline ::Protocol::ChatType C_CHAT::_internal_type() const {
+  return static_cast< ::Protocol::ChatType >(_impl_.type_);
+}
+inline ::Protocol::ChatType C_CHAT::type() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_CHAT.type)
+  return _internal_type();
+}
+inline void C_CHAT::_internal_set_type(::Protocol::ChatType value) {
+  
+  _impl_.type_ = value;
+}
+inline void C_CHAT::set_type(::Protocol::ChatType value) {
+  _internal_set_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_CHAT.type)
+}
+
+// uint64 playerId = 2;
+inline void C_CHAT::clear_playerid() {
+  _impl_.playerid_ = uint64_t{0u};
+}
+inline uint64_t C_CHAT::_internal_playerid() const {
+  return _impl_.playerid_;
+}
+inline uint64_t C_CHAT::playerid() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_CHAT.playerId)
+  return _internal_playerid();
+}
+inline void C_CHAT::_internal_set_playerid(uint64_t value) {
+  
+  _impl_.playerid_ = value;
+}
+inline void C_CHAT::set_playerid(uint64_t value) {
+  _internal_set_playerid(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_CHAT.playerId)
+}
+
+// string playerName = 3;
+inline void C_CHAT::clear_playername() {
+  _impl_.playername_.ClearToEmpty();
+}
+inline const std::string& C_CHAT::playername() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_CHAT.playerName)
+  return _internal_playername();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void C_CHAT::set_playername(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.playername_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.C_CHAT.playerName)
+}
+inline std::string* C_CHAT::mutable_playername() {
+  std::string* _s = _internal_mutable_playername();
+  // @@protoc_insertion_point(field_mutable:Protocol.C_CHAT.playerName)
+  return _s;
+}
+inline const std::string& C_CHAT::_internal_playername() const {
+  return _impl_.playername_.Get();
+}
+inline void C_CHAT::_internal_set_playername(const std::string& value) {
+  
+  _impl_.playername_.Set(value, GetArenaForAllocation());
+}
+inline std::string* C_CHAT::_internal_mutable_playername() {
+  
+  return _impl_.playername_.Mutable(GetArenaForAllocation());
+}
+inline std::string* C_CHAT::release_playername() {
+  // @@protoc_insertion_point(field_release:Protocol.C_CHAT.playerName)
+  return _impl_.playername_.Release();
+}
+inline void C_CHAT::set_allocated_playername(std::string* playername) {
+  if (playername != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.playername_.SetAllocated(playername, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.playername_.IsDefault()) {
+    _impl_.playername_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.C_CHAT.playerName)
+}
+
+// string msg = 4;
 inline void C_CHAT::clear_msg() {
   _impl_.msg_.ClearToEmpty();
 }
@@ -1961,7 +2116,27 @@ inline void C_CHAT::set_allocated_msg(std::string* msg) {
 
 // S_CHAT
 
-// uint64 playerId = 1;
+// .Protocol.ChatType type = 1;
+inline void S_CHAT::clear_type() {
+  _impl_.type_ = 0;
+}
+inline ::Protocol::ChatType S_CHAT::_internal_type() const {
+  return static_cast< ::Protocol::ChatType >(_impl_.type_);
+}
+inline ::Protocol::ChatType S_CHAT::type() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_CHAT.type)
+  return _internal_type();
+}
+inline void S_CHAT::_internal_set_type(::Protocol::ChatType value) {
+  
+  _impl_.type_ = value;
+}
+inline void S_CHAT::set_type(::Protocol::ChatType value) {
+  _internal_set_type(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_CHAT.type)
+}
+
+// uint64 playerId = 2;
 inline void S_CHAT::clear_playerid() {
   _impl_.playerid_ = uint64_t{0u};
 }
@@ -1981,7 +2156,57 @@ inline void S_CHAT::set_playerid(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.S_CHAT.playerId)
 }
 
-// string msg = 2;
+// string playerName = 3;
+inline void S_CHAT::clear_playername() {
+  _impl_.playername_.ClearToEmpty();
+}
+inline const std::string& S_CHAT::playername() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_CHAT.playerName)
+  return _internal_playername();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void S_CHAT::set_playername(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.playername_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.S_CHAT.playerName)
+}
+inline std::string* S_CHAT::mutable_playername() {
+  std::string* _s = _internal_mutable_playername();
+  // @@protoc_insertion_point(field_mutable:Protocol.S_CHAT.playerName)
+  return _s;
+}
+inline const std::string& S_CHAT::_internal_playername() const {
+  return _impl_.playername_.Get();
+}
+inline void S_CHAT::_internal_set_playername(const std::string& value) {
+  
+  _impl_.playername_.Set(value, GetArenaForAllocation());
+}
+inline std::string* S_CHAT::_internal_mutable_playername() {
+  
+  return _impl_.playername_.Mutable(GetArenaForAllocation());
+}
+inline std::string* S_CHAT::release_playername() {
+  // @@protoc_insertion_point(field_release:Protocol.S_CHAT.playerName)
+  return _impl_.playername_.Release();
+}
+inline void S_CHAT::set_allocated_playername(std::string* playername) {
+  if (playername != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.playername_.SetAllocated(playername, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.playername_.IsDefault()) {
+    _impl_.playername_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.S_CHAT.playerName)
+}
+
+// string msg = 4;
 inline void S_CHAT::clear_msg() {
   _impl_.msg_.ClearToEmpty();
 }

@@ -62,12 +62,7 @@ unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& quer
                 pstmt->setString(i + 1, params[i]);
             }
 
-            cout << "Executing Query: " << query << endl;
-            cout << "Parameters: ";
-            for (const auto& param : params) {
-                cout << param << " ";
-            }
-            cout << endl;
+            //LogQueryParams(query, params);
 
             // Execute the query
             unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
@@ -122,12 +117,12 @@ bool executeTransaction(ConnectionPool& pool, const vector<string>& queries, con
                         pstmt->setString(j + 1, params[i][j]);
                     }
 
-                    cout << "Executing Query: " << queries[i] << endl;
+                    /*cout << "Executing Query: " << queries[i] << endl;
                     cout << "Parameters: ";
                     for (const auto& param : params[i]) {
                         cout << param << " ";
                     }
-                    cout << endl;
+                    cout << endl;*/
 
                     pstmt->executeUpdate();
                 }
@@ -156,4 +151,14 @@ bool executeTransaction(ConnectionPool& pool, const vector<string>& queries, con
         cerr << "SQL state: " << e.getSQLState() << endl;
         return false;
     }
+}
+
+void LogQueryParams(const string& query, vector<string>& params)
+{
+    cout << "Executing Query: " << query << endl;
+    cout << "Parameters: ";
+    for (const auto& param : params) {
+        cout << param << " ";
+    }
+    cout << endl;
 }

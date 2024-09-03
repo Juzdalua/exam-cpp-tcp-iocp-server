@@ -21,9 +21,18 @@ unique_ptr<Account> AccountController::GetAccountByName(string accountName)
 	return account;
 }
 
+unique_ptr<Account> AccountController::GetAccountByPlayerId(uint64 playerId)
+{
+	unique_ptr<Account> account = AccountService::GetAccountByPlayerId(playerId);
+	if (account == nullptr)
+		return nullptr;
+
+	return account;
+}
+
 pair<shared_ptr<Account>, shared_ptr<Player>> AccountController::GetAccountAndPlayerByName(string accountName)
 {
-	pair<shared_ptr<Account>, shared_ptr<Player>> pariAccountPlayer = AccountService::GetAccountAndPlayerByName1(accountName);
+	pair<shared_ptr<Account>, shared_ptr<Player>> pariAccountPlayer = AccountService::GetAccountAndPlayerByName(accountName);
 	if (pariAccountPlayer.first == nullptr)
 		return make_pair(nullptr, nullptr);
 

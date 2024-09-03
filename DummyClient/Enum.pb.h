@@ -28,6 +28,7 @@
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
+#include <google/protobuf/generated_enum_reflection.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_Enum_2eproto
@@ -46,6 +47,35 @@ PROTOBUF_NAMESPACE_OPEN
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
+enum ChatType : int {
+  CHAT_TYPE_NONE = 0,
+  CHAT_TYPE_NORMAL = 1,
+  CHAT_TYPE_PARTY = 2,
+  CHAT_TYPE_GUILD = 3,
+  CHAT_TYPE_WHISPER = 4,
+  CHAT_TYPE_SYSTEM = 5,
+  ChatType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  ChatType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool ChatType_IsValid(int value);
+constexpr ChatType ChatType_MIN = CHAT_TYPE_NONE;
+constexpr ChatType ChatType_MAX = CHAT_TYPE_SYSTEM;
+constexpr int ChatType_ARRAYSIZE = ChatType_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ChatType_descriptor();
+template<typename T>
+inline const std::string& ChatType_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ChatType>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function ChatType_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    ChatType_descriptor(), enum_t_value);
+}
+inline bool ChatType_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ChatType* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ChatType>(
+    ChatType_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -65,6 +95,16 @@ namespace Protocol {
 // @@protoc_insertion_point(namespace_scope)
 
 }  // namespace Protocol
+
+PROTOBUF_NAMESPACE_OPEN
+
+template <> struct is_proto_enum< ::Protocol::ChatType> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::ChatType>() {
+  return ::Protocol::ChatType_descriptor();
+}
+
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
 

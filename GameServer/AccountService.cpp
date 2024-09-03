@@ -63,7 +63,38 @@ unique_ptr<Account> AccountService::GetAccountByName(string accountName)
 	return nullptr;
 }
 
-pair<shared_ptr<Account>, shared_ptr<Player>> AccountService::GetAccountAndPlayerByName1(string accountName)
+unique_ptr<Account> AccountService::GetAccountByPlayerId(uint64 playerId)
+{
+	string query = R"(
+			select 
+				account.id as accountId,
+				account.name 
+			from
+				account
+			left join 
+				player 
+			on 
+				player.account_id = account.id
+			where 
+				player.id = ?
+		)";
+	vector<string>params;
+	params.push_back(to_string(playerId));
+	cout << params[0] << endl;
+
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+	if (res->next())
+	{
+		uint64 id = res->getUInt64("accountId");
+		string name = res->getString("name");
+
+		return  make_unique<Account>(id, name);
+	}
+	return nullptr;
+}
+
+pair<shared_ptr<Account>, shared_ptr<Player>> AccountService::GetAccountAndPlayerByName(string accountName)
 {
 	string query = R"(
 			select

@@ -4,6 +4,8 @@
 #include "IocpCore.h"
 #include "GameSession.h"
 #include "Service.h"
+#include "Protocol.pb.h"
+#include "Room.h"
 
 CoreGlobal GCoreGlobal;
 int32 MAX_CLIENT_COUNT = 1;
@@ -45,6 +47,26 @@ int main()
 			}));
 	}
 	cout << "===== Worker Thread Start =====" << endl;
+
+	// System Server Message
+	while (true) 
+	{
+		string input;
+		//getline(cin, input);
+		cin >> input;
+
+		uint16 packetId = PKT_S_CHAT;
+		Protocol::S_CHAT pkt;
+		pkt.set_type(Protocol::CHAT_TYPE_SYSTEM);
+		pkt.set_msg(input);
+		pkt.set_playername("");
+		pkt.set_playerid(0);
+
+		SendBufferRef sendBuffer = MakeSendBuffer(pkt, packetId);
+		
+		GRoom.Broadcast(sendBuffer);
+	}
+
 
 	for (thread& t : workers)
 	{

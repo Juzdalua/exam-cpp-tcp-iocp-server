@@ -16,6 +16,9 @@ enum : uint16
 
 	PKT_C_CHAT = 1008,
 	PKT_S_CHAT = 1009,
+
+	PKT_C_MOVE = 1010,
+	PKT_S_MOVE = 1011,
 };
 
 class ClientPacketHandler
@@ -28,5 +31,6 @@ public:
 	static bool HandleLogin(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 	static bool HandleEnterGame(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 	static bool HandleChat(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
+	static bool HandleMove(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 };
 
