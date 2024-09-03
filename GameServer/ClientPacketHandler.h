@@ -26,5 +26,7 @@ public:
 	static bool HandleTest(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 	static bool HandleSignup(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 	static bool HandleLogin(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
+	static bool HandleEnterGame(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
+	static bool HandleChat(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 };
 

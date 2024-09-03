@@ -28,8 +28,8 @@ unique_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
 	{
 		uint64 playerId = res->getUInt64("playerId");
 		uint64 accountId = res->getUInt64("accountId");
-		string posX = res->getString("posX");
-		string posY = res->getString("posY");
+		float posX = res->getDouble("posX");
+		float posY = res->getDouble("posY");
 		float maxHP = res->getDouble("maxHP");
 		float currentHP = res->getDouble("currentHP");
 

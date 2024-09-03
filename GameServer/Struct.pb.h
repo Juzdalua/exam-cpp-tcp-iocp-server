@@ -530,41 +530,13 @@ class Player final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kPosXFieldNumber = 3,
-    kPosYFieldNumber = 4,
     kIdFieldNumber = 1,
     kAccountIdFieldNumber = 2,
+    kPosXFieldNumber = 3,
+    kPosYFieldNumber = 4,
     kMaxHPFieldNumber = 5,
     kCurrentHPFieldNumber = 6,
   };
-  // string posX = 3;
-  void clear_posx();
-  const std::string& posx() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_posx(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_posx();
-  PROTOBUF_NODISCARD std::string* release_posx();
-  void set_allocated_posx(std::string* posx);
-  private:
-  const std::string& _internal_posx() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_posx(const std::string& value);
-  std::string* _internal_mutable_posx();
-  public:
-
-  // string posY = 4;
-  void clear_posy();
-  const std::string& posy() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_posy(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_posy();
-  PROTOBUF_NODISCARD std::string* release_posy();
-  void set_allocated_posy(std::string* posy);
-  private:
-  const std::string& _internal_posy() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_posy(const std::string& value);
-  std::string* _internal_mutable_posy();
-  public:
-
   // uint64 id = 1;
   void clear_id();
   uint64_t id() const;
@@ -581,6 +553,24 @@ class Player final :
   private:
   uint64_t _internal_accountid() const;
   void _internal_set_accountid(uint64_t value);
+  public:
+
+  // float posX = 3;
+  void clear_posx();
+  float posx() const;
+  void set_posx(float value);
+  private:
+  float _internal_posx() const;
+  void _internal_set_posx(float value);
+  public:
+
+  // float posY = 4;
+  void clear_posy();
+  float posy() const;
+  void set_posy(float value);
+  private:
+  float _internal_posy() const;
+  void _internal_set_posy(float value);
   public:
 
   // float maxHP = 5;
@@ -609,10 +599,10 @@ class Player final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr posx_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr posy_;
     uint64_t id_;
     uint64_t accountid_;
+    float posx_;
+    float posy_;
     float maxhp_;
     float currenthp_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -869,104 +859,44 @@ inline void Player::set_accountid(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.Player.accountId)
 }
 
-// string posX = 3;
+// float posX = 3;
 inline void Player::clear_posx() {
-  _impl_.posx_.ClearToEmpty();
+  _impl_.posx_ = 0;
 }
-inline const std::string& Player::posx() const {
+inline float Player::_internal_posx() const {
+  return _impl_.posx_;
+}
+inline float Player::posx() const {
   // @@protoc_insertion_point(field_get:Protocol.Player.posX)
   return _internal_posx();
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void Player::set_posx(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.posx_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+inline void Player::_internal_set_posx(float value) {
+  
+  _impl_.posx_ = value;
+}
+inline void Player::set_posx(float value) {
+  _internal_set_posx(value);
   // @@protoc_insertion_point(field_set:Protocol.Player.posX)
 }
-inline std::string* Player::mutable_posx() {
-  std::string* _s = _internal_mutable_posx();
-  // @@protoc_insertion_point(field_mutable:Protocol.Player.posX)
-  return _s;
-}
-inline const std::string& Player::_internal_posx() const {
-  return _impl_.posx_.Get();
-}
-inline void Player::_internal_set_posx(const std::string& value) {
-  
-  _impl_.posx_.Set(value, GetArenaForAllocation());
-}
-inline std::string* Player::_internal_mutable_posx() {
-  
-  return _impl_.posx_.Mutable(GetArenaForAllocation());
-}
-inline std::string* Player::release_posx() {
-  // @@protoc_insertion_point(field_release:Protocol.Player.posX)
-  return _impl_.posx_.Release();
-}
-inline void Player::set_allocated_posx(std::string* posx) {
-  if (posx != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.posx_.SetAllocated(posx, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.posx_.IsDefault()) {
-    _impl_.posx_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:Protocol.Player.posX)
-}
 
-// string posY = 4;
+// float posY = 4;
 inline void Player::clear_posy() {
-  _impl_.posy_.ClearToEmpty();
+  _impl_.posy_ = 0;
 }
-inline const std::string& Player::posy() const {
+inline float Player::_internal_posy() const {
+  return _impl_.posy_;
+}
+inline float Player::posy() const {
   // @@protoc_insertion_point(field_get:Protocol.Player.posY)
   return _internal_posy();
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void Player::set_posy(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.posy_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+inline void Player::_internal_set_posy(float value) {
+  
+  _impl_.posy_ = value;
+}
+inline void Player::set_posy(float value) {
+  _internal_set_posy(value);
   // @@protoc_insertion_point(field_set:Protocol.Player.posY)
-}
-inline std::string* Player::mutable_posy() {
-  std::string* _s = _internal_mutable_posy();
-  // @@protoc_insertion_point(field_mutable:Protocol.Player.posY)
-  return _s;
-}
-inline const std::string& Player::_internal_posy() const {
-  return _impl_.posy_.Get();
-}
-inline void Player::_internal_set_posy(const std::string& value) {
-  
-  _impl_.posy_.Set(value, GetArenaForAllocation());
-}
-inline std::string* Player::_internal_mutable_posy() {
-  
-  return _impl_.posy_.Mutable(GetArenaForAllocation());
-}
-inline std::string* Player::release_posy() {
-  // @@protoc_insertion_point(field_release:Protocol.Player.posY)
-  return _impl_.posy_.Release();
-}
-inline void Player::set_allocated_posy(std::string* posy) {
-  if (posy != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.posy_.SetAllocated(posy, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.posy_.IsDefault()) {
-    _impl_.posy_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:Protocol.Player.posY)
 }
 
 // float maxHP = 5;
