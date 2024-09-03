@@ -91,7 +91,7 @@ void GameProtobufSession::OnDisconnected()
 void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 {
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
-	cout << "Packet Id: " << recvHeader->id << ", SIze: " << recvHeader->size << endl;
+	cout << "Packet Id: " << static_cast<PKT_ID>(recvHeader->id) << ", SIze: " << recvHeader->size << endl;
 
 	GameProtobufSessionRef session = GetProtobufSessionRef();
 	ClientPacketHandler::HandlePacket(buffer, len, session);

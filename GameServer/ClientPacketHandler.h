@@ -1,6 +1,6 @@
 #pragma once
 
-enum : uint16
+enum PKT_ID : uint16
 {
 	PKT_C_TEST = 1000,
 	PKT_S_TEST = 1001,

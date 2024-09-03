@@ -38,7 +38,7 @@ bool ClientPacketHandler::HandleTest(BYTE* buffer, int32 len, GameProtobufSessio
 
 	Protocol::S_CHAT pkt;
 	pkt.set_msg("Pong");
-	uint16 packetId = PKT_S_TEST;
+	uint16 packetId = PKT_ID::PKT_S_TEST;
 	SendProtobuf(pkt, packetId, session);
 
 	return true;
@@ -60,20 +60,20 @@ bool ClientPacketHandler::HandleSignup(BYTE* buffer, int32 len, GameProtobufSess
 		{
 			Protocol::S_SIGNUP pkt;
 			pkt.set_success(true);
-			uint16 packetId = PKT_S_SIGNUP;
+			uint16 packetId = PKT_ID::PKT_S_SIGNUP;
 			SendProtobuf(pkt, packetId, session);
 			return true;
 		}
 	}
 
 	auto errorPkt = new Protocol::ErrorObj();
-	errorPkt->set_errorcode(-PKT_C_SIGNUP);
+	errorPkt->set_errorcode(-PKT_ID::PKT_C_SIGNUP);
 	errorPkt->set_errormsg("ID has exists");
 
 	Protocol::S_SIGNUP pkt;
 	pkt.set_success(false);
 	pkt.set_allocated_error(errorPkt);
-	uint16 packetId = PKT_S_SIGNUP;
+	uint16 packetId = PKT_ID::PKT_S_SIGNUP;
 	SendProtobuf(pkt, packetId, session);
 
 	return false;
@@ -95,14 +95,14 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	// Invalid Id
 	if (pairAccountPlayer.first == nullptr) {
 		auto errorPkt = new Protocol::ErrorObj();
-		errorPkt->set_errorcode(-PKT_C_LOGIN);
+		errorPkt->set_errorcode(-PKT_ID::PKT_C_LOGIN);
 		errorPkt->set_errormsg("ID not exists");
 
 		Protocol::S_LOGIN pkt;
 		pkt.set_success(false);
 		pkt.set_allocated_player(nullptr);
 		pkt.set_allocated_error(errorPkt); // 소유권을 protobuf에 넘긴다 -> 메모리 해제를 자동으로 함.
-		uint16 packetId = PKT_S_LOGIN;
+		uint16 packetId = PKT_ID::PKT_S_LOGIN;
 		SendProtobuf(pkt, packetId, session);
 
 		return false;
@@ -112,14 +112,14 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	if (pairAccountPlayer.first->GetHashedPwd() != recvAccount.password())
 	{
 		auto errorPkt = new Protocol::ErrorObj();
-		errorPkt->set_errorcode(-PKT_C_LOGIN);
+		errorPkt->set_errorcode(-PKT_ID::PKT_C_LOGIN);
 		errorPkt->set_errormsg("Password not correct");
 
 		Protocol::S_LOGIN pkt;
 		pkt.set_success(false);
 		pkt.set_allocated_player(nullptr);
 		pkt.set_allocated_error(errorPkt); 
-		uint16 packetId = PKT_S_LOGIN;
+		uint16 packetId = PKT_ID::PKT_S_LOGIN;
 		SendProtobuf(pkt, packetId, session);
 
 		return false;
@@ -136,7 +136,7 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	Protocol::S_LOGIN pkt;
 	pkt.set_success(true);
 	pkt.set_allocated_player(player);
-	uint16 packetId = PKT_S_LOGIN;
+	uint16 packetId = PKT_ID::PKT_S_LOGIN;
 	SendProtobuf(pkt, packetId, session);
 
 	return true;

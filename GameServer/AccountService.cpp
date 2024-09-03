@@ -99,8 +99,8 @@ pair<shared_ptr<Account>, shared_ptr<Player>> AccountService::GetAccountAndPlaye
 		string name = res->getString("name");
 		string hashedPwd = res->getString("password");
 		uint64 playerId = res->getUInt64("playerId");
-		string posX = res->getString("posX");
-		string posY = res->getString("posY");
+		float posX = res->getDouble("posX");
+		float posY = res->getDouble("posY");
 		float maxHP = res->getDouble("maxHP");
 		float currentHP = res->getDouble("currentHP");
 
