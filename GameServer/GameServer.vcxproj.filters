@@ -69,6 +69,9 @@
     <ClCompile Include="PlayerService.cpp">
       <Filter>Service</Filter>
     </ClCompile>
+    <ClCompile Include="PacketUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="PlayerService.h">
       <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketUtils.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

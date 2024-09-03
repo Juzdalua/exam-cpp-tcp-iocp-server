@@ -3,6 +3,8 @@
 #include "GameSessionManager.h"
 #include "Protocol.pb.h"
 
+extern unordered_map<uint16_t, string> packetIdToString;
+
 /*---------------
 	Game Session
 	Without Header
@@ -91,7 +93,7 @@ void GameProtobufSession::OnDisconnected()
 void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 {
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
-	cout << "Packet Id: " << static_cast<PKT_ID>(recvHeader->id) << ", SIze: " << recvHeader->size << endl;
+	cout << "[ PacketId-> " << recvHeader->id << " : " << packetIdToString[recvHeader->id] << " / Size-> " << recvHeader->size << " ]" << endl;
 
 	GameProtobufSessionRef session = GetProtobufSessionRef();
 	ClientPacketHandler::HandlePacket(buffer, len, session);

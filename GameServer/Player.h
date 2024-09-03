@@ -8,6 +8,9 @@ public:
 		: _playerId(id), _accountId(accountId), _posX(posX), _posY(posY), _maxHP(maxHP), _currentHP(currentHP) {}
 	~Player() {};
 
+	void SetOwnerSession(GameProtobufSessionRef session) { _ownerSession = session; }
+	GameProtobufSessionRef GetOwnerSession() { return _ownerSession; }
+
 public:
 	uint64 GetPlayerId() { return _playerId; }
 	uint64 GetAccountId() { return _accountId; }
@@ -23,6 +26,6 @@ private:
 	float _posY;
 	float _maxHP;
 	float _currentHP;
-	GameSessionRef _ownerSession;
+	GameProtobufSessionRef _ownerSession;
 };
 

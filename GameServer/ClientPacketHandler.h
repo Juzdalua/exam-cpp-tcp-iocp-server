@@ -1,6 +1,6 @@
 #pragma once
 
-enum PKT_ID : uint16
+enum : uint16
 {
 	PKT_C_TEST = 1000,
 	PKT_S_TEST = 1001,
@@ -26,5 +26,7 @@ public:
 	static bool HandleTest(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 	static bool HandleSignup(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 	static bool HandleLogin(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
+	static bool HandleEnterGame(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
+	static bool HandleChat(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 };
 
