@@ -302,6 +302,7 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 
 	uint16 packetId = PKT_S_MOVE;
 	Protocol::S_MOVE pkt;
+	pkt.set_dir(recvPkt.dir());
 	pkt.set_allocated_player(sendPlayer);
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 

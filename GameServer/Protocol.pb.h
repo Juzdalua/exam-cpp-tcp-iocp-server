@@ -1597,6 +1597,7 @@ class C_MOVE final :
     kPlayerIdFieldNumber = 1,
     kPosXFieldNumber = 2,
     kPosYFieldNumber = 3,
+    kDirFieldNumber = 4,
   };
   // uint64 playerId = 1;
   void clear_playerid();
@@ -1625,6 +1626,15 @@ class C_MOVE final :
   void _internal_set_posy(float value);
   public:
 
+  // .Protocol.MoveDir dir = 4;
+  void clear_dir();
+  ::Protocol::MoveDir dir() const;
+  void set_dir(::Protocol::MoveDir value);
+  private:
+  ::Protocol::MoveDir _internal_dir() const;
+  void _internal_set_dir(::Protocol::MoveDir value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.C_MOVE)
  private:
   class _Internal;
@@ -1636,6 +1646,7 @@ class C_MOVE final :
     uint64_t playerid_;
     float posx_;
     float posy_;
+    int dir_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1765,6 +1776,7 @@ class S_MOVE final :
 
   enum : int {
     kPlayerFieldNumber = 1,
+    kDirFieldNumber = 2,
   };
   // .Protocol.Player player = 1;
   bool has_player() const;
@@ -1784,6 +1796,15 @@ class S_MOVE final :
       ::Protocol::Player* player);
   ::Protocol::Player* unsafe_arena_release_player();
 
+  // .Protocol.MoveDir dir = 2;
+  void clear_dir();
+  ::Protocol::MoveDir dir() const;
+  void set_dir(::Protocol::MoveDir value);
+  private:
+  ::Protocol::MoveDir _internal_dir() const;
+  void _internal_set_dir(::Protocol::MoveDir value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.S_MOVE)
  private:
   class _Internal;
@@ -1793,6 +1814,7 @@ class S_MOVE final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::Protocol::Player* player_;
+    int dir_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2743,6 +2765,26 @@ inline void C_MOVE::set_posy(float value) {
   // @@protoc_insertion_point(field_set:Protocol.C_MOVE.posY)
 }
 
+// .Protocol.MoveDir dir = 4;
+inline void C_MOVE::clear_dir() {
+  _impl_.dir_ = 0;
+}
+inline ::Protocol::MoveDir C_MOVE::_internal_dir() const {
+  return static_cast< ::Protocol::MoveDir >(_impl_.dir_);
+}
+inline ::Protocol::MoveDir C_MOVE::dir() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_MOVE.dir)
+  return _internal_dir();
+}
+inline void C_MOVE::_internal_set_dir(::Protocol::MoveDir value) {
+  
+  _impl_.dir_ = value;
+}
+inline void C_MOVE::set_dir(::Protocol::MoveDir value) {
+  _internal_set_dir(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_MOVE.dir)
+}
+
 // -------------------------------------------------------------------
 
 // S_MOVE
@@ -2830,6 +2872,26 @@ inline void S_MOVE::set_allocated_player(::Protocol::Player* player) {
   }
   _impl_.player_ = player;
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_MOVE.player)
+}
+
+// .Protocol.MoveDir dir = 2;
+inline void S_MOVE::clear_dir() {
+  _impl_.dir_ = 0;
+}
+inline ::Protocol::MoveDir S_MOVE::_internal_dir() const {
+  return static_cast< ::Protocol::MoveDir >(_impl_.dir_);
+}
+inline ::Protocol::MoveDir S_MOVE::dir() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_MOVE.dir)
+  return _internal_dir();
+}
+inline void S_MOVE::_internal_set_dir(::Protocol::MoveDir value) {
+  
+  _impl_.dir_ = value;
+}
+inline void S_MOVE::set_dir(::Protocol::MoveDir value) {
+  _internal_set_dir(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_MOVE.dir)
 }
 
 #ifdef __GNUC__

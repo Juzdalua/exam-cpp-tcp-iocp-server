@@ -141,6 +141,7 @@ PROTOBUF_CONSTEXPR C_MOVE::C_MOVE(
     /*decltype(_impl_.playerid_)*/uint64_t{0u}
   , /*decltype(_impl_.posx_)*/0
   , /*decltype(_impl_.posy_)*/0
+  , /*decltype(_impl_.dir_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct C_MOVEDefaultTypeInternal {
   PROTOBUF_CONSTEXPR C_MOVEDefaultTypeInternal()
@@ -154,6 +155,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR S_MOVE::S_MOVE(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.player_)*/nullptr
+  , /*decltype(_impl_.dir_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S_MOVEDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S_MOVEDefaultTypeInternal()
@@ -246,6 +248,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   PROTOBUF_FIELD_OFFSET(::Protocol::C_MOVE, _impl_.playerid_),
   PROTOBUF_FIELD_OFFSET(::Protocol::C_MOVE, _impl_.posx_),
   PROTOBUF_FIELD_OFFSET(::Protocol::C_MOVE, _impl_.posy_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_MOVE, _impl_.dir_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_MOVE, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -253,6 +256,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_MOVE, _impl_.player_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::S_MOVE, _impl_.dir_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::C_SIGNUP)},
@@ -264,7 +268,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 47, -1, -1, sizeof(::Protocol::C_CHAT)},
   { 57, -1, -1, sizeof(::Protocol::S_CHAT)},
   { 67, -1, -1, sizeof(::Protocol::C_MOVE)},
-  { 76, -1, -1, sizeof(::Protocol::S_MOVE)},
+  { 77, -1, -1, sizeof(::Protocol::S_MOVE)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -296,10 +300,12 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "col.ChatType\022\020\n\010playerId\030\002 \001(\004\022\022\n\nplayer"
   "Name\030\003 \001(\t\022\013\n\003msg\030\004 \001(\t\"]\n\006S_CHAT\022 \n\004typ"
   "e\030\001 \001(\0162\022.Protocol.ChatType\022\020\n\010playerId\030"
-  "\002 \001(\004\022\022\n\nplayerName\030\003 \001(\t\022\013\n\003msg\030\004 \001(\t\"6"
+  "\002 \001(\004\022\022\n\nplayerName\030\003 \001(\t\022\013\n\003msg\030\004 \001(\t\"V"
   "\n\006C_MOVE\022\020\n\010playerId\030\001 \001(\004\022\014\n\004posX\030\002 \001(\002"
-  "\022\014\n\004posY\030\003 \001(\002\"*\n\006S_MOVE\022 \n\006player\030\001 \001(\013"
-  "2\020.Protocol.Playerb\006proto3"
+  "\022\014\n\004posY\030\003 \001(\002\022\036\n\003dir\030\004 \001(\0162\021.Protocol.M"
+  "oveDir\"J\n\006S_MOVE\022 \n\006player\030\001 \001(\0132\020.Proto"
+  "col.Player\022\036\n\003dir\030\002 \001(\0162\021.Protocol.MoveD"
+  "irb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -307,7 +313,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 746, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 810, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
     &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 10,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
@@ -2307,12 +2313,13 @@ C_MOVE::C_MOVE(const C_MOVE& from)
       decltype(_impl_.playerid_){}
     , decltype(_impl_.posx_){}
     , decltype(_impl_.posy_){}
+    , decltype(_impl_.dir_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.playerid_, &from._impl_.playerid_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.posy_) -
-    reinterpret_cast<char*>(&_impl_.playerid_)) + sizeof(_impl_.posy_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.dir_) -
+    reinterpret_cast<char*>(&_impl_.playerid_)) + sizeof(_impl_.dir_));
   // @@protoc_insertion_point(copy_constructor:Protocol.C_MOVE)
 }
 
@@ -2324,6 +2331,7 @@ inline void C_MOVE::SharedCtor(
       decltype(_impl_.playerid_){uint64_t{0u}}
     , decltype(_impl_.posx_){0}
     , decltype(_impl_.posy_){0}
+    , decltype(_impl_.dir_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -2352,8 +2360,8 @@ void C_MOVE::Clear() {
   (void) cached_has_bits;
 
   ::memset(&_impl_.playerid_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.posy_) -
-      reinterpret_cast<char*>(&_impl_.playerid_)) + sizeof(_impl_.posy_));
+      reinterpret_cast<char*>(&_impl_.dir_) -
+      reinterpret_cast<char*>(&_impl_.playerid_)) + sizeof(_impl_.dir_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2384,6 +2392,15 @@ const char* C_MOVE::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 29)) {
           _impl_.posy_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // .Protocol.MoveDir dir = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_dir(static_cast<::Protocol::MoveDir>(val));
         } else
           goto handle_unusual;
         continue;
@@ -2442,6 +2459,13 @@ uint8_t* C_MOVE::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteFloatToArray(3, this->_internal_posy(), target);
   }
 
+  // .Protocol.MoveDir dir = 4;
+  if (this->_internal_dir() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      4, this->_internal_dir(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2481,6 +2505,12 @@ size_t C_MOVE::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
+  // .Protocol.MoveDir dir = 4;
+  if (this->_internal_dir() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_dir());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -2516,6 +2546,9 @@ void C_MOVE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBU
   if (raw_posy != 0) {
     _this->_internal_set_posy(from._internal_posy());
   }
+  if (from._internal_dir() != 0) {
+    _this->_internal_set_dir(from._internal_dir());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -2534,8 +2567,8 @@ void C_MOVE::InternalSwap(C_MOVE* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(C_MOVE, _impl_.posy_)
-      + sizeof(C_MOVE::_impl_.posy_)
+      PROTOBUF_FIELD_OFFSET(C_MOVE, _impl_.dir_)
+      + sizeof(C_MOVE::_impl_.dir_)
       - PROTOBUF_FIELD_OFFSET(C_MOVE, _impl_.playerid_)>(
           reinterpret_cast<char*>(&_impl_.playerid_),
           reinterpret_cast<char*>(&other->_impl_.playerid_));
@@ -2575,12 +2608,14 @@ S_MOVE::S_MOVE(const S_MOVE& from)
   S_MOVE* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.player_){nullptr}
+    , decltype(_impl_.dir_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   if (from._internal_has_player()) {
     _this->_impl_.player_ = new ::Protocol::Player(*from._impl_.player_);
   }
+  _this->_impl_.dir_ = from._impl_.dir_;
   // @@protoc_insertion_point(copy_constructor:Protocol.S_MOVE)
 }
 
@@ -2590,6 +2625,7 @@ inline void S_MOVE::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.player_){nullptr}
+    , decltype(_impl_.dir_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -2622,6 +2658,7 @@ void S_MOVE::Clear() {
     delete _impl_.player_;
   }
   _impl_.player_ = nullptr;
+  _impl_.dir_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2636,6 +2673,15 @@ const char* S_MOVE::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_player(), ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .Protocol.MoveDir dir = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_dir(static_cast<::Protocol::MoveDir>(val));
         } else
           goto handle_unusual;
         continue;
@@ -2675,6 +2721,13 @@ uint8_t* S_MOVE::_InternalSerialize(
         _Internal::player(this).GetCachedSize(), target, stream);
   }
 
+  // .Protocol.MoveDir dir = 2;
+  if (this->_internal_dir() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      2, this->_internal_dir(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -2696,6 +2749,12 @@ size_t S_MOVE::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *_impl_.player_);
+  }
+
+  // .Protocol.MoveDir dir = 2;
+  if (this->_internal_dir() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_dir());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -2720,6 +2779,9 @@ void S_MOVE::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBU
     _this->_internal_mutable_player()->::Protocol::Player::MergeFrom(
         from._internal_player());
   }
+  if (from._internal_dir() != 0) {
+    _this->_internal_set_dir(from._internal_dir());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -2737,7 +2799,12 @@ bool S_MOVE::IsInitialized() const {
 void S_MOVE::InternalSwap(S_MOVE* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_.player_, other->_impl_.player_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(S_MOVE, _impl_.dir_)
+      + sizeof(S_MOVE::_impl_.dir_)
+      - PROTOBUF_FIELD_OFFSET(S_MOVE, _impl_.player_)>(
+          reinterpret_cast<char*>(&_impl_.player_),
+          reinterpret_cast<char*>(&other->_impl_.player_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata S_MOVE::GetMetadata() const {

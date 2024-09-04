@@ -273,11 +273,21 @@ void Session::ProcessSend(int32 numOfBytes)
 	OnSend(numOfBytes);
 
 	//WRITE_LOCK;
-	lock_guard<mutex> lock(_lock);
+	/*lock_guard<mutex> lock(_lock);
 	if (_sendQueue.empty())
 		_sendRegistered.store(false);
 	else
-		RegisterSend();
+		RegisterSend();*/
+
+	{
+		lock_guard<mutex> lock(_lock); 
+		if (_sendQueue.empty()) {
+			_sendRegistered.store(false);
+			return;  
+		}
+	}  
+	
+	RegisterSend();
 }
 
 void Session::HandleError(int32 errorCode)
