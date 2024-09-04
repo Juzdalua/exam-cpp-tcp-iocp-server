@@ -56,6 +56,7 @@ class GameProtobufSession : public PacketSession
 public:
 	virtual ~GameProtobufSession()
 	{
+		GRoom.Leave(_player);
 		cout << "~GameProtobufSession" << endl;
 	}
 
