@@ -7,6 +7,8 @@ public:
 	void Leave(PlayerRef player);
 	void Broadcast(SendBufferRef sendBuffer);
 
+	bool IsLogin(uint64 playerId);
+
 	map<uint64, PlayerRef>* GetPlayersInRoom() {return &_players;}
 
 	void CheckPlayers();

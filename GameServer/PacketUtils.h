@@ -22,6 +22,9 @@ unordered_map<uint16, string> packetIdToString =
 
 	{PKT_C_MOVE, "PKT_C_MOVE"},
 	{PKT_S_MOVE, "PKT_S_MOVE"},
+
+	{PKT_C_SHOT, "PKT_C_SHOT"},
+	{PKT_S_SHOT, "PKT_S_SHOT"},
 };
 
 class PacketUtils

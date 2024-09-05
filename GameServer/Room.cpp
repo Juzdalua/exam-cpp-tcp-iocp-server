@@ -39,3 +39,14 @@ void Room::CheckPlayers()
 	}
 	cout << "[Check Room END]" << endl;
 }
+
+bool Room::IsLogin(uint64 playerId) 
+{
+	for (auto& pair : _players)
+	{
+		PlayerRef player = pair.second;
+		if (player->GetPlayerId() == player->GetPlayerId())
+			return true;
+	}
+	return false;
+}

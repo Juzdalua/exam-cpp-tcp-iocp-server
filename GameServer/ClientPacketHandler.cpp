@@ -36,6 +36,9 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 		ClientPacketHandler::HandleMove(buffer, len, session);
 		break;
 
+	case PKT_C_SHOT:
+		ClientPacketHandler::HandleShot(buffer, len, session);
+		break;
 	}
 
 	return false;
@@ -100,9 +103,8 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 {
 	Protocol::C_LOGIN recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
-
+	
 	const Protocol::Account& recvAccount = recvPkt.account();
-
 	pair<shared_ptr<Account>, shared_ptr<Player>> pairAccountPlayer = AccountController::GetAccountAndPlayerByName(recvAccount.name());
 
 	// Invalid Id
@@ -248,6 +250,7 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
 		return false;
 	}
 
@@ -312,6 +315,7 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
 		return false;
 	}
 	
@@ -337,4 +341,24 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 
 	return true;
+}
+
+bool ClientPacketHandler::HandleShot(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
+{
+	Protocol::C_SHOT recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	// TODO DB LOG SAVE
+	
+
+	uint16 packetId = PKT_S_SHOT;
+	Protocol::S_SHOT pkt;
+	pkt.set_playerid(recvPkt.playerid());
+	pkt.set_spawnposx(recvPkt.spawnposx());
+	pkt.set_spawnposy(recvPkt.spawnposy());
+	pkt.set_targetposx(recvPkt.targetposx());
+	pkt.set_targetposy(recvPkt.targetposy());
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	return false;
 }
