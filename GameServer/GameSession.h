@@ -1,6 +1,7 @@
 #pragma once
 #include "Session.h"
 #include "ClientPacketHandler.h"
+#include "Room.h"
 
 /*---------------
 	Game Session
@@ -56,7 +57,9 @@ class GameProtobufSession : public PacketSession
 public:
 	virtual ~GameProtobufSession()
 	{
-		GRoom.Leave(_player);
+		if (_player != nullptr) {
+			GRoom.Leave(_player);
+		}
 		cout << "~GameProtobufSession" << endl;
 	}
 

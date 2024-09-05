@@ -8,6 +8,7 @@ unique_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
 			SELECT
 				id as playerId,
 				account_id,
+				name as playerName,
 				posX,
 				posY,
 				maxHP,
@@ -27,12 +28,13 @@ unique_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
 	{
 		uint64 playerId = res->getUInt64("playerId");
 		uint64 accountId = res->getUInt64("accountId");
+		string playerName = res->getString("playerName");
 		float posX = res->getDouble("posX");
 		float posY = res->getDouble("posY");
 		float maxHP = res->getDouble("maxHP");
 		float currentHP = res->getDouble("currentHP");
 
-		return  make_unique<Player>(playerId, accountId, posX, posY, maxHP, currentHP);
+		return  make_unique<Player>(playerId, accountId, playerName, posX, posY, maxHP, currentHP);
 	}
 	return nullptr;
 }

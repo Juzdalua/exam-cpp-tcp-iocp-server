@@ -52,7 +52,8 @@ struct AccountDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AccountDefaultTypeInternal _Account_default_instance_;
 PROTOBUF_CONSTEXPR Player::Player(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.id_)*/uint64_t{0u}
+    /*decltype(_impl_.name_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.id_)*/uint64_t{0u}
   , /*decltype(_impl_.accountid_)*/uint64_t{0u}
   , /*decltype(_impl_.posx_)*/0
   , /*decltype(_impl_.posy_)*/0
@@ -99,6 +100,7 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::Player, _impl_.id_),
   PROTOBUF_FIELD_OFFSET(::Protocol::Player, _impl_.accountid_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::Player, _impl_.name_),
   PROTOBUF_FIELD_OFFSET(::Protocol::Player, _impl_.posx_),
   PROTOBUF_FIELD_OFFSET(::Protocol::Player, _impl_.posy_),
   PROTOBUF_FIELD_OFFSET(::Protocol::Player, _impl_.maxhp_),
@@ -120,17 +122,17 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "\n\014Struct.proto\022\010Protocol\032\nEnum.proto\"/\n\010"
   "ErrorObj\022\021\n\terrorCode\030\001 \001(\003\022\020\n\010errorMsg\030"
   "\002 \001(\t\"5\n\007Account\022\n\n\002id\030\001 \001(\004\022\014\n\004name\030\002 \001"
-  "(\t\022\020\n\010password\030\003 \001(\t\"e\n\006Player\022\n\n\002id\030\001 \001"
-  "(\004\022\021\n\taccountId\030\002 \001(\004\022\014\n\004posX\030\003 \001(\002\022\014\n\004p"
-  "osY\030\004 \001(\002\022\r\n\005maxHP\030\005 \001(\002\022\021\n\tcurrentHP\030\006 "
-  "\001(\002b\006proto3"
+  "(\t\022\020\n\010password\030\003 \001(\t\"s\n\006Player\022\n\n\002id\030\001 \001"
+  "(\004\022\021\n\taccountId\030\002 \001(\004\022\014\n\004name\030\003 \001(\t\022\014\n\004p"
+  "osX\030\004 \001(\002\022\014\n\004posY\030\005 \001(\002\022\r\n\005maxHP\030\006 \001(\002\022\021"
+  "\n\tcurrentHP\030\007 \001(\002b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 251, descriptor_table_protodef_Struct_2eproto,
+    false, false, 265, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
     &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 3,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
@@ -671,7 +673,8 @@ Player::Player(const Player& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   Player* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.id_){}
+      decltype(_impl_.name_){}
+    , decltype(_impl_.id_){}
     , decltype(_impl_.accountid_){}
     , decltype(_impl_.posx_){}
     , decltype(_impl_.posy_){}
@@ -680,6 +683,14 @@ Player::Player(const Player& from)
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_name().empty()) {
+    _this->_impl_.name_.Set(from._internal_name(), 
+      _this->GetArenaForAllocation());
+  }
   ::memcpy(&_impl_.id_, &from._impl_.id_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.currenthp_) -
     reinterpret_cast<char*>(&_impl_.id_)) + sizeof(_impl_.currenthp_));
@@ -691,7 +702,8 @@ inline void Player::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.id_){uint64_t{0u}}
+      decltype(_impl_.name_){}
+    , decltype(_impl_.id_){uint64_t{0u}}
     , decltype(_impl_.accountid_){uint64_t{0u}}
     , decltype(_impl_.posx_){0}
     , decltype(_impl_.posy_){0}
@@ -699,6 +711,10 @@ inline void Player::SharedCtor(
     , decltype(_impl_.currenthp_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.name_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 Player::~Player() {
@@ -712,6 +728,7 @@ Player::~Player() {
 
 inline void Player::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.name_.Destroy();
 }
 
 void Player::SetCachedSize(int size) const {
@@ -724,6 +741,7 @@ void Player::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.name_.ClearToEmpty();
   ::memset(&_impl_.id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&_impl_.currenthp_) -
       reinterpret_cast<char*>(&_impl_.id_)) + sizeof(_impl_.currenthp_));
@@ -752,33 +770,43 @@ const char* Player::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
         } else
           goto handle_unusual;
         continue;
-      // float posX = 3;
+      // string name = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 29)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "Protocol.Player.name"));
+        } else
+          goto handle_unusual;
+        continue;
+      // float posX = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 37)) {
           _impl_.posx_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
-      // float posY = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 37)) {
+      // float posY = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 45)) {
           _impl_.posy_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
-      // float maxHP = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 45)) {
+      // float maxHP = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 53)) {
           _impl_.maxhp_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
-      // float currentHP = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 53)) {
+      // float currentHP = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 61)) {
           _impl_.currenthp_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
@@ -825,44 +853,54 @@ uint8_t* Player::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_accountid(), target);
   }
 
-  // float posX = 3;
+  // string name = 3;
+  if (!this->_internal_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "Protocol.Player.name");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_name(), target);
+  }
+
+  // float posX = 4;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_posx = this->_internal_posx();
   uint32_t raw_posx;
   memcpy(&raw_posx, &tmp_posx, sizeof(tmp_posx));
   if (raw_posx != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(3, this->_internal_posx(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(4, this->_internal_posx(), target);
   }
 
-  // float posY = 4;
+  // float posY = 5;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_posy = this->_internal_posy();
   uint32_t raw_posy;
   memcpy(&raw_posy, &tmp_posy, sizeof(tmp_posy));
   if (raw_posy != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(4, this->_internal_posy(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(5, this->_internal_posy(), target);
   }
 
-  // float maxHP = 5;
+  // float maxHP = 6;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_maxhp = this->_internal_maxhp();
   uint32_t raw_maxhp;
   memcpy(&raw_maxhp, &tmp_maxhp, sizeof(tmp_maxhp));
   if (raw_maxhp != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(5, this->_internal_maxhp(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(6, this->_internal_maxhp(), target);
   }
 
-  // float currentHP = 6;
+  // float currentHP = 7;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_currenthp = this->_internal_currenthp();
   uint32_t raw_currenthp;
   memcpy(&raw_currenthp, &tmp_currenthp, sizeof(tmp_currenthp));
   if (raw_currenthp != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(6, this->_internal_currenthp(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(7, this->_internal_currenthp(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -881,6 +919,13 @@ size_t Player::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  // string name = 3;
+  if (!this->_internal_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_name());
+  }
+
   // uint64 id = 1;
   if (this->_internal_id() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_id());
@@ -891,7 +936,7 @@ size_t Player::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_accountid());
   }
 
-  // float posX = 3;
+  // float posX = 4;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_posx = this->_internal_posx();
   uint32_t raw_posx;
@@ -900,7 +945,7 @@ size_t Player::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
-  // float posY = 4;
+  // float posY = 5;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_posy = this->_internal_posy();
   uint32_t raw_posy;
@@ -909,7 +954,7 @@ size_t Player::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
-  // float maxHP = 5;
+  // float maxHP = 6;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_maxhp = this->_internal_maxhp();
   uint32_t raw_maxhp;
@@ -918,7 +963,7 @@ size_t Player::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
-  // float currentHP = 6;
+  // float currentHP = 7;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_currenthp = this->_internal_currenthp();
   uint32_t raw_currenthp;
@@ -945,6 +990,9 @@ void Player::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBU
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_name().empty()) {
+    _this->_internal_set_name(from._internal_name());
+  }
   if (from._internal_id() != 0) {
     _this->_internal_set_id(from._internal_id());
   }
@@ -995,7 +1043,13 @@ bool Player::IsInitialized() const {
 
 void Player::InternalSwap(Player* other) {
   using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.name_, lhs_arena,
+      &other->_impl_.name_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(Player, _impl_.currenthp_)
       + sizeof(Player::_impl_.currenthp_)

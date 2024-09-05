@@ -11,35 +11,31 @@ CoreGlobal GCoreGlobal;
 int32 MAX_CLIENT_COUNT = 1;
 int32 MAX_WORKER_COUNT = 2;
 
-	// System Server Message
+// System Server Message
 void SystemMessageFromServer() 
 {
+	int32 i = 0;
 	while (true)
 	{
 		string input;
-		//getline(cin, input);
-		cin >> input;
+		getline(cin, input);
 
-		uint16 packetId = PKT_S_CHAT;
-		Protocol::S_CHAT pkt;
+		uint16 packetId = PKT_S_SERVER_CHAT;
+		Protocol::S_SERVER_CHAT pkt;
 		pkt.set_type(Protocol::CHAT_TYPE_SYSTEM);
 		pkt.set_msg(input);
-		pkt.set_playername("");
-		pkt.set_playerid(0);
+		
+		cout << pkt.msg() << endl;
 
 		SendBufferRef sendBuffer = MakeSendBuffer(pkt, packetId);
 
 		GRoom.Broadcast(sendBuffer);
+		break;
 	}
 }
 
 int main()
 {
-	/*unique_ptr<sql::ResultSet> result = executeQuery(*CP, "Select * FROM user;");
-	while (result->next()) {
-		cout << result->getString(1) << " " << result->getString(2) << endl;
-	}*/
-
 	SocketUtils::Init();
 
 	ServerServiceRef service = ServerServiceRef(
@@ -70,6 +66,8 @@ int main()
 	}
 	cout << "===== Worker Thread Start =====" << endl;
 
+	//SystemMessageFromServer();
+
 	for (thread& t : workers)
 	{
 		if (t.joinable())
@@ -79,7 +77,7 @@ int main()
 	SocketUtils::Clear();
 	cout << "===== Server has been shut down. =====" << endl;
 }
-
+	
 /*
 	Listener -> Socket Set -> Register Accept (AcceptEx)
 	Process Accept -> Client Session Set -> Process Connect -> Register Recv (WSARecv)

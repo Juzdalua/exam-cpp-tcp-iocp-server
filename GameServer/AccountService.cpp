@@ -99,6 +99,7 @@ pair<shared_ptr<Account>, shared_ptr<Player>> AccountService::GetAccountAndPlaye
 				account.name,
 				account.password as password,
 				player.id as playerId,
+				player.name as playerName,
 				player.posX,
 				player.posY,
 				player.maxHP,
@@ -126,13 +127,14 @@ pair<shared_ptr<Account>, shared_ptr<Player>> AccountService::GetAccountAndPlaye
 		string name = res->getString("name");
 		string hashedPwd = res->getString("password");
 		uint64 playerId = res->getUInt64("playerId");
+		string playerName = res->getString("playerName");
 		float posX = res->getDouble("posX");
 		float posY = res->getDouble("posY");
 		float maxHP = res->getDouble("maxHP");
 		float currentHP = res->getDouble("currentHP");
 
 		account = make_shared<Account>(accountId, name, hashedPwd);
-		player = make_shared<Player>(playerId, accountId, posX, posY, maxHP, currentHP);
+		player = make_shared<Player>(playerId, accountId, playerName, posX, posY, maxHP, currentHP);
 
 		return make_pair(account, player);
 	}
@@ -194,10 +196,11 @@ bool AccountService::CreateAccountAndPlayer(string name, string password)
 
 			// ÇÃ·¹ÀÌ¾î »ðÀÔ Äõ¸®
 			string playerInsertQuery = R"(
-            INSERT INTO player (account_id) VALUES (?);
+            INSERT INTO player (account_id, name) VALUES (?, ?);
         )";
 			unique_ptr<sql::PreparedStatement> pstmtPlayer(conn->prepareStatement(playerInsertQuery));
 			pstmtPlayer->setInt(1, insertId);
+			pstmtPlayer->setString(2, name);
 			pstmtPlayer->executeUpdate();
 
 			conn->commit();  // Ä¿¹Ô
