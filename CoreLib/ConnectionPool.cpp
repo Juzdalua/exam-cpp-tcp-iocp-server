@@ -81,9 +81,9 @@ unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& quer
         }
     }
     catch (sql::SQLException& e) {
-        cerr << "SQLException: " << e.what() << endl;
-        cerr << "Error code: " << e.getErrorCode() << endl;
-        cerr << "SQL state: " << e.getSQLState() << endl;
+        cerr << "[SQLException: " << e.what() << "]" << endl;
+        cerr << "[Error code: " << e.getErrorCode() << "]" << endl;
+        cerr << "[SQL state: " << e.getSQLState() << "]" << endl;
     }
 }
 

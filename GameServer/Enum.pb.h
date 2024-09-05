@@ -129,6 +129,32 @@ inline bool MoveDir_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<MoveDir>(
     MoveDir_descriptor(), name, value);
 }
+enum PlayerState : int {
+  PLAYER_STATE_NONE = 0,
+  PLAYER_STATE_LIVE = 1,
+  PLAYER_STATE_DEAD = 2,
+  PlayerState_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  PlayerState_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool PlayerState_IsValid(int value);
+constexpr PlayerState PlayerState_MIN = PLAYER_STATE_NONE;
+constexpr PlayerState PlayerState_MAX = PLAYER_STATE_DEAD;
+constexpr int PlayerState_ARRAYSIZE = PlayerState_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PlayerState_descriptor();
+template<typename T>
+inline const std::string& PlayerState_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, PlayerState>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function PlayerState_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    PlayerState_descriptor(), enum_t_value);
+}
+inline bool PlayerState_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, PlayerState* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<PlayerState>(
+    PlayerState_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -165,6 +191,11 @@ template <> struct is_proto_enum< ::Protocol::MoveDir> : ::std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::MoveDir>() {
   return ::Protocol::MoveDir_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::PlayerState> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::PlayerState>() {
+  return ::Protocol::PlayerState_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

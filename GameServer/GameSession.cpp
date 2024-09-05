@@ -3,6 +3,7 @@
 #include "GameSessionManager.h"
 #include "Protocol.pb.h"
 #include "Room.h"
+#include "Player.h"
 
 extern unordered_map<uint16_t, string> packetIdToString;
 
@@ -97,10 +98,20 @@ void GameProtobufSession::OnDisconnected()
 
 void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 {
-	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
-	cout << endl << "[ PacketId-> " << recvHeader->id << " : " << packetIdToString[recvHeader->id] << " / Size-> " << recvHeader->size << " ]" << endl;
-
 	GameProtobufSessionRef session = GetProtobufSessionRef();
+
+	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
+	
+	// Log
+	cout << endl << "[ PacketId-> " << recvHeader->id << " : " << packetIdToString[recvHeader->id] << " / Size-> " << recvHeader->size;
+	if (session->_accountId && session->_accountId != 0) {
+		cout << " / AccountId: " << session->_accountId;
+	}
+	if (session->_player) {
+		cout << " / PlayerId: " << session->_player->GetPlayerId();
+	}
+	cout << "]" << endl;
+
 	ClientPacketHandler::HandlePacket(buffer, len, session);
 
 	//GProtobufSessionManager.Broadcast(sendBuffer);

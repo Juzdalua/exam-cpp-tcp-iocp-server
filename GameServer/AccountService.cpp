@@ -196,8 +196,8 @@ bool AccountService::CreateAccountAndPlayer(string name, string password)
 
 			// ÇÃ·¹ÀÌ¾î »ðÀÔ Äõ¸®
 			string playerInsertQuery = R"(
-            INSERT INTO player (account_id, name) VALUES (?, ?);
-        )";
+				INSERT INTO player (account_id, name) VALUES (?, ?);
+			)";
 			unique_ptr<sql::PreparedStatement> pstmtPlayer(conn->prepareStatement(playerInsertQuery));
 			pstmtPlayer->setInt(1, insertId);
 			pstmtPlayer->setString(2, name);

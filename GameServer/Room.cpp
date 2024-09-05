@@ -45,8 +45,20 @@ bool Room::IsLogin(uint64 playerId)
 	for (auto& pair : _players)
 	{
 		PlayerRef player = pair.second;
-		if (player->GetPlayerId() == player->GetPlayerId())
+		if (player->GetPlayerId() == playerId)
 			return true;
 	}
 	return false;
+}
+
+void Room::UpdateMove(uint64 playerId, float posX, float posY)
+{
+	for (auto& pair : _players)
+	{
+		PlayerRef player = pair.second;
+		if (player->GetPlayerId() == playerId)
+		{
+			player->SetPosition(posX, posY);
+		}
+	}
 }

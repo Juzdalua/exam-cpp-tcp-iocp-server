@@ -73,4 +73,5 @@ public:
 
 public:
 	PlayerRef _player;
+	uint64 _accountId;
 };
