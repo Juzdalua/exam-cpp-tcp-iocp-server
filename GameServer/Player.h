@@ -4,8 +4,8 @@ class Player
 {
 public:
 	Player() = default;
-	Player(uint64 id, uint64 accountId, float posX, float posY, float maxHP, float currentHP)
-		: _playerId(id), _accountId(accountId), _posX(posX), _posY(posY), _maxHP(maxHP), _currentHP(currentHP) {}
+	Player(uint64 id, uint64 accountId, string name, float posX, float posY, float maxHP, float currentHP)
+		: _playerId(id), _accountId(accountId), _playerName(name), _posX(posX), _posY(posY), _maxHP(maxHP), _currentHP(currentHP) {}
 	~Player() {};
 
 	void SetOwnerSession(GameProtobufSessionRef session) { _ownerSession = session; }
@@ -16,6 +16,7 @@ public:
 public:
 	uint64 GetPlayerId() { return _playerId; }
 	uint64 GetAccountId() { return _accountId; }
+	string GetPlayerName() { return _playerName; }
 	float GetPosX() { return _posX; }
 	float GetPosY() { return _posY; }
 	float GetMaxHP() { return _maxHP; }
@@ -24,6 +25,7 @@ public:
 private:
 	uint64 _playerId = 0;
 	uint64 _accountId = 0;
+	string _playerName;
 	float _posX;
 	float _posY;
 	float _maxHP;

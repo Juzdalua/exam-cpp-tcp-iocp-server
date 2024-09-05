@@ -2,6 +2,7 @@
 #include "GameSession.h"
 #include "GameSessionManager.h"
 #include "Protocol.pb.h"
+#include "Room.h"
 
 extern unordered_map<uint16_t, string> packetIdToString;
 
@@ -87,6 +88,10 @@ void GameProtobufSession::OnConnected()
 
 void GameProtobufSession::OnDisconnected()
 {
+	if (_player != nullptr) {
+		GRoom.Leave(_player);
+	}
+
 	GProtobufSessionManager.Remove(static_pointer_cast<GameProtobufSession>(shared_from_this()));
 }
 

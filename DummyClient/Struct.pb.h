@@ -530,13 +530,28 @@ class Player final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kNameFieldNumber = 3,
     kIdFieldNumber = 1,
     kAccountIdFieldNumber = 2,
-    kPosXFieldNumber = 3,
-    kPosYFieldNumber = 4,
-    kMaxHPFieldNumber = 5,
-    kCurrentHPFieldNumber = 6,
+    kPosXFieldNumber = 4,
+    kPosYFieldNumber = 5,
+    kMaxHPFieldNumber = 6,
+    kCurrentHPFieldNumber = 7,
   };
+  // string name = 3;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_NODISCARD std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
   // uint64 id = 1;
   void clear_id();
   uint64_t id() const;
@@ -555,7 +570,7 @@ class Player final :
   void _internal_set_accountid(uint64_t value);
   public:
 
-  // float posX = 3;
+  // float posX = 4;
   void clear_posx();
   float posx() const;
   void set_posx(float value);
@@ -564,7 +579,7 @@ class Player final :
   void _internal_set_posx(float value);
   public:
 
-  // float posY = 4;
+  // float posY = 5;
   void clear_posy();
   float posy() const;
   void set_posy(float value);
@@ -573,7 +588,7 @@ class Player final :
   void _internal_set_posy(float value);
   public:
 
-  // float maxHP = 5;
+  // float maxHP = 6;
   void clear_maxhp();
   float maxhp() const;
   void set_maxhp(float value);
@@ -582,7 +597,7 @@ class Player final :
   void _internal_set_maxhp(float value);
   public:
 
-  // float currentHP = 6;
+  // float currentHP = 7;
   void clear_currenthp();
   float currenthp() const;
   void set_currenthp(float value);
@@ -599,6 +614,7 @@ class Player final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
     uint64_t id_;
     uint64_t accountid_;
     float posx_;
@@ -859,7 +875,57 @@ inline void Player::set_accountid(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.Player.accountId)
 }
 
-// float posX = 3;
+// string name = 3;
+inline void Player::clear_name() {
+  _impl_.name_.ClearToEmpty();
+}
+inline const std::string& Player::name() const {
+  // @@protoc_insertion_point(field_get:Protocol.Player.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void Player::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.name_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:Protocol.Player.name)
+}
+inline std::string* Player::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:Protocol.Player.name)
+  return _s;
+}
+inline const std::string& Player::_internal_name() const {
+  return _impl_.name_.Get();
+}
+inline void Player::_internal_set_name(const std::string& value) {
+  
+  _impl_.name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Player::_internal_mutable_name() {
+  
+  return _impl_.name_.Mutable(GetArenaForAllocation());
+}
+inline std::string* Player::release_name() {
+  // @@protoc_insertion_point(field_release:Protocol.Player.name)
+  return _impl_.name_.Release();
+}
+inline void Player::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.name_.SetAllocated(name, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.name_.IsDefault()) {
+    _impl_.name_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:Protocol.Player.name)
+}
+
+// float posX = 4;
 inline void Player::clear_posx() {
   _impl_.posx_ = 0;
 }
@@ -879,7 +945,7 @@ inline void Player::set_posx(float value) {
   // @@protoc_insertion_point(field_set:Protocol.Player.posX)
 }
 
-// float posY = 4;
+// float posY = 5;
 inline void Player::clear_posy() {
   _impl_.posy_ = 0;
 }
@@ -899,7 +965,7 @@ inline void Player::set_posy(float value) {
   // @@protoc_insertion_point(field_set:Protocol.Player.posY)
 }
 
-// float maxHP = 5;
+// float maxHP = 6;
 inline void Player::clear_maxhp() {
   _impl_.maxhp_ = 0;
 }
@@ -919,7 +985,7 @@ inline void Player::set_maxhp(float value) {
   // @@protoc_insertion_point(field_set:Protocol.Player.maxHP)
 }
 
-// float currentHP = 6;
+// float currentHP = 7;
 inline void Player::clear_currenthp() {
   _impl_.currenthp_ = 0;
 }

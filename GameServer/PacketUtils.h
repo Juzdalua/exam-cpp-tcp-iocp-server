@@ -3,6 +3,8 @@
 
 unordered_map<uint16, string> packetIdToString =
 {
+	{PKT_S_SERVER_CHAT, "PKT_S_SERVER_CHAT"},
+
 	{PKT_C_TEST, "PKT_C_TEST"},
 	{PKT_S_TEST, "PKT_S_TEST"},
 
@@ -17,6 +19,12 @@ unordered_map<uint16, string> packetIdToString =
 
 	{PKT_C_CHAT, "PKT_C_CHAT"},
 	{PKT_S_CHAT, "PKT_S_CHAT"},
+
+	{PKT_C_MOVE, "PKT_C_MOVE"},
+	{PKT_S_MOVE, "PKT_S_MOVE"},
+
+	{PKT_C_SHOT, "PKT_C_SHOT"},
+	{PKT_S_SHOT, "PKT_S_SHOT"},
 };
 
 class PacketUtils

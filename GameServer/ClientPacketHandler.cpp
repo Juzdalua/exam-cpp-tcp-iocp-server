@@ -36,6 +36,9 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 		ClientPacketHandler::HandleMove(buffer, len, session);
 		break;
 
+	case PKT_C_SHOT:
+		ClientPacketHandler::HandleShot(buffer, len, session);
+		break;
 	}
 
 	return false;
@@ -100,9 +103,8 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 {
 	Protocol::C_LOGIN recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
-
+	
 	const Protocol::Account& recvAccount = recvPkt.account();
-
 	pair<shared_ptr<Account>, shared_ptr<Player>> pairAccountPlayer = AccountController::GetAccountAndPlayerByName(recvAccount.name());
 
 	// Invalid Id
@@ -142,6 +144,7 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	auto sendPlayer = new Protocol::Player();
 	sendPlayer->set_id(pairAccountPlayer.second->GetPlayerId());
 	sendPlayer->set_accountid(pairAccountPlayer.second->GetAccountId());
+	sendPlayer->set_name(pairAccountPlayer.second->GetPlayerName());
 	sendPlayer->set_posx(pairAccountPlayer.second->GetPosX());
 	sendPlayer->set_posy(pairAccountPlayer.second->GetPosY());
 	sendPlayer->set_maxhp(pairAccountPlayer.second->GetMaxHP());
@@ -151,12 +154,15 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	PlayerRef playerRef = make_shared<Player>(
 		pairAccountPlayer.second->GetPlayerId(),
 		pairAccountPlayer.second->GetAccountId(),
+		pairAccountPlayer.second->GetPlayerName(),
 		pairAccountPlayer.second->GetPosX(),
 		pairAccountPlayer.second->GetPosY(),
 		pairAccountPlayer.second->GetMaxHP(),
 		pairAccountPlayer.second->GetCurrentHP()
 	);
 	playerRef->SetOwnerSession(session);
+
+	// Set Session
 	session->_player = playerRef;
 
 	// Set SendBuffer
@@ -180,6 +186,16 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 	// Get Player in Session
 	PlayerRef player = session->_player;
 
+	// Validation
+	if (player->GetPlayerId() != recvPkt.playerid()) {
+		uint16 packetId = PKT_S_ENTER_GAME;
+		Protocol::S_ENTER_GAME pkt;
+		pkt.set_success(false);
+		pkt.set_toplayer(Protocol::TO_PLAYER_OWNER);
+		session->Send(MakeSendBuffer(pkt, packetId));
+		return false;
+	}
+
 	// Broadcast new player info to all players in room
 	uint16 packetId = PKT_S_ENTER_GAME;
 	Protocol::S_ENTER_GAME pkt;
@@ -189,6 +205,7 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		Protocol::Player* repeatPlayer = pkt.add_players();
 		repeatPlayer->set_id(player->GetPlayerId());
 		repeatPlayer->set_accountid(player->GetAccountId());
+		repeatPlayer->set_name(player->GetPlayerName());
 		repeatPlayer->set_posx(player->GetPosX());
 		repeatPlayer->set_posy(player->GetPosY());
 		repeatPlayer->set_maxhp(player->GetMaxHP());
@@ -200,21 +217,23 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 
 	// Send all players in room to new player
 	map<uint64, PlayerRef>* players = GRoom.GetPlayersInRoom();
-	for (const auto& pair : *players)
-	{
-		const PlayerRef _player = pair.second;
+	if (players->size() > 0) {
+		for (const auto& pair : *players)
+		{
+			const PlayerRef _player = pair.second;
+			Protocol::Player* repeatedPlayer = pkt.add_players();
+			repeatedPlayer->set_id(_player->GetPlayerId());
+			repeatedPlayer->set_accountid(_player->GetAccountId());
+			repeatedPlayer->set_name(_player->GetPlayerName());
+			repeatedPlayer->set_posx(_player->GetPosX());
+			repeatedPlayer->set_posy(_player->GetPosY());
+			repeatedPlayer->set_maxhp(_player->GetMaxHP());
+			repeatedPlayer->set_currenthp(_player->GetCurrentHP());
+		}
+		pkt.set_toplayer(Protocol::TO_PLAYER_OWNER);
 
-		Protocol::Player* repeatedPlayer = pkt.add_players();
-		repeatedPlayer->set_id(_player->GetPlayerId());
-		repeatedPlayer->set_accountid(_player->GetAccountId());
-		repeatedPlayer->set_posx(_player->GetPosX());
-		repeatedPlayer->set_posy(_player->GetPosY());
-		repeatedPlayer->set_maxhp(_player->GetMaxHP());
-		repeatedPlayer->set_currenthp(_player->GetCurrentHP());
+		session->Send(MakeSendBuffer(pkt, packetId));
 	}
-	pkt.set_toplayer(Protocol::TO_PLAYER_OWNER);
-
-	session->Send(MakeSendBuffer(pkt, packetId));
 	GRoom.Enter(player); // WRITE_LOCK
 
 	return true;
@@ -227,6 +246,14 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 {
 	Protocol::C_CHAT recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	// Validation
+	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
+		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		return false;
+	}
+
 	unique_ptr<Account> account = AccountController::GetAccountByPlayerId(recvPkt.playerid());
 
 	uint16 packetId = PKT_S_CHAT;
@@ -284,6 +311,13 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 {
 	Protocol::C_MOVE recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	// Validation
+	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
+		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		return false;
+	}
 	
 	// Update Session
 	session->_player->SetPosition(recvPkt.posx(), recvPkt.posy());
@@ -307,4 +341,24 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 
 	return true;
+}
+
+bool ClientPacketHandler::HandleShot(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
+{
+	Protocol::C_SHOT recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	// TODO DB LOG SAVE
+	
+
+	uint16 packetId = PKT_S_SHOT;
+	Protocol::S_SHOT pkt;
+	pkt.set_playerid(recvPkt.playerid());
+	pkt.set_spawnposx(recvPkt.spawnposx());
+	pkt.set_spawnposy(recvPkt.spawnposy());
+	pkt.set_targetposx(recvPkt.targetposx());
+	pkt.set_targetposy(recvPkt.targetposy());
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	return false;
 }
