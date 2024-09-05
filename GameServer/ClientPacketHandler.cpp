@@ -3,6 +3,7 @@
 #include "GameSession.h"
 #include "Protocol.pb.h"
 #include "AccountController.h"
+#include "PlayerController.h"
 #include "Player.h"
 #include "Room.h"
 
@@ -38,6 +39,10 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 
 	case PKT_C_SHOT:
 		ClientPacketHandler::HandleShot(buffer, len, session);
+		break;
+
+	case PKT_C_HIT:
+		ClientPacketHandler::HandleHit(buffer, len, session);
 		break;
 	}
 
@@ -164,6 +169,7 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 
 	// Set Session
 	session->_player = playerRef;
+	session->_accountId = recvAccount.id();
 
 	// Set SendBuffer
 	uint16 packetId = PKT_S_LOGIN;
@@ -319,11 +325,12 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 		return false;
 	}
 	
-	// Update Session
+	// Update Session & Room
 	session->_player->SetPosition(recvPkt.posx(), recvPkt.posy());
+	GRoom.UpdateMove(recvPkt.playerid(), recvPkt.posx(), recvPkt.posy());
 
 	// Update DB
-	// TODO
+	PlayerController::UpdateMove(recvPkt.playerid(), recvPkt.posx(), recvPkt.posy());
 
 	// Broadcast players in room
 	auto sendPlayer = new Protocol::Player();
@@ -358,6 +365,44 @@ bool ClientPacketHandler::HandleShot(BYTE* buffer, int32 len, GameProtobufSessio
 	pkt.set_spawnposy(recvPkt.spawnposy());
 	pkt.set_targetposx(recvPkt.targetposx());
 	pkt.set_targetposy(recvPkt.targetposy());
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	cout << "SHOT PLAYER ID: " << recvPkt.playerid() << endl;
+	return false;
+}
+
+bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
+{
+	Protocol::C_HIT recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	cout << "HIT PLAYER ID: " << recvPkt.playerid() << endl;
+	// Validation
+	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
+		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		return false;
+	}
+
+	session->_player->DecreaseHP(recvPkt.damage());
+	uint64 currentHP = PlayerController::DecreaseHP(recvPkt.playerid(), recvPkt.damage());
+	if (currentHP < 0) {
+		// TODO error
+		cout << "ERROR: currentHP = -1 " << endl;
+		return false;
+	}
+	session->_player->SetCurrentHP(currentHP);
+
+	uint16 packetId = PKT_S_HIT;
+	Protocol::S_HIT pkt;
+	if (currentHP == 0) {
+		pkt.set_state(Protocol::PLAYER_STATE_DEAD);
+	}
+	else 
+	{
+		pkt.set_state(Protocol::PLAYER_STATE_LIVE);
+	}
+	pkt.set_currenthp(currentHP);
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 
 	return false;

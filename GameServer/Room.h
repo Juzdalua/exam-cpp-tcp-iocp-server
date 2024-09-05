@@ -10,6 +10,7 @@ public:
 	bool IsLogin(uint64 playerId);
 
 	map<uint64, PlayerRef>* GetPlayersInRoom() {return &_players;}
+	void UpdateMove(uint64 playerId, float posX, float posY);
 
 	void CheckPlayers();
 

@@ -12,6 +12,9 @@ public:
 	GameProtobufSessionRef GetOwnerSession() { return _ownerSession; }
 
 	void SetPosition(float posX, float posY) { _posX = posX; _posY = posY; }
+	
+	void DecreaseHP(float damage) { _currentHP -= damage; if (_currentHP < 0) _currentHP = 0; }
+	void SetCurrentHP(uint64 currentHP) { _currentHP = currentHP; }
 
 public:
 	uint64 GetPlayerId() { return _playerId; }
@@ -19,8 +22,8 @@ public:
 	string GetPlayerName() { return _playerName; }
 	float GetPosX() { return _posX; }
 	float GetPosY() { return _posY; }
-	float GetMaxHP() { return _maxHP; }
-	float GetCurrentHP() { return _currentHP; }
+	uint64 GetMaxHP() { return _maxHP; }
+	uint64 GetCurrentHP() { return _currentHP; }
 
 private:
 	uint64 _playerId = 0;
@@ -28,8 +31,8 @@ private:
 	string _playerName;
 	float _posX;
 	float _posY;
-	float _maxHP;
-	float _currentHP;
+	uint64 _maxHP;
+	uint64 _currentHP;
 	GameProtobufSessionRef _ownerSession;
 };
 
