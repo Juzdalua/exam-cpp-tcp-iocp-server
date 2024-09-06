@@ -12,7 +12,7 @@ void PlayerController::UpdateMove(uint64 playerId, float posX, float posY)
     return PlayerService::UpdateMove(playerId, posX, posY);
 }
 
-uint64 PlayerController::DecreaseHP(uint64 playerId, float damage)
+uint64 PlayerController::DecreaseHP(uint64 playerId, uint64 damage)
 {
     return PlayerService::DecreaseHP(playerId, damage);
 }

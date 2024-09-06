@@ -57,8 +57,8 @@ PROTOBUF_CONSTEXPR Player::Player(
   , /*decltype(_impl_.accountid_)*/uint64_t{0u}
   , /*decltype(_impl_.posx_)*/0
   , /*decltype(_impl_.posy_)*/0
-  , /*decltype(_impl_.maxhp_)*/0
-  , /*decltype(_impl_.currenthp_)*/0
+  , /*decltype(_impl_.maxhp_)*/uint64_t{0u}
+  , /*decltype(_impl_.currenthp_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct PlayerDefaultTypeInternal {
   PROTOBUF_CONSTEXPR PlayerDefaultTypeInternal()
@@ -124,8 +124,8 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "\002 \001(\t\"5\n\007Account\022\n\n\002id\030\001 \001(\004\022\014\n\004name\030\002 \001"
   "(\t\022\020\n\010password\030\003 \001(\t\"s\n\006Player\022\n\n\002id\030\001 \001"
   "(\004\022\021\n\taccountId\030\002 \001(\004\022\014\n\004name\030\003 \001(\t\022\014\n\004p"
-  "osX\030\004 \001(\002\022\014\n\004posY\030\005 \001(\002\022\r\n\005maxHP\030\006 \001(\002\022\021"
-  "\n\tcurrentHP\030\007 \001(\002b\006proto3"
+  "osX\030\004 \001(\002\022\014\n\004posY\030\005 \001(\002\022\r\n\005maxHP\030\006 \001(\004\022\021"
+  "\n\tcurrentHP\030\007 \001(\004b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
@@ -707,8 +707,8 @@ inline void Player::SharedCtor(
     , decltype(_impl_.accountid_){uint64_t{0u}}
     , decltype(_impl_.posx_){0}
     , decltype(_impl_.posy_){0}
-    , decltype(_impl_.maxhp_){0}
-    , decltype(_impl_.currenthp_){0}
+    , decltype(_impl_.maxhp_){uint64_t{0u}}
+    , decltype(_impl_.currenthp_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.name_.InitDefault();
@@ -796,19 +796,19 @@ const char* Player::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
         } else
           goto handle_unusual;
         continue;
-      // float maxHP = 6;
+      // uint64 maxHP = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 53)) {
-          _impl_.maxhp_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          _impl_.maxhp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // float currentHP = 7;
+      // uint64 currentHP = 7;
       case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 61)) {
-          _impl_.currenthp_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 56)) {
+          _impl_.currenthp_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -883,24 +883,16 @@ uint8_t* Player::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteFloatToArray(5, this->_internal_posy(), target);
   }
 
-  // float maxHP = 6;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_maxhp = this->_internal_maxhp();
-  uint32_t raw_maxhp;
-  memcpy(&raw_maxhp, &tmp_maxhp, sizeof(tmp_maxhp));
-  if (raw_maxhp != 0) {
+  // uint64 maxHP = 6;
+  if (this->_internal_maxhp() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(6, this->_internal_maxhp(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(6, this->_internal_maxhp(), target);
   }
 
-  // float currentHP = 7;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_currenthp = this->_internal_currenthp();
-  uint32_t raw_currenthp;
-  memcpy(&raw_currenthp, &tmp_currenthp, sizeof(tmp_currenthp));
-  if (raw_currenthp != 0) {
+  // uint64 currentHP = 7;
+  if (this->_internal_currenthp() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(7, this->_internal_currenthp(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(7, this->_internal_currenthp(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -954,22 +946,14 @@ size_t Player::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
-  // float maxHP = 6;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_maxhp = this->_internal_maxhp();
-  uint32_t raw_maxhp;
-  memcpy(&raw_maxhp, &tmp_maxhp, sizeof(tmp_maxhp));
-  if (raw_maxhp != 0) {
-    total_size += 1 + 4;
+  // uint64 maxHP = 6;
+  if (this->_internal_maxhp() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_maxhp());
   }
 
-  // float currentHP = 7;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_currenthp = this->_internal_currenthp();
-  uint32_t raw_currenthp;
-  memcpy(&raw_currenthp, &tmp_currenthp, sizeof(tmp_currenthp));
-  if (raw_currenthp != 0) {
-    total_size += 1 + 4;
+  // uint64 currentHP = 7;
+  if (this->_internal_currenthp() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_currenthp());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -1013,18 +997,10 @@ void Player::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBU
   if (raw_posy != 0) {
     _this->_internal_set_posy(from._internal_posy());
   }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_maxhp = from._internal_maxhp();
-  uint32_t raw_maxhp;
-  memcpy(&raw_maxhp, &tmp_maxhp, sizeof(tmp_maxhp));
-  if (raw_maxhp != 0) {
+  if (from._internal_maxhp() != 0) {
     _this->_internal_set_maxhp(from._internal_maxhp());
   }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_currenthp = from._internal_currenthp();
-  uint32_t raw_currenthp;
-  memcpy(&raw_currenthp, &tmp_currenthp, sizeof(tmp_currenthp));
-  if (raw_currenthp != 0) {
+  if (from._internal_currenthp() != 0) {
     _this->_internal_set_currenthp(from._internal_currenthp());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);

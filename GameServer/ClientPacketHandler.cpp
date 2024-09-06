@@ -145,6 +145,22 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 		return false;
 	}
 
+	// Already login
+	if (GRoom.IsLogin(recvAccount.id())) {
+		auto errorPkt = new Protocol::ErrorObj();
+		errorPkt->set_errorcode(-PKT_C_LOGIN);
+		errorPkt->set_errormsg("Already Login");
+
+		uint16 packetId = PKT_S_LOGIN;
+		Protocol::S_LOGIN pkt;
+		pkt.set_success(false);
+		pkt.set_allocated_player(nullptr);
+		pkt.set_allocated_error(errorPkt);
+		session->Send(MakeSendBuffer(pkt, packetId));
+
+		return false;
+	}
+
 	// Set Send Player Info
 	auto sendPlayer = new Protocol::Player();
 	sendPlayer->set_id(pairAccountPlayer.second->GetPlayerId());
@@ -322,6 +338,12 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
 		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		return false;
+	}
+
+	if (!GRoom.CanGo(recvPkt.playerid(), recvPkt.posx(), recvPkt.posy())) {
+		//TODO ERROR SEND
+		cout << "CAN'T GO" << endl;
 		return false;
 	}
 	

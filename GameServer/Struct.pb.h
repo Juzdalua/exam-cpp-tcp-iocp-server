@@ -588,22 +588,22 @@ class Player final :
   void _internal_set_posy(float value);
   public:
 
-  // float maxHP = 6;
+  // uint64 maxHP = 6;
   void clear_maxhp();
-  float maxhp() const;
-  void set_maxhp(float value);
+  uint64_t maxhp() const;
+  void set_maxhp(uint64_t value);
   private:
-  float _internal_maxhp() const;
-  void _internal_set_maxhp(float value);
+  uint64_t _internal_maxhp() const;
+  void _internal_set_maxhp(uint64_t value);
   public:
 
-  // float currentHP = 7;
+  // uint64 currentHP = 7;
   void clear_currenthp();
-  float currenthp() const;
-  void set_currenthp(float value);
+  uint64_t currenthp() const;
+  void set_currenthp(uint64_t value);
   private:
-  float _internal_currenthp() const;
-  void _internal_set_currenthp(float value);
+  uint64_t _internal_currenthp() const;
+  void _internal_set_currenthp(uint64_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.Player)
@@ -619,8 +619,8 @@ class Player final :
     uint64_t accountid_;
     float posx_;
     float posy_;
-    float maxhp_;
-    float currenthp_;
+    uint64_t maxhp_;
+    uint64_t currenthp_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -965,42 +965,42 @@ inline void Player::set_posy(float value) {
   // @@protoc_insertion_point(field_set:Protocol.Player.posY)
 }
 
-// float maxHP = 6;
+// uint64 maxHP = 6;
 inline void Player::clear_maxhp() {
-  _impl_.maxhp_ = 0;
+  _impl_.maxhp_ = uint64_t{0u};
 }
-inline float Player::_internal_maxhp() const {
+inline uint64_t Player::_internal_maxhp() const {
   return _impl_.maxhp_;
 }
-inline float Player::maxhp() const {
+inline uint64_t Player::maxhp() const {
   // @@protoc_insertion_point(field_get:Protocol.Player.maxHP)
   return _internal_maxhp();
 }
-inline void Player::_internal_set_maxhp(float value) {
+inline void Player::_internal_set_maxhp(uint64_t value) {
   
   _impl_.maxhp_ = value;
 }
-inline void Player::set_maxhp(float value) {
+inline void Player::set_maxhp(uint64_t value) {
   _internal_set_maxhp(value);
   // @@protoc_insertion_point(field_set:Protocol.Player.maxHP)
 }
 
-// float currentHP = 7;
+// uint64 currentHP = 7;
 inline void Player::clear_currenthp() {
-  _impl_.currenthp_ = 0;
+  _impl_.currenthp_ = uint64_t{0u};
 }
-inline float Player::_internal_currenthp() const {
+inline uint64_t Player::_internal_currenthp() const {
   return _impl_.currenthp_;
 }
-inline float Player::currenthp() const {
+inline uint64_t Player::currenthp() const {
   // @@protoc_insertion_point(field_get:Protocol.Player.currentHP)
   return _internal_currenthp();
 }
-inline void Player::_internal_set_currenthp(float value) {
+inline void Player::_internal_set_currenthp(uint64_t value) {
   
   _impl_.currenthp_ = value;
 }
-inline void Player::set_currenthp(float value) {
+inline void Player::set_currenthp(uint64_t value) {
   _internal_set_currenthp(value);
   // @@protoc_insertion_point(field_set:Protocol.Player.currentHP)
 }

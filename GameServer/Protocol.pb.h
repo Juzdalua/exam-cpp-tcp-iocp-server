@@ -2523,13 +2523,13 @@ class C_HIT final :
   void _internal_set_playerid(uint64_t value);
   public:
 
-  // float damage = 2;
+  // uint64 damage = 2;
   void clear_damage();
-  float damage() const;
-  void set_damage(float value);
+  uint64_t damage() const;
+  void set_damage(uint64_t value);
   private:
-  float _internal_damage() const;
-  void _internal_set_damage(float value);
+  uint64_t _internal_damage() const;
+  void _internal_set_damage(uint64_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.C_HIT)
@@ -2541,7 +2541,7 @@ class C_HIT final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     uint64_t playerid_;
-    float damage_;
+    uint64_t damage_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4097,22 +4097,22 @@ inline void C_HIT::set_playerid(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.C_HIT.playerId)
 }
 
-// float damage = 2;
+// uint64 damage = 2;
 inline void C_HIT::clear_damage() {
-  _impl_.damage_ = 0;
+  _impl_.damage_ = uint64_t{0u};
 }
-inline float C_HIT::_internal_damage() const {
+inline uint64_t C_HIT::_internal_damage() const {
   return _impl_.damage_;
 }
-inline float C_HIT::damage() const {
+inline uint64_t C_HIT::damage() const {
   // @@protoc_insertion_point(field_get:Protocol.C_HIT.damage)
   return _internal_damage();
 }
-inline void C_HIT::_internal_set_damage(float value) {
+inline void C_HIT::_internal_set_damage(uint64_t value) {
   
   _impl_.damage_ = value;
 }
-inline void C_HIT::set_damage(float value) {
+inline void C_HIT::set_damage(uint64_t value) {
   _internal_set_damage(value);
   // @@protoc_insertion_point(field_set:Protocol.C_HIT.damage)
 }

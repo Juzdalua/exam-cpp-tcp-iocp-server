@@ -51,6 +51,19 @@ bool Room::IsLogin(uint64 playerId)
 	return false;
 }
 
+bool Room::CanGo(uint64 playerId, float posX, float posY)
+{
+	lock_guard<mutex> lock(_lock);
+	for (auto& pair : _players)
+	{
+		PlayerRef player = pair.second;
+		if (player->GetPosX() == posX || player->GetPosY() == posY) {
+			return false;
+		}
+	}
+	return true;
+}
+
 void Room::UpdateMove(uint64 playerId, float posX, float posY)
 {
 	for (auto& pair : _players)

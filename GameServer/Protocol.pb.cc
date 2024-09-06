@@ -217,7 +217,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR C_HIT::C_HIT(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.playerid_)*/uint64_t{0u}
-  , /*decltype(_impl_.damage_)*/0
+  , /*decltype(_impl_.damage_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct C_HITDefaultTypeInternal {
   PROTOBUF_CONSTEXPR C_HITDefaultTypeInternal()
@@ -447,7 +447,7 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "\022\021\n\tspawnPosX\030\002 \001(\002\022\021\n\tspawnPosY\030\003 \001(\002\022\022"
   "\n\ntargetPosX\030\004 \001(\002\022\022\n\ntargetPosY\030\005 \001(\002\")"
   "\n\005C_HIT\022\020\n\010playerId\030\001 \001(\004\022\016\n\006damage\030\002 \001("
-  "\002\"R\n\005S_HIT\022\020\n\010playerId\030\001 \001(\004\022\021\n\tcurrentH"
+  "\004\"R\n\005S_HIT\022\020\n\010playerId\030\001 \001(\004\022\021\n\tcurrentH"
   "P\030\002 \001(\004\022$\n\005state\030\003 \001(\0162\025.Protocol.Player"
   "Stateb\006proto3"
   ;
@@ -3885,7 +3885,7 @@ inline void C_HIT::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.playerid_){uint64_t{0u}}
-    , decltype(_impl_.damage_){0}
+    , decltype(_impl_.damage_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -3933,11 +3933,11 @@ const char* C_HIT::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
         } else
           goto handle_unusual;
         continue;
-      // float damage = 2;
+      // uint64 damage = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 21)) {
-          _impl_.damage_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.damage_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -3976,14 +3976,10 @@ uint8_t* C_HIT::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_playerid(), target);
   }
 
-  // float damage = 2;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_damage = this->_internal_damage();
-  uint32_t raw_damage;
-  memcpy(&raw_damage, &tmp_damage, sizeof(tmp_damage));
-  if (raw_damage != 0) {
+  // uint64 damage = 2;
+  if (this->_internal_damage() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(2, this->_internal_damage(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_damage(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -4007,13 +4003,9 @@ size_t C_HIT::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_playerid());
   }
 
-  // float damage = 2;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_damage = this->_internal_damage();
-  uint32_t raw_damage;
-  memcpy(&raw_damage, &tmp_damage, sizeof(tmp_damage));
-  if (raw_damage != 0) {
-    total_size += 1 + 4;
+  // uint64 damage = 2;
+  if (this->_internal_damage() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_damage());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -4037,11 +4029,7 @@ void C_HIT::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF
   if (from._internal_playerid() != 0) {
     _this->_internal_set_playerid(from._internal_playerid());
   }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_damage = from._internal_damage();
-  uint32_t raw_damage;
-  memcpy(&raw_damage, &tmp_damage, sizeof(tmp_damage));
-  if (raw_damage != 0) {
+  if (from._internal_damage() != 0) {
     _this->_internal_set_damage(from._internal_damage());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);

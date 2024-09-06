@@ -4,7 +4,7 @@ class Player
 {
 public:
 	Player() = default;
-	Player(uint64 id, uint64 accountId, string name, float posX, float posY, float maxHP, float currentHP)
+	Player(uint64 id, uint64 accountId, string name, float posX, float posY, uint64 maxHP, uint64 currentHP)
 		: _playerId(id), _accountId(accountId), _playerName(name), _posX(posX), _posY(posY), _maxHP(maxHP), _currentHP(currentHP) {}
 	~Player() {};
 
@@ -13,7 +13,7 @@ public:
 
 	void SetPosition(float posX, float posY) { _posX = posX; _posY = posY; }
 	
-	void DecreaseHP(float damage) { _currentHP -= damage; if (_currentHP < 0) _currentHP = 0; }
+	void DecreaseHP(uint64 damage) { _currentHP -= damage; if (_currentHP < 0) _currentHP = 0; }
 	void SetCurrentHP(uint64 currentHP) { _currentHP = currentHP; }
 
 public:
