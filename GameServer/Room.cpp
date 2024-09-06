@@ -74,3 +74,8 @@ void Room::UpdateMove(uint64 playerId, float posX, float posY)
 		}
 	}
 }
+
+void Room::UpdateCurrentHP(uint64 playerId, uint64 currentHP)
+{
+	_players[playerId]->SetCurrentHP(currentHP);
+}

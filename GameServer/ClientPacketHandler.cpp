@@ -375,11 +375,13 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 	return true;
 }
 
+// SHOT
 bool ClientPacketHandler::HandleShot(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
 	Protocol::C_SHOT recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
+	cout << "[SHOT PLAYER: " << session->_player->GetPlayerId() << "]" << endl;
 	// TODO DB LOG SAVE
 	
 
@@ -395,6 +397,7 @@ bool ClientPacketHandler::HandleShot(BYTE* buffer, int32 len, GameProtobufSessio
 	return false;
 }
 
+// HIT
 bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
 	Protocol::C_HIT recvPkt;
@@ -406,15 +409,18 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
 		return false;
 	}
-
-	session->_player->DecreaseHP(recvPkt.damage());
+	
 	uint64 currentHP = PlayerController::DecreaseHP(recvPkt.playerid(), recvPkt.damage());
 	if (currentHP < 0) {
 		// TODO error
 		cout << "ERROR: currentHP = -1 " << endl;
 		return false;
 	}
-	session->_player->SetCurrentHP(currentHP);
+
+	// Session & Room Update
+	session->_player->DecreaseHP(recvPkt.damage());
+	GRoom.UpdateCurrentHP(session->_player->GetPlayerId(), currentHP);
+	cout << "[HIT PLAYER: " << session->_player->GetPlayerId() << ", CURRENTHP: " << currentHP << "]" << endl;
 
 	uint16 packetId = PKT_S_HIT;
 	Protocol::S_HIT pkt;
@@ -426,6 +432,7 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 		pkt.set_state(Protocol::PLAYER_STATE_LIVE);
 	}
 	pkt.set_currenthp(currentHP);
+	pkt.set_playerid(session->_player->GetPlayerId());
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 
 	return false;

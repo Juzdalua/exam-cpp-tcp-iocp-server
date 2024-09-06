@@ -14,6 +14,8 @@ public:
 	bool CanGo(uint64 playerId, float posX, float posY);
 	void UpdateMove(uint64 playerId, float posX, float posY);
 
+	void UpdateCurrentHP(uint64 playerId, uint64 currentHP);
+
 	void CheckPlayers();
 
 private:
