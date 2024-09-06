@@ -31,8 +31,7 @@ void Room::Broadcast(SendBufferRef sendBuffer)
 
 void Room::CheckPlayers()
 {
-	cout << "[Check Room Start / COUNT: " << _players.size() << "]" << endl;
-	cout << "[Check Room END]" << endl;
+	cout << "[Check Room Count: " << _players.size() << "]" << endl;
 }
 
 bool Room::IsLogin(uint64 playerId)
@@ -42,7 +41,6 @@ bool Room::IsLogin(uint64 playerId)
 		PlayerRef player = pair.second;
 		if (player->GetPlayerId() == playerId)
 		{
-			cout << "ROOM: " << player->GetPlayerId() << " / LOGIN: " << playerId << endl;
 			return true;
 		}
 	}
@@ -59,7 +57,6 @@ bool Room::CanGo(uint64 playerId, float posX, float posY)
 			continue;
 
 		if (player->GetPosX() == posX && player->GetPosY() == posY) {
-			cout << "[" <<"DIR: (" << posX << ", " << posY << "), ROOM: (" << player->GetPosX() << ", " << player->GetPosY() << ")]" << endl;
 			return false;
 		}
 	}
