@@ -146,7 +146,9 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	}
 
 	// Already login
-	if (GRoom.IsLogin(recvAccount.id())) {
+	if (GRoom.IsLogin(pairAccountPlayer.second->GetPlayerId())) 
+	{
+		cout << pairAccountPlayer.second->GetPlayerId() << " is Already Login" << endl;
 		auto errorPkt = new Protocol::ErrorObj();
 		errorPkt->set_errorcode(-PKT_C_LOGIN);
 		errorPkt->set_errormsg("Already Login");
@@ -239,6 +241,15 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 
 	// Send all players in room to new player
 	map<uint64, PlayerRef>* players = GRoom.GetPlayersInRoom();
+	cout << "ROOM SIZE: " << players->size();
+	for (auto& pair : *players)
+	{
+		cout << endl;
+		PlayerRef player = pair.second;
+		cout << player->GetPlayerId() << endl << endl;
+	}
+
+
 	if (players->size() > 0) {
 		for (const auto& pair : *players)
 		{
@@ -251,9 +262,11 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 			repeatedPlayer->set_posy(_player->GetPosY());
 			repeatedPlayer->set_maxhp(_player->GetMaxHP());
 			repeatedPlayer->set_currenthp(_player->GetCurrentHP());
+			cout << _player->GetPlayerId();
 		}
 		pkt.set_toplayer(Protocol::TO_PLAYER_OWNER);
 
+		cout << endl;
 		session->Send(MakeSendBuffer(pkt, packetId));
 	}
 	GRoom.Enter(player); // WRITE_LOCK
@@ -341,7 +354,7 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 		return false;
 	}
 
-	if (!GRoom.CanGo(recvPkt.playerid(), recvPkt.posx(), recvPkt.posy())) {
+	if (!GRoom.CanGo(session->_player->GetPlayerId(), recvPkt.posx(), recvPkt.posy())) {
 		//TODO ERROR SEND
 		cout << "CAN'T GO" << endl;
 		return false;
