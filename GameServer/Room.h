@@ -20,7 +20,7 @@ public:
 
 	vector <shared_ptr<RoomItem>> GetRoomItems() { return _roomItems; }
 	void SetRoomItems(const vector<shared_ptr<RoomItem>>& roomItems);
-	void UpdateRoomItem(shared_ptr<RoomItem>& roomItem);
+	void UpdateRoomItem(const shared_ptr<RoomItem>& roomItem);
 
 	void CheckPlayers();
 

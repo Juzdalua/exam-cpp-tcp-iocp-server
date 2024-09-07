@@ -81,6 +81,9 @@
     <ClCompile Include="ItemController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
+    <ClCompile Include="EnumMap.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="ItemController.h">
       <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumMap.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -93,12 +93,14 @@ void Room::SetRoomItems(const vector<shared_ptr<RoomItem>>& roomItems)
 	}
 }
 
-void Room::UpdateRoomItem(shared_ptr<RoomItem>& roomItem)
+void Room::UpdateRoomItem(const shared_ptr<RoomItem>& roomItem)
 {
 	for (auto& item : _roomItems)
 	{
 		if (item->GetRoomItemId() == roomItem->GetRoomItemId())
 		{
+			RoomItemState state = roomItem->GetState();
+
 			item = make_shared<RoomItem>(
 				roomItem->GetRoomId(),
 				roomItem->GetRoomItemId(),
@@ -107,10 +109,9 @@ void Room::UpdateRoomItem(shared_ptr<RoomItem>& roomItem)
 				roomItem->GetItemId(),
 				roomItem->GetItemName(),
 				roomItem->GetItemEffect(),
-				roomItem->GetItemValue()
+				roomItem->GetItemValue(),
+				roomItem->GetState()
 			);
-
-			item->SetState(roomItem->GetState());
 			return;
 		}
 	}

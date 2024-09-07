@@ -73,7 +73,8 @@ vector<shared_ptr<RoomItem>> ItemService::GetRoomItemsByRoomId(uint64 roomId)
 				item.effect as itemEffect,
 				item.value as itemValue,
 				roomitem.posX,
-				roomitem.posY 
+				roomitem.posY ,
+				roomitem.state
 			from 
 				item
 			left join
@@ -100,8 +101,20 @@ vector<shared_ptr<RoomItem>> ItemService::GetRoomItemsByRoomId(uint64 roomId)
 		int itemValue = res->getInt("itemValue");
 		float posX = static_cast<float>(res->getDouble("posX"));
 		float posY = static_cast<float>(res->getDouble("posY"));
+		string state = res->getString("state");
 
-		roomItems.push_back(make_shared<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue));
+		//TODO ENUM MAP
+		RoomItemState convertState;
+		if (state == "0")
+		{
+			convertState = RoomItemState::AVAILABLE;
+		}
+		else if(state == "1")
+		{
+			convertState = RoomItemState::RESPAWN_PENDING;
+		}
+
+		roomItems.push_back(make_shared<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue, convertState));
 	}
 	return roomItems;
 }
@@ -117,7 +130,8 @@ shared_ptr<RoomItem> ItemService::GetRoomItemByRoomItemId(uint64 roomItemId)
 				item.effect as itemEffect,
 				item.value as itemValue,
 				roomitem.posX,
-				roomitem.posY 
+				roomitem.posY,
+				roomitem.state
 			from 
 				item
 			left join
@@ -143,8 +157,52 @@ shared_ptr<RoomItem> ItemService::GetRoomItemByRoomItemId(uint64 roomItemId)
 		int itemValue = res->getInt("itemValue");
 		float posX = static_cast<float>(res->getDouble("posX"));
 		float posY = static_cast<float>(res->getDouble("posY"));
+		string state = res->getString("state");
 
-		return  make_shared<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue);
+		//TODO ENUM MAP
+		RoomItemState convertState;
+		if (state == "0")
+		{
+			convertState = RoomItemState::AVAILABLE;
+		}
+		else if (state == "1")
+		{
+			convertState = RoomItemState::RESPAWN_PENDING;
+		}
+		return  make_shared<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue, convertState);
 	}
 	return nullptr;
+}
+
+void ItemService::InitRoomItems()
+{
+	string query = R"(
+		update roomitem 
+		set 
+		state = "0"
+		)";
+
+	vector<string>params;
+
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+}
+
+void ItemService::UpdateRoomItemByRoomItem(shared_ptr<RoomItem> roomItem)
+{
+	string query = R"(
+		update roomitem 
+		set 
+		posX = ?,
+		posY = ?,
+		state = ?
+		where id = ?;
+		)";
+
+	vector<string>params;
+	params.push_back(to_string(roomItem->GetPosX()));
+	params.push_back(to_string(roomItem->GetPosY()));
+	params.push_back(to_string(roomItem->GetState()));
+	params.push_back(to_string(roomItem->GetRoomItemId()));
+
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }

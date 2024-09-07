@@ -39,9 +39,7 @@ class RoomItem : public Item
 {
 public:
 	RoomItem() = default;
-	RoomItem(uint64 roomId, uint64 roomItemId, float posX, float posY, uint64 itemId, string itemName, string itemEffect, int64 value)
-		:Item(itemId, itemName, itemEffect, value),
-		_roomId(roomId), _roomItemId(roomItemId), _posX(posX), _posY(posY) {};
+	RoomItem(uint64 roomId, uint64 roomItemId, float posX, float posY, uint64 itemId, string itemName, string itemEffect, int64 value, RoomItemState state);
 	~RoomItem() {};
 
 public:

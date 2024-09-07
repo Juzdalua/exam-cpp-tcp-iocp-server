@@ -9,5 +9,8 @@ public:
 
 	static vector<shared_ptr<RoomItem>> GetRoomItemsByRoomId(uint64 roomId);
 	static shared_ptr<RoomItem> GetRoomItemByRoomItemId(uint64 roomItemId);
+
+	static void InitRoomItems();
+	static void UpdateRoomItemByRoomItem(shared_ptr<RoomItem> roomItem);
 };
 

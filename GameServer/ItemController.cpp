@@ -21,3 +21,13 @@ shared_ptr<RoomItem> ItemController::GetRoomItemByRoomItemId(uint64 roomItemId)
 {
 	return ItemService::GetRoomItemByRoomItemId(roomItemId);
 }
+
+void ItemController::InitRoomItems()
+{
+	return ItemService::InitRoomItems();
+}
+
+void ItemController::UpdateRoomItemByRoomItem(shared_ptr<RoomItem> roomItem)
+{
+	return ItemService::UpdateRoomItemByRoomItem(roomItem);
+}
