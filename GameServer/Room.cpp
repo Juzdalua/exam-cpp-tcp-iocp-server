@@ -31,24 +31,41 @@ void Room::Broadcast(SendBufferRef sendBuffer)
 
 void Room::CheckPlayers()
 {
-	cout << "[Check Room Start / COUNT: "<< _players.size() << "]" << endl;
-	for (auto& pair : _players)
-	{
-		PlayerRef player = pair.second;
-		cout << "ID: " << player->GetPlayerId() << " / Position: (" << player->GetPosX() << ", "<< player->GetPosY() << ")" << endl;
-	}
-	cout << "[Check Room END]" << endl;
+	cout << "[Check Room Count: " << _players.size() << "]" << endl;
 }
 
-bool Room::IsLogin(uint64 playerId) 
+bool Room::IsLogin(uint64 playerId)
 {
 	for (auto& pair : _players)
 	{
 		PlayerRef player = pair.second;
 		if (player->GetPlayerId() == playerId)
+		{
 			return true;
+		}
 	}
 	return false;
+}
+
+uint64 Room::GetSize()
+{
+	return _players.size();
+}
+
+bool Room::CanGo(uint64 playerId, float posX, float posY)
+{
+	lock_guard<mutex> lock(_lock);
+	for (auto& pair : _players)
+	{
+		PlayerRef player = pair.second;
+		if (playerId == pair.second->GetAccountId())
+			continue;
+
+		if (player->GetPosX() == posX && player->GetPosY() == posY) {
+			return false;
+		}
+	}
+	return true;
 }
 
 void Room::UpdateMove(uint64 playerId, float posX, float posY)
@@ -61,4 +78,9 @@ void Room::UpdateMove(uint64 playerId, float posX, float posY)
 			player->SetPosition(posX, posY);
 		}
 	}
+}
+
+void Room::UpdateCurrentHP(uint64 playerId, uint64 currentHP)
+{
+	_players[playerId]->SetCurrentHP(currentHP);
 }

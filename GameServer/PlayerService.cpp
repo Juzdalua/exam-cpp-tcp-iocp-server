@@ -29,10 +29,10 @@ unique_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
 		uint64 playerId = res->getUInt64("playerId");
 		uint64 accountId = res->getUInt64("accountId");
 		string playerName = res->getString("playerName");
-		float posX = res->getDouble("posX");
-		float posY = res->getDouble("posY");
-		float maxHP = res->getDouble("maxHP");
-		float currentHP = res->getDouble("currentHP");
+		float posX = static_cast<float>(res->getDouble("posX"));
+		float posY = static_cast<float>(res->getDouble("posY"));
+		uint64 maxHP = res->getUInt64("maxHP");
+		uint64 currentHP = res->getUInt64("currentHP");
 
 		return  make_unique<Player>(playerId, accountId, playerName, posX, posY, maxHP, currentHP);
 	}
@@ -57,7 +57,7 @@ void PlayerService::UpdateMove(uint64 playerId, float posX, float posY)
 	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }
 
-uint64 PlayerService::DecreaseHP(uint64 playerId, float damage)
+uint64 PlayerService::DecreaseHP(uint64 playerId, uint64 damage)
 {
 	auto conn = CP->getConnection();
 	if (!conn) {
@@ -107,8 +107,24 @@ uint64 PlayerService::DecreaseHP(uint64 playerId, float damage)
 		cerr << "SQL state: " << e.getSQLState() << endl;
 		return -1;
 	}
+}
 
+void PlayerService::UpdatePlayer(PlayerRef& player)
+{
+	string query = R"(
+		update player 
+		set 
+			posX = ?,
+			posY = ?,
+			currentHP = ?
+		where id =?;
+		)";
 
+	vector<string>params;
+	params.push_back(to_string(player->GetPosX()));
+	params.push_back(to_string(player->GetPosY()));
+	params.push_back(to_string(player->GetCurrentHP()));
+	params.push_back(to_string(player->GetPlayerId()));
 
-
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }

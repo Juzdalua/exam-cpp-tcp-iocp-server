@@ -1,0 +1,150 @@
+#include "pch.h"
+#include "ItemService.h"
+#include <ConnectionPool.h>
+
+unique_ptr<Item> ItemService::GetItemById(uint64 id)
+{
+	string query = R"(
+			select 
+				id as itemId,
+				name as itemName,
+				effect as itemEffect,
+				value as itemValue
+			from item 
+			where id = ?;
+		)";
+	vector<string>params;
+	params.push_back(to_string(id));
+
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+	if (res->next())
+	{
+		uint64 id = res->getUInt64("itemId");
+		string name = res->getString("itemName");
+		string effect = res->getString("itemEffect");
+		int value = res->getInt("itemValue");
+		cout << "ID: " << id << endl;
+		cout << "name: " << name << endl;
+		cout << "effect: " << effect << endl;
+		cout << "value: " << value << endl;
+		
+		return  make_unique<Item>(id, name, effect, value);
+	}
+	return nullptr;
+}
+
+unique_ptr<Item> ItemService::GetItemByName(string name)
+{
+	string query = R"(
+			select 
+				id as itemId,
+				name as itemName,
+				effect as itemEffect,
+				value as itemValue
+			from item 
+			where name = ?;
+		)";
+	vector<string>params;
+	params.push_back(name);
+
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+	if (res->next())
+	{
+		uint64 id = res->getUInt64("itemId");
+		string name = res->getString("itemName");
+		string effect = res->getString("itemEffect");
+		int value= res->getInt("itemValue");
+
+		return  make_unique<Item>(id, name, effect, value);
+	}
+	return nullptr;
+}
+
+vector<unique_ptr<RoomItem>> ItemService::GetRoomItemsByRoomId(uint64 roomId)
+{
+	string query = R"(
+			select 
+				roomitem.roomId as roomId,
+				roomitem.id as roomItemId,
+				item.id as itemId,
+				item.name as itemName,
+				item.effect as itemEffect,
+				item.value as itemValue,
+				roomitem.posX,
+				roomitem.posY 
+			from 
+				item
+			left join
+				roomitem
+			on
+				item.id = roomitem.itemId 
+			where 
+				roomId = ?
+			order by roomitem.id asc;
+		)";
+	vector<string>params;
+	params.push_back(to_string(roomId));
+
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+	vector<unique_ptr<RoomItem>> roomItems;
+	while (res->next())
+	{
+		uint64 roomId = res->getUInt64("roomId");
+		uint64 roomItemId = res->getUInt64("roomItemId");
+		uint64 itemId = res->getUInt64("itemId");
+		string itemName = res->getString("itemName");
+		string itemEffect = res->getString("itemEffect");
+		int itemValue = res->getInt("itemValue");
+		float posX = static_cast<float>(res->getDouble("posX"));
+		float posY = static_cast<float>(res->getDouble("posY"));
+
+		roomItems.push_back(make_unique<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue));
+	}
+	return roomItems;
+}
+
+unique_ptr<RoomItem> ItemService::GetRoomItemByRoomItemId(uint64 roomItemId)
+{
+	string query = R"(
+			select 
+				roomitem.roomId as roomId,
+				roomitem.id as roomItemId,
+				item.id as itemId,
+				item.name as itemName,
+				item.effect as itemEffect,
+				item.value as itemValue,
+				roomitem.posX,
+				roomitem.posY 
+			from 
+				item
+			left join
+				roomitem
+			on
+				item.id = roomitem.itemId 
+			where 
+				roomitem.id = ?
+			order by roomitem.id asc;
+		)";
+	vector<string>params;
+	params.push_back(to_string(roomItemId));
+
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+	if (res->next())
+	{
+		uint64 roomId = res->getUInt64("roomId");
+		uint64 roomItemId = res->getUInt64("roomItemId");
+		uint64 itemId = res->getUInt64("itemId");
+		string itemName = res->getString("itemName");
+		string itemEffect = res->getString("itemEffect");
+		int itemValue = res->getInt("itemValue");
+		float posX = static_cast<float>(res->getDouble("posX"));
+		float posY = static_cast<float>(res->getDouble("posY"));
+
+		return  make_unique<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue);
+	}
+	return nullptr;
+}

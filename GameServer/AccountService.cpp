@@ -130,8 +130,8 @@ pair<shared_ptr<Account>, shared_ptr<Player>> AccountService::GetAccountAndPlaye
 		string playerName = res->getString("playerName");
 		float posX = res->getDouble("posX");
 		float posY = res->getDouble("posY");
-		float maxHP = res->getDouble("maxHP");
-		float currentHP = res->getDouble("currentHP");
+		uint64 maxHP = res->getUInt64("maxHP");
+		uint64 currentHP = res->getUInt64("currentHP");
 
 		account = make_shared<Account>(accountId, name, hashedPwd);
 		player = make_shared<Player>(playerId, accountId, playerName, posX, posY, maxHP, currentHP);
