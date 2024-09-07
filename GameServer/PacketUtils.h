@@ -28,6 +28,12 @@ unordered_map<uint16, string> packetIdToString =
 
 	{PKT_C_HIT, "PKT_C_HIT"},
 	{PKT_S_HIT, "PKT_S_HIT"},
+
+	{PKT_C_EAT_ROOM_ITEM, "PKT_C_EAT_ROOM_ITEM"},
+	{PKT_S_EAT_ROOM_ITEM, "PKT_S_EAT_ROOM_ITEM"},
+
+	{PKT_C_USE_ITEM, "PKT_C_USE_ITEM"},
+	{PKT_S_USE_ITEM, "PKT_S_USE_ITEM"},
 };
 
 class PacketUtils

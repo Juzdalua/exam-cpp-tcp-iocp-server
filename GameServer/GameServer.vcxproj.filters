@@ -72,6 +72,15 @@
     <ClCompile Include="PacketUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemService.cpp">
+      <Filter>Service</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -118,6 +127,15 @@
     </ClInclude>
     <ClInclude Include="PacketUtils.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemService.h">
+      <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemController.h">
+      <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

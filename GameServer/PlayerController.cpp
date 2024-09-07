@@ -16,3 +16,8 @@ uint64 PlayerController::DecreaseHP(uint64 playerId, uint64 damage)
 {
     return PlayerService::DecreaseHP(playerId, damage);
 }
+
+void PlayerController::UpdatePlayer(PlayerRef& player)
+{
+    return PlayerService::UpdatePlayer(player);
+}

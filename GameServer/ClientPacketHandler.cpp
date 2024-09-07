@@ -6,7 +6,9 @@
 #include "PlayerController.h"
 #include "Player.h"
 #include "Room.h"
+#include "ItemController.h"
 
+mutex _lock;
 bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
@@ -43,6 +45,14 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 
 	case PKT_C_HIT:
 		ClientPacketHandler::HandleHit(buffer, len, session);
+		break;
+
+	case PKT_C_EAT_ROOM_ITEM:
+		ClientPacketHandler::HandleEatRoomItem(buffer, len, session);
+		break;
+
+	case PKT_C_USE_ITEM:
+		ClientPacketHandler::HandleUseItem(buffer, len, session);
 		break;
 	}
 
@@ -235,8 +245,8 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		repeatPlayer->set_maxhp(player->GetMaxHP());
 		repeatPlayer->set_currenthp(player->GetCurrentHP());
 	}
-	auto m = pkt.mutable_players();
-	m->Add();
+	/*auto m = pkt.mutable_players();
+	m->Add();*/
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 
 	// Send all players in room to new player
@@ -260,6 +270,45 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		session->Send(MakeSendBuffer(pkt, packetId));
 	}
 	GRoom.Enter(player); // WRITE_LOCK
+
+	// Create Game Set
+	lock_guard<mutex> lock(_lock);
+	cout << "ROOM SIZE: " << GRoom.GetSize() << endl;
+	if (GRoom.GetSize() == 1)
+	{
+		// TODO -> MAKE Room ID
+		vector<unique_ptr<RoomItem>> roomItems = ItemController::GetRoomItemsByRoomId(1);
+
+		Protocol::S_CREATE_ROOM createRoomPkt;
+		uint16 createRoomPacketId = PKT_S_CREATE_ROOM;
+		
+		for (unique_ptr<RoomItem>& roomItem : roomItems) 
+		{
+			Protocol::RoomItem* repeatedItem = createRoomPkt.add_item();
+			repeatedItem->set_roomid(roomItem->GetRoomId());
+			repeatedItem->set_roomitemid(roomItem->GetRoomItemId());
+			repeatedItem->set_posx(roomItem->GetPosX());
+			repeatedItem->set_posy(roomItem->GetPosY());
+
+			auto sendItem = new Protocol::Item();
+			sendItem->set_itemid(roomItem->GetItemId());
+			sendItem->set_value(roomItem->GetItemValue());
+			sendItem->set_amount(1);
+			if (roomItem->GetItemEffect() == "HP")
+			{
+				sendItem->set_type(Protocol::ITEM_TYPE_HEAL);
+				sendItem->set_effect(Protocol::ITEM_EFFECT_HP);
+			}
+			// TODO 
+			else {
+
+			}
+			repeatedItem->set_allocated_item(sendItem);
+		}
+		/*auto m = pkt.mutable_item();
+		m->Add();*/
+		session->Send(MakeSendBuffer(createRoomPkt, createRoomPacketId));
+	}
 
 	return true;
 }
@@ -435,5 +484,109 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 	pkt.set_playerid(session->_player->GetPlayerId());
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 
-	return false;
+	return true;
+}
+
+// Eat Room Item
+bool ClientPacketHandler::HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
+{
+	Protocol::C_EAT_ROOM_ITEM recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	// Validation
+	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
+		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		return false;
+	}
+
+	const Protocol::RoomItem& recvItem = recvPkt.item();
+	unique_ptr<RoomItem> roomItem = ItemController::GetRoomItemByRoomItemId(recvItem.roomitemid());
+
+	// Session & Room Update
+	switch (recvItem.item().type())
+	{
+	default:
+	case Protocol::ITEM_TYPE_HEAL:
+		
+		session->_player->HealHP(roomItem->GetItemValue());
+		GRoom.UpdateCurrentHP(session->_player->GetPlayerId(), session->_player->GetCurrentHP());
+		break;
+
+	// TODO ADD MORE ITEM
+	}
+
+	// UPDATE DB WITH PLAYER
+	PlayerController::UpdatePlayer(session->_player);
+
+	auto sendPlayer = new Protocol::Player();
+	sendPlayer->set_id(session->_player->GetPlayerId());
+	sendPlayer->set_accountid(session->_player->GetAccountId());
+	sendPlayer->set_posx(session->_player->GetPosX());
+	sendPlayer->set_posy(session->_player->GetPosY());
+	sendPlayer->set_maxhp(session->_player->GetMaxHP());
+	sendPlayer->set_currenthp(session->_player->GetCurrentHP());
+
+	uint16 packetId = PKT_S_EAT_ROOM_ITEM;
+	Protocol::S_EAT_ROOM_ITEM pkt;
+	pkt.set_allocated_player(sendPlayer);
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	// Respawn Room Item
+	Protocol::S_CREATE_ROOM createRoomPkt;
+	uint16 createRoomPacketId = PKT_S_CREATE_ROOM;
+
+	Protocol::RoomItem* repeatedItem = createRoomPkt.add_item();
+	repeatedItem->set_roomid(roomItem->GetRoomId());
+	repeatedItem->set_roomitemid(roomItem->GetRoomItemId());
+	repeatedItem->set_posx(roomItem->GetPosX());
+	repeatedItem->set_posy(roomItem->GetPosY());
+
+	auto sendItem = new Protocol::Item();
+	sendItem->set_itemid(roomItem->GetItemId());
+	sendItem->set_value(roomItem->GetItemValue());
+	sendItem->set_amount(1);
+	if (roomItem->GetItemEffect() == "HP")
+	{
+		sendItem->set_type(Protocol::ITEM_TYPE_HEAL);
+		sendItem->set_effect(Protocol::ITEM_EFFECT_HP);
+	}
+	// TODO 
+	else {
+
+	}
+	repeatedItem->set_allocated_item(sendItem);
+	
+	//this_thread::sleep_for(3s); // 3초 대기 후 전송.
+
+	std::thread([=]() {
+		std::this_thread::sleep_for(std::chrono::seconds(3));
+		GRoom.Broadcast(MakeSendBuffer(createRoomPkt, createRoomPacketId));
+		}).detach();
+
+
+	//GRoom.Broadcast(MakeSendBuffer(createRoomPkt, createRoomPacketId));
+
+	return true;
+}
+
+// USE ITEM
+bool ClientPacketHandler::HandleUseItem(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
+{
+	//Protocol::C_USE_ITEM recvPkt;
+	//recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	//// Validation
+	//if (session->_player->GetPlayerId() != recvPkt.playerid()) {
+	//	// TODO Send Error
+	//	cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+	//	return false;
+	//}
+
+	//const Protocol::Item& recvItem = recvPkt.item();
+	//unique_ptr<Item> item = ItemController::GetItemById(recvItem.itemid());
+
+	
+
+	return true;
 }

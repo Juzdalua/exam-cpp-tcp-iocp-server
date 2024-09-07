@@ -9,6 +9,7 @@ public:
 
 	bool IsLogin(uint64 playerId);
 
+	uint64 GetSize();
 	map<uint64, PlayerRef>* GetPlayersInRoom() {return &_players;}
 
 	bool CanGo(uint64 playerId, float posX, float posY);

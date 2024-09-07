@@ -14,6 +14,7 @@ public:
 	void SetPosition(float posX, float posY) { _posX = posX; _posY = posY; }
 	
 	void DecreaseHP(uint64 damage) { _currentHP -= damage; if (_currentHP < 0) _currentHP = 0; }
+	void HealHP(uint64 heal) { _currentHP += heal; if (_currentHP > _maxHP) _currentHP = _maxHP; }
 	void SetCurrentHP(uint64 currentHP) { _currentHP = currentHP; }
 
 public:

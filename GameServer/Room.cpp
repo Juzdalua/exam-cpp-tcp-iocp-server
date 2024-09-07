@@ -47,6 +47,11 @@ bool Room::IsLogin(uint64 playerId)
 	return false;
 }
 
+uint64 Room::GetSize()
+{
+	return _players.size();
+}
+
 bool Room::CanGo(uint64 playerId, float posX, float posY)
 {
 	lock_guard<mutex> lock(_lock);

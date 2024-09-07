@@ -107,8 +107,24 @@ uint64 PlayerService::DecreaseHP(uint64 playerId, uint64 damage)
 		cerr << "SQL state: " << e.getSQLState() << endl;
 		return -1;
 	}
+}
 
+void PlayerService::UpdatePlayer(PlayerRef& player)
+{
+	string query = R"(
+		update player 
+		set 
+			posX = ?,
+			posY = ?,
+			currentHP = ?
+		where id =?;
+		)";
 
+	vector<string>params;
+	params.push_back(to_string(player->GetPosX()));
+	params.push_back(to_string(player->GetPosY()));
+	params.push_back(to_string(player->GetCurrentHP()));
+	params.push_back(to_string(player->GetPlayerId()));
 
-
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }
