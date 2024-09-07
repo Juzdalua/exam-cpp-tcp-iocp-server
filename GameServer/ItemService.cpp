@@ -2,7 +2,7 @@
 #include "ItemService.h"
 #include <ConnectionPool.h>
 
-unique_ptr<Item> ItemService::GetItemById(uint64 id)
+shared_ptr<Item> ItemService::GetItemById(uint64 id)
 {
 	string query = R"(
 			select 
@@ -16,7 +16,7 @@ unique_ptr<Item> ItemService::GetItemById(uint64 id)
 	vector<string>params;
 	params.push_back(to_string(id));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -29,12 +29,12 @@ unique_ptr<Item> ItemService::GetItemById(uint64 id)
 		cout << "effect: " << effect << endl;
 		cout << "value: " << value << endl;
 		
-		return  make_unique<Item>(id, name, effect, value);
+		return  make_shared<Item>(id, name, effect, value);
 	}
 	return nullptr;
 }
 
-unique_ptr<Item> ItemService::GetItemByName(string name)
+shared_ptr<Item> ItemService::GetItemByName(string name)
 {
 	string query = R"(
 			select 
@@ -48,7 +48,7 @@ unique_ptr<Item> ItemService::GetItemByName(string name)
 	vector<string>params;
 	params.push_back(name);
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -57,12 +57,12 @@ unique_ptr<Item> ItemService::GetItemByName(string name)
 		string effect = res->getString("itemEffect");
 		int value= res->getInt("itemValue");
 
-		return  make_unique<Item>(id, name, effect, value);
+		return  make_shared<Item>(id, name, effect, value);
 	}
 	return nullptr;
 }
 
-vector<unique_ptr<RoomItem>> ItemService::GetRoomItemsByRoomId(uint64 roomId)
+vector<shared_ptr<RoomItem>> ItemService::GetRoomItemsByRoomId(uint64 roomId)
 {
 	string query = R"(
 			select 
@@ -87,9 +87,9 @@ vector<unique_ptr<RoomItem>> ItemService::GetRoomItemsByRoomId(uint64 roomId)
 	vector<string>params;
 	params.push_back(to_string(roomId));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
-	vector<unique_ptr<RoomItem>> roomItems;
+	vector<shared_ptr<RoomItem>> roomItems;
 	while (res->next())
 	{
 		uint64 roomId = res->getUInt64("roomId");
@@ -101,12 +101,12 @@ vector<unique_ptr<RoomItem>> ItemService::GetRoomItemsByRoomId(uint64 roomId)
 		float posX = static_cast<float>(res->getDouble("posX"));
 		float posY = static_cast<float>(res->getDouble("posY"));
 
-		roomItems.push_back(make_unique<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue));
+		roomItems.push_back(make_shared<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue));
 	}
 	return roomItems;
 }
 
-unique_ptr<RoomItem> ItemService::GetRoomItemByRoomItemId(uint64 roomItemId)
+shared_ptr<RoomItem> ItemService::GetRoomItemByRoomItemId(uint64 roomItemId)
 {
 	string query = R"(
 			select 
@@ -131,7 +131,7 @@ unique_ptr<RoomItem> ItemService::GetRoomItemByRoomItemId(uint64 roomItemId)
 	vector<string>params;
 	params.push_back(to_string(roomItemId));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -144,7 +144,7 @@ unique_ptr<RoomItem> ItemService::GetRoomItemByRoomItemId(uint64 roomItemId)
 		float posX = static_cast<float>(res->getDouble("posX"));
 		float posY = static_cast<float>(res->getDouble("posY"));
 
-		return  make_unique<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue);
+		return  make_shared<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue);
 	}
 	return nullptr;
 }

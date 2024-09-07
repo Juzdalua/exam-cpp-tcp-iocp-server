@@ -2,7 +2,7 @@
 #include "PlayerService.h"
 #include <ConnectionPool.h>
 
-unique_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
+shared_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
 {
 	string query = R"(
 			SELECT
@@ -22,7 +22,7 @@ unique_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
 	vector<string>params;
 	params.push_back(to_string(accountId));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -34,7 +34,7 @@ unique_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
 		uint64 maxHP = res->getUInt64("maxHP");
 		uint64 currentHP = res->getUInt64("currentHP");
 
-		return  make_unique<Player>(playerId, accountId, playerName, posX, posY, maxHP, currentHP);
+		return  make_shared<Player>(playerId, accountId, playerName, posX, posY, maxHP, currentHP);
 	}
 	return nullptr;
 }
@@ -54,7 +54,7 @@ void PlayerService::UpdateMove(uint64 playerId, float posX, float posY)
 	params.push_back(to_string(posY));
 	params.push_back(to_string(playerId));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }
 
 uint64 PlayerService::DecreaseHP(uint64 playerId, uint64 damage)
@@ -73,7 +73,7 @@ uint64 PlayerService::DecreaseHP(uint64 playerId, uint64 damage)
 			set currentHP = if (currentHP <= ?, 0, currentHP - ?)
 			where id = ?;
         )";
-		unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(decreaseHPQuery));
+		shared_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(decreaseHPQuery));
 
 		pstmt->setString(1, to_string(damage));
 		pstmt->setString(2, to_string(damage));
@@ -83,9 +83,9 @@ uint64 PlayerService::DecreaseHP(uint64 playerId, uint64 damage)
 		string getCurrentHPQuery = R"(
 				SELECT currentHP FROM player WHERE id = ?
 			)";
-		unique_ptr<sql::PreparedStatement> pstmtPlayer(conn->prepareStatement(getCurrentHPQuery));
+		shared_ptr<sql::PreparedStatement> pstmtPlayer(conn->prepareStatement(getCurrentHPQuery));
 		pstmtPlayer->setString(1, to_string(playerId));
-		unique_ptr<sql::ResultSet> res(pstmtPlayer->executeQuery());
+		shared_ptr<sql::ResultSet> res(pstmtPlayer->executeQuery());
 
 		if (res->next())
 		{
@@ -126,5 +126,5 @@ void PlayerService::UpdatePlayer(PlayerRef& player)
 	params.push_back(to_string(player->GetCurrentHP()));
 	params.push_back(to_string(player->GetPlayerId()));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }

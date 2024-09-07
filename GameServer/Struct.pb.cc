@@ -93,6 +93,7 @@ PROTOBUF_CONSTEXPR RoomItem::RoomItem(
   , /*decltype(_impl_.roomitemid_)*/uint64_t{0u}
   , /*decltype(_impl_.posx_)*/0
   , /*decltype(_impl_.posy_)*/0
+  , /*decltype(_impl_.state_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct RoomItemDefaultTypeInternal {
   PROTOBUF_CONSTEXPR RoomItemDefaultTypeInternal()
@@ -161,6 +162,7 @@ const uint32_t TableStruct_Struct_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::Protocol::RoomItem, _impl_.item_),
   PROTOBUF_FIELD_OFFSET(::Protocol::RoomItem, _impl_.posx_),
   PROTOBUF_FIELD_OFFSET(::Protocol::RoomItem, _impl_.posy_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::RoomItem, _impl_.state_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::Protocol::ErrorObj)},
@@ -188,17 +190,18 @@ const char descriptor_table_protodef_Struct_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "\n\tcurrentHP\030\007 \001(\004\"}\n\004Item\022\016\n\006itemId\030\001 \001("
   "\004\022 \n\004type\030\002 \001(\0162\022.Protocol.ItemType\022$\n\006e"
   "ffect\030\003 \001(\0162\024.Protocol.ItemEffect\022\r\n\005val"
-  "ue\030\004 \001(\004\022\016\n\006amount\030\005 \001(\004\"h\n\010RoomItem\022\016\n\006"
-  "roomId\030\001 \001(\004\022\022\n\nroomItemId\030\002 \001(\004\022\034\n\004item"
-  "\030\003 \001(\0132\016.Protocol.Item\022\014\n\004posX\030\004 \001(\002\022\014\n\004"
-  "posY\030\005 \001(\002b\006proto3"
+  "ue\030\004 \001(\004\022\016\n\006amount\030\005 \001(\004\"\220\001\n\010RoomItem\022\016\n"
+  "\006roomId\030\001 \001(\004\022\022\n\nroomItemId\030\002 \001(\004\022\034\n\004ite"
+  "m\030\003 \001(\0132\016.Protocol.Item\022\014\n\004posX\030\004 \001(\002\022\014\n"
+  "\004posY\030\005 \001(\002\022&\n\005state\030\006 \001(\0162\027.Protocol.Ro"
+  "omItemStateb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Struct_2eproto_deps[1] = {
   &::descriptor_table_Enum_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_Struct_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Struct_2eproto = {
-    false, false, 498, descriptor_table_protodef_Struct_2eproto,
+    false, false, 539, descriptor_table_protodef_Struct_2eproto,
     "Struct.proto",
     &descriptor_table_Struct_2eproto_once, descriptor_table_Struct_2eproto_deps, 1, 5,
     schemas, file_default_instances, TableStruct_Struct_2eproto::offsets,
@@ -1421,6 +1424,7 @@ RoomItem::RoomItem(const RoomItem& from)
     , decltype(_impl_.roomitemid_){}
     , decltype(_impl_.posx_){}
     , decltype(_impl_.posy_){}
+    , decltype(_impl_.state_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -1428,8 +1432,8 @@ RoomItem::RoomItem(const RoomItem& from)
     _this->_impl_.item_ = new ::Protocol::Item(*from._impl_.item_);
   }
   ::memcpy(&_impl_.roomid_, &from._impl_.roomid_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.posy_) -
-    reinterpret_cast<char*>(&_impl_.roomid_)) + sizeof(_impl_.posy_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.state_) -
+    reinterpret_cast<char*>(&_impl_.roomid_)) + sizeof(_impl_.state_));
   // @@protoc_insertion_point(copy_constructor:Protocol.RoomItem)
 }
 
@@ -1443,6 +1447,7 @@ inline void RoomItem::SharedCtor(
     , decltype(_impl_.roomitemid_){uint64_t{0u}}
     , decltype(_impl_.posx_){0}
     , decltype(_impl_.posy_){0}
+    , decltype(_impl_.state_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1476,8 +1481,8 @@ void RoomItem::Clear() {
   }
   _impl_.item_ = nullptr;
   ::memset(&_impl_.roomid_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.posy_) -
-      reinterpret_cast<char*>(&_impl_.roomid_)) + sizeof(_impl_.posy_));
+      reinterpret_cast<char*>(&_impl_.state_) -
+      reinterpret_cast<char*>(&_impl_.roomid_)) + sizeof(_impl_.state_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1524,6 +1529,15 @@ const char* RoomItem::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 45)) {
           _impl_.posy_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // .Protocol.RoomItemState state = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_state(static_cast<::Protocol::RoomItemState>(val));
         } else
           goto handle_unusual;
         continue;
@@ -1595,6 +1609,13 @@ uint8_t* RoomItem::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteFloatToArray(5, this->_internal_posy(), target);
   }
 
+  // .Protocol.RoomItemState state = 6;
+  if (this->_internal_state() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      6, this->_internal_state(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1646,6 +1667,12 @@ size_t RoomItem::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
+  // .Protocol.RoomItemState state = 6;
+  if (this->_internal_state() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_state());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1688,6 +1715,9 @@ void RoomItem::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTO
   if (raw_posy != 0) {
     _this->_internal_set_posy(from._internal_posy());
   }
+  if (from._internal_state() != 0) {
+    _this->_internal_set_state(from._internal_state());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1706,8 +1736,8 @@ void RoomItem::InternalSwap(RoomItem* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(RoomItem, _impl_.posy_)
-      + sizeof(RoomItem::_impl_.posy_)
+      PROTOBUF_FIELD_OFFSET(RoomItem, _impl_.state_)
+      + sizeof(RoomItem::_impl_.state_)
       - PROTOBUF_FIELD_OFFSET(RoomItem, _impl_.item_)>(
           reinterpret_cast<char*>(&_impl_.item_),
           reinterpret_cast<char*>(&other->_impl_.item_));

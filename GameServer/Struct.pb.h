@@ -954,6 +954,7 @@ class RoomItem final :
     kRoomItemIdFieldNumber = 2,
     kPosXFieldNumber = 4,
     kPosYFieldNumber = 5,
+    kStateFieldNumber = 6,
   };
   // .Protocol.Item item = 3;
   bool has_item() const;
@@ -1009,6 +1010,15 @@ class RoomItem final :
   void _internal_set_posy(float value);
   public:
 
+  // .Protocol.RoomItemState state = 6;
+  void clear_state();
+  ::Protocol::RoomItemState state() const;
+  void set_state(::Protocol::RoomItemState value);
+  private:
+  ::Protocol::RoomItemState _internal_state() const;
+  void _internal_set_state(::Protocol::RoomItemState value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.RoomItem)
  private:
   class _Internal;
@@ -1022,6 +1032,7 @@ class RoomItem final :
     uint64_t roomitemid_;
     float posx_;
     float posy_;
+    int state_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1682,6 +1693,26 @@ inline void RoomItem::_internal_set_posy(float value) {
 inline void RoomItem::set_posy(float value) {
   _internal_set_posy(value);
   // @@protoc_insertion_point(field_set:Protocol.RoomItem.posY)
+}
+
+// .Protocol.RoomItemState state = 6;
+inline void RoomItem::clear_state() {
+  _impl_.state_ = 0;
+}
+inline ::Protocol::RoomItemState RoomItem::_internal_state() const {
+  return static_cast< ::Protocol::RoomItemState >(_impl_.state_);
+}
+inline ::Protocol::RoomItemState RoomItem::state() const {
+  // @@protoc_insertion_point(field_get:Protocol.RoomItem.state)
+  return _internal_state();
+}
+inline void RoomItem::_internal_set_state(::Protocol::RoomItemState value) {
+  
+  _impl_.state_ = value;
+}
+inline void RoomItem::set_state(::Protocol::RoomItemState value) {
+  _internal_set_state(value);
+  // @@protoc_insertion_point(field_set:Protocol.RoomItem.state)
 }
 
 #ifdef __GNUC__

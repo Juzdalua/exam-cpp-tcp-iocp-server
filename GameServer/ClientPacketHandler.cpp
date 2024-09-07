@@ -84,7 +84,7 @@ bool ClientPacketHandler::HandleSignup(BYTE* buffer, int32 len, GameProtobufSess
 	Protocol::C_SIGNUP recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	unique_ptr<Account> account = AccountController::GetAccountByName(recvPkt.account().name());
+	shared_ptr<Account> account = AccountController::GetAccountByName(recvPkt.account().name());
 	if (account == nullptr)
 	{
 		bool res = AccountController::CreateAccount(recvPkt.account().id(), recvPkt.account().name(), recvPkt.account().password());
@@ -274,41 +274,59 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 	// Create Game Set
 	lock_guard<mutex> lock(_lock);
 	cout << "ROOM SIZE: " << GRoom.GetSize() << endl;
+	Protocol::S_CREATE_ROOM createRoomPkt;
+	uint16 createRoomPacketId = PKT_S_CREATE_ROOM;
+	
+	vector<shared_ptr<RoomItem>> roomItems = {};
 	if (GRoom.GetSize() == 1)
 	{
 		// TODO -> MAKE Room ID
-		vector<unique_ptr<RoomItem>> roomItems = ItemController::GetRoomItemsByRoomId(1);
-
-		Protocol::S_CREATE_ROOM createRoomPkt;
-		uint16 createRoomPacketId = PKT_S_CREATE_ROOM;
-		
-		for (unique_ptr<RoomItem>& roomItem : roomItems) 
-		{
-			Protocol::RoomItem* repeatedItem = createRoomPkt.add_item();
-			repeatedItem->set_roomid(roomItem->GetRoomId());
-			repeatedItem->set_roomitemid(roomItem->GetRoomItemId());
-			repeatedItem->set_posx(roomItem->GetPosX());
-			repeatedItem->set_posy(roomItem->GetPosY());
-
-			auto sendItem = new Protocol::Item();
-			sendItem->set_itemid(roomItem->GetItemId());
-			sendItem->set_value(roomItem->GetItemValue());
-			sendItem->set_amount(1);
-			if (roomItem->GetItemEffect() == "HP")
-			{
-				sendItem->set_type(Protocol::ITEM_TYPE_HEAL);
-				sendItem->set_effect(Protocol::ITEM_EFFECT_HP);
-			}
-			// TODO 
-			else {
-
-			}
-			repeatedItem->set_allocated_item(sendItem);
-		}
-		/*auto m = pkt.mutable_item();
-		m->Add();*/
-		session->Send(MakeSendBuffer(createRoomPkt, createRoomPacketId));
+		//vector<shared_ptr<RoomItem>> roomItems = ItemController::GetRoomItemsByRoomId(1);
+		roomItems = ItemController::GetRoomItemsByRoomId(1);
+		GRoom.SetRoomItems(roomItems);
 	}
+	else
+	{
+		roomItems = GRoom.GetRoomItems();
+	}
+
+	for (shared_ptr<RoomItem>& roomItem : roomItems)
+	{
+		Protocol::RoomItem* repeatedItem = createRoomPkt.add_item();
+		repeatedItem->set_roomid(roomItem->GetRoomId());
+		repeatedItem->set_roomitemid(roomItem->GetRoomItemId());
+		repeatedItem->set_posx(roomItem->GetPosX());
+		repeatedItem->set_posy(roomItem->GetPosY());
+
+		switch (roomItem->GetRoomItemState())
+		{
+		default:
+		case RoomItemState::AVAILABLE:
+			repeatedItem->set_state(Protocol::ROOM_ITEM_STATE_AVAILABLE);
+			break;
+
+		case RoomItemState::RESPAWN_PENDING:
+			repeatedItem->set_state(Protocol::ROOM_ITEM_STATE_RESPAWN_PENDING);
+			break;
+		}
+
+		auto sendItem = new Protocol::Item();
+		sendItem->set_itemid(roomItem->GetItemId());
+		sendItem->set_value(roomItem->GetItemValue());
+		sendItem->set_amount(1);
+		if (roomItem->GetItemEffect() == "HP")
+		{
+			sendItem->set_type(Protocol::ITEM_TYPE_HEAL);
+			sendItem->set_effect(Protocol::ITEM_EFFECT_HP);
+		}
+		// TODO 
+		else {
+
+		}
+		repeatedItem->set_allocated_item(sendItem);
+	}
+
+	session->Send(MakeSendBuffer(createRoomPkt, createRoomPacketId));
 
 	return true;
 }
@@ -328,7 +346,7 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 		return false;
 	}
 
-	unique_ptr<Account> account = AccountController::GetAccountByPlayerId(recvPkt.playerid());
+	shared_ptr<Account> account = AccountController::GetAccountByPlayerId(recvPkt.playerid());
 
 	uint16 packetId = PKT_S_CHAT;
 	Protocol::S_CHAT pkt;
@@ -501,9 +519,12 @@ bool ClientPacketHandler::HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobu
 	}
 
 	const Protocol::RoomItem& recvItem = recvPkt.item();
-	unique_ptr<RoomItem> roomItem = ItemController::GetRoomItemByRoomItemId(recvItem.roomitemid());
+	shared_ptr<RoomItem> roomItem = ItemController::GetRoomItemByRoomItemId(recvItem.roomitemid());
 
 	// Session & Room Update
+	roomItem->EatItem();
+	GRoom.UpdateRoomItem(roomItem);
+
 	switch (recvItem.item().type())
 	{
 	default:
@@ -551,21 +572,16 @@ bool ClientPacketHandler::HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobu
 		sendItem->set_type(Protocol::ITEM_TYPE_HEAL);
 		sendItem->set_effect(Protocol::ITEM_EFFECT_HP);
 	}
-	// TODO 
+	// TODO OTHER ITEM
 	else {
 
 	}
 	repeatedItem->set_allocated_item(sendItem);
 	
-	//this_thread::sleep_for(3s); // 3초 대기 후 전송.
-
-	std::thread([=]() {
-		std::this_thread::sleep_for(std::chrono::seconds(3));
+	thread([=]() {
+		this_thread::sleep_for(3s);
 		GRoom.Broadcast(MakeSendBuffer(createRoomPkt, createRoomPacketId));
 		}).detach();
-
-
-	//GRoom.Broadcast(MakeSendBuffer(createRoomPkt, createRoomPacketId));
 
 	return true;
 }
@@ -584,7 +600,7 @@ bool ClientPacketHandler::HandleUseItem(BYTE* buffer, int32 len, GameProtobufSes
 	//}
 
 	//const Protocol::Item& recvItem = recvPkt.item();
-	//unique_ptr<Item> item = ItemController::GetItemById(recvItem.itemid());
+	//shared_ptr<Item> item = ItemController::GetItemById(recvItem.itemid());
 
 	
 
