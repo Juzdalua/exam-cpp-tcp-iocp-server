@@ -1,4 +1,5 @@
 #pragma once
+#include "Item.h"
 
 class Room
 {
@@ -10,12 +11,16 @@ public:
 	bool IsLogin(uint64 playerId);
 
 	uint64 GetSize();
-	map<uint64, PlayerRef>* GetPlayersInRoom() {return &_players;}
+	map<uint64, PlayerRef>* GetPlayersInRoom() { return &_players; }
 
 	bool CanGo(uint64 playerId, float posX, float posY);
 	void UpdateMove(uint64 playerId, float posX, float posY);
 
 	void UpdateCurrentHP(uint64 playerId, uint64 currentHP);
+
+	vector <shared_ptr<RoomItem>> GetRoomItems() { return _roomItems; }
+	void SetRoomItems(const vector<shared_ptr<RoomItem>>& roomItems);
+	void UpdateRoomItem(const shared_ptr<RoomItem>& roomItem);
 
 	void CheckPlayers();
 
@@ -23,6 +28,7 @@ private:
 	//USE_LOCK;
 	mutex _lock;
 	map<uint64, PlayerRef> _players;
+	vector <shared_ptr<RoomItem>> _roomItems;
 };
 
 extern Room GRoom;

@@ -8,6 +8,12 @@ enum ItemEffect
 	DEF,
 };
 
+enum RoomItemState 
+{
+	AVAILABLE,
+	RESPAWN_PENDING
+};
+
 class Item
 {
 public:
@@ -33,9 +39,7 @@ class RoomItem : public Item
 {
 public:
 	RoomItem() = default;
-	RoomItem(uint64 roomId, uint64 roomItemId, float posX, float posY, uint64 itemId, string itemName, string itemEffect, int64 value)
-		:Item(itemId, itemName, itemEffect, value),
-		_roomId(roomId), _roomItemId(roomItemId), _posX(posX), _posY(posY) {};
+	RoomItem(uint64 roomId, uint64 roomItemId, float posX, float posY, uint64 itemId, string itemName, string itemEffect, int64 value, RoomItemState state);
 	~RoomItem() {};
 
 public:
@@ -43,11 +47,19 @@ public:
 	uint64 GetRoomItemId() { return _roomItemId; }
 	float GetPosX() { return _posX; }
 	float GetPosY() { return _posY; }
+	RoomItemState GetRoomItemState() { return _state; }
+	
+	RoomItemState GetState() { return _state; }
+	void SetState(RoomItemState state) { _state = state; }
+	void EatItem();
 
 private:
 	uint64 _roomId;
 	uint64 _roomItemId;
 	float _posX;
 	float _posY;
+
+	RoomItemState _state = RoomItemState::AVAILABLE;
+	chrono::steady_clock::time_point _respawnTime;
 };
 

@@ -3,7 +3,7 @@
 #include <ConnectionPool.h>
 #include "Player.h"
 
-unique_ptr<Account> AccountService::GetAccountById(uint64 accountId)
+shared_ptr<Account> AccountService::GetAccountById(uint64 accountId)
 {
 	string query = R"(
 			SELECT
@@ -19,7 +19,7 @@ unique_ptr<Account> AccountService::GetAccountById(uint64 accountId)
 	vector<string>params;
 	params.push_back(to_string(accountId));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -27,12 +27,12 @@ unique_ptr<Account> AccountService::GetAccountById(uint64 accountId)
 		string name = res->getString("name");
 		string hashedPwd = res->getString("password");
 
-		return  make_unique<Account>(id, name, hashedPwd);
+		return  make_shared<Account>(id, name, hashedPwd);
 	}
 	return nullptr;
 }
 
-unique_ptr<Account> AccountService::GetAccountByName(string accountName)
+shared_ptr<Account> AccountService::GetAccountByName(string accountName)
 {
 	string query = R"(
 			SELECT
@@ -48,7 +48,7 @@ unique_ptr<Account> AccountService::GetAccountByName(string accountName)
 	vector<string>params;
 	params.push_back(accountName);
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -56,12 +56,12 @@ unique_ptr<Account> AccountService::GetAccountByName(string accountName)
 		string name = res->getString("name");
 		string hashedPwd = res->getString("password");
 
-		return  make_unique<Account>(id, name, hashedPwd);
+		return  make_shared<Account>(id, name, hashedPwd);
 	}
 	return nullptr;
 }
 
-unique_ptr<Account> AccountService::GetAccountByPlayerId(uint64 playerId)
+shared_ptr<Account> AccountService::GetAccountByPlayerId(uint64 playerId)
 {
 	string query = R"(
 			select 
@@ -79,14 +79,14 @@ unique_ptr<Account> AccountService::GetAccountByPlayerId(uint64 playerId)
 	vector<string>params;
 	params.push_back(to_string(playerId));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
 		uint64 id = res->getUInt64("accountId");
 		string name = res->getString("name");
 
-		return  make_unique<Account>(id, name);
+		return  make_shared<Account>(id, name);
 	}
 	return nullptr;
 }
@@ -116,7 +116,7 @@ pair<shared_ptr<Account>, shared_ptr<Player>> AccountService::GetAccountAndPlaye
 	vector<string>params;
 	params.push_back(accountName);
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	shared_ptr<Account> account = nullptr;
 	shared_ptr<Player> player = nullptr;
@@ -154,7 +154,7 @@ bool AccountService::CreateAccount(string name, string password)
 		params.push_back(name);
 		params.push_back(password);
 
-		unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+		shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 		return true;
 	}
@@ -179,7 +179,7 @@ bool AccountService::CreateAccountAndPlayer(string name, string password)
 		string accountInsertQuery = R"(
             INSERT INTO account (name, password) VALUES (?, ?);
         )";
-		unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(accountInsertQuery));
+		shared_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(accountInsertQuery));
 
 		// 계정 삽입 쿼리 파라미터 설정
 		pstmt->setString(1, name);
@@ -187,8 +187,8 @@ bool AccountService::CreateAccountAndPlayer(string name, string password)
 		pstmt->executeUpdate();
 
 		// 마지막 삽입된 ID 가져오기
-		unique_ptr<sql::Statement> stmt(conn->createStatement());
-		unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
+		shared_ptr<sql::Statement> stmt(conn->createStatement());
+		shared_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
 
 		int insertId = 0;
 		if (res->next()) {
@@ -198,7 +198,7 @@ bool AccountService::CreateAccountAndPlayer(string name, string password)
 			string playerInsertQuery = R"(
 				INSERT INTO player (account_id, name) VALUES (?, ?);
 			)";
-			unique_ptr<sql::PreparedStatement> pstmtPlayer(conn->prepareStatement(playerInsertQuery));
+			shared_ptr<sql::PreparedStatement> pstmtPlayer(conn->prepareStatement(playerInsertQuery));
 			pstmtPlayer->setInt(1, insertId);
 			pstmtPlayer->setString(2, name);
 			pstmtPlayer->executeUpdate();

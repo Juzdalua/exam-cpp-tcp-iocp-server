@@ -84,3 +84,35 @@ void Room::UpdateCurrentHP(uint64 playerId, uint64 currentHP)
 {
 	_players[playerId]->SetCurrentHP(currentHP);
 }
+
+void Room::SetRoomItems(const vector<shared_ptr<RoomItem>>& roomItems)
+{
+	_roomItems.clear();
+	for (const auto& item : roomItems) {
+		_roomItems.push_back(make_shared<RoomItem>(*item));
+	}
+}
+
+void Room::UpdateRoomItem(const shared_ptr<RoomItem>& roomItem)
+{
+	for (auto& item : _roomItems)
+	{
+		if (item->GetRoomItemId() == roomItem->GetRoomItemId())
+		{
+			RoomItemState state = roomItem->GetState();
+
+			item = make_shared<RoomItem>(
+				roomItem->GetRoomId(),
+				roomItem->GetRoomItemId(),
+				roomItem->GetPosX(),
+				roomItem->GetPosY(),
+				roomItem->GetItemId(),
+				roomItem->GetItemName(),
+				roomItem->GetItemEffect(),
+				roomItem->GetItemValue(),
+				roomItem->GetState()
+			);
+			return;
+		}
+	}
+}
