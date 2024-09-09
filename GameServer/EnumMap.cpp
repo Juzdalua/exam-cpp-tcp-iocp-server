@@ -53,7 +53,19 @@ PartyStatus EnumMap::PartyStatusMap(string column)
 		{"1", PartyStatus::PARTY_STATUS_UNAVAILABLE},
 	};
 
-	return partyStatusColumnToEnum[column];
+	//return partyStatusColumnToEnum[column];
+
+	auto it = partyStatusColumnToEnum.find(column);
+	if (it != partyStatusColumnToEnum.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		// 처리하지 못한 값에 대한 오류 처리
+		cerr << "Invalid column value: " << column << endl;
+		return PartyStatus::PARTY_STATUS_UNAVAILABLE;  // 기본값 반환 또는 예외 처리
+	}
 }
 
 PartyPlayerStatus EnumMap::PartyPlayerStatusMap(string column)
@@ -64,5 +76,17 @@ PartyPlayerStatus EnumMap::PartyPlayerStatusMap(string column)
 		{"1", PartyPlayerStatus::PARTY_PLAYER_STATUS_OUT},
 	};
 
-	return partyPlayerStatusColumnToEnum[column];
+	//return partyPlayerStatusColumnToEnum[column];
+
+	auto it = partyPlayerStatusColumnToEnum.find(column);
+	if (it != partyPlayerStatusColumnToEnum.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		// 처리하지 못한 값에 대한 오류 처리
+		cerr << "Invalid column value: " << column << endl;
+		return PartyPlayerStatus::PARTY_PLAYER_STATUS_IN;  // 기본값 반환 또는 예외 처리
+	}
 }

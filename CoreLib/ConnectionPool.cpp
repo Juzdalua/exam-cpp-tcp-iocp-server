@@ -51,19 +51,10 @@ void ConnectionPool::releaseConnection(unique_ptr<sql::Connection> conn) {
 }
 
 // 쿼리문을 받아서 실행하는 함수
-unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& cacheQuery, vector<string>& params) {
+unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& query, vector<string>& params) {
     try {
         auto conn = pool.getConnection();
         if (conn) {
-
-            // 캐시 비활성화 쿼리
-            string query = cacheQuery;
-            int64 pos = query.find("SELECT");
-            if (pos == string::npos) {
-                pos = query.find("select");
-                pos += 6;
-            }
-            query.insert(pos, " SQL_NO_CACHE");
 
             // Prepare the statement
             unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(query));

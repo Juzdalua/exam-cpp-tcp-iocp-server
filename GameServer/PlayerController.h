@@ -15,5 +15,6 @@ public:
 	static uint64 GetMyPartyIdByPlayerId(uint64 playerId);
 	static vector<shared_ptr<Player>> GetPartyPlayersByPartyId(uint64 partyId);
 	static vector<shared_ptr<Player>> GetPartyPlayersByPlayerId(uint64 playerId);
+	static vector<pair<shared_ptr<Party>, shared_ptr<PartyPlayer>>> GetAllParties();
 };
 

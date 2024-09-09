@@ -234,6 +234,32 @@ inline bool RoomItemState_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<RoomItemState>(
     RoomItemState_descriptor(), name, value);
 }
+enum PartyStatus : int {
+  PARTY_STATUS_NONE = 0,
+  PARTY_STATUS_AVAILABLE = 1,
+  PARTY_STATUS_UNAVAILABLE = 2,
+  PartyStatus_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  PartyStatus_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool PartyStatus_IsValid(int value);
+constexpr PartyStatus PartyStatus_MIN = PARTY_STATUS_NONE;
+constexpr PartyStatus PartyStatus_MAX = PARTY_STATUS_UNAVAILABLE;
+constexpr int PartyStatus_ARRAYSIZE = PartyStatus_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PartyStatus_descriptor();
+template<typename T>
+inline const std::string& PartyStatus_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, PartyStatus>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function PartyStatus_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    PartyStatus_descriptor(), enum_t_value);
+}
+inline bool PartyStatus_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, PartyStatus* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<PartyStatus>(
+    PartyStatus_descriptor(), name, value);
+}
 // ===================================================================
 
 
@@ -290,6 +316,11 @@ template <> struct is_proto_enum< ::Protocol::RoomItemState> : ::std::true_type 
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::RoomItemState>() {
   return ::Protocol::RoomItemState_descriptor();
+}
+template <> struct is_proto_enum< ::Protocol::PartyStatus> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::PartyStatus>() {
+  return ::Protocol::PartyStatus_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

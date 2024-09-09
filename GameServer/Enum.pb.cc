@@ -22,7 +22,7 @@ namespace _pbi = _pb::internal;
 
 namespace Protocol {
 }  // namespace Protocol
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[7];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Enum_2eproto[8];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Enum_2eproto = nullptr;
 const uint32_t TableStruct_Enum_2eproto::offsets[1] = {};
 static constexpr ::_pbi::MigrationSchema* schemas = nullptr;
@@ -45,11 +45,13 @@ const char descriptor_table_protodef_Enum_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "\023\n\017ITEM_EFFECT_DEF\020\004*m\n\rRoomItemState\022\030\n"
   "\024ROOM_ITEM_STATE_NONE\020\000\022\035\n\031ROOM_ITEM_STA"
   "TE_AVAILABLE\020\001\022#\n\037ROOM_ITEM_STATE_RESPAW"
-  "N_PENDING\020\002b\006proto3"
+  "N_PENDING\020\002*^\n\013PartyStatus\022\025\n\021PARTY_STAT"
+  "US_NONE\020\000\022\032\n\026PARTY_STATUS_AVAILABLE\020\001\022\034\n"
+  "\030PARTY_STATUS_UNAVAILABLE\020\002b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_Enum_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Enum_2eproto = {
-    false, false, 659, descriptor_table_protodef_Enum_2eproto,
+    false, false, 755, descriptor_table_protodef_Enum_2eproto,
     "Enum.proto",
     &descriptor_table_Enum_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_Enum_2eproto::offsets,
@@ -163,6 +165,21 @@ const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* RoomItemState_descriptor() {
   return file_level_enum_descriptors_Enum_2eproto[6];
 }
 bool RoomItemState_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PartyStatus_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Enum_2eproto);
+  return file_level_enum_descriptors_Enum_2eproto[7];
+}
+bool PartyStatus_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:

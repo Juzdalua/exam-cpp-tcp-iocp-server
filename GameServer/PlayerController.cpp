@@ -51,3 +51,8 @@ vector<shared_ptr<Player>> PlayerController::GetPartyPlayersByPlayerId(uint64 pl
 {
     return PlayerService::GetPartyPlayersByPlayerId(playerId);
 }
+
+vector<pair<shared_ptr<Party>, shared_ptr<PartyPlayer>>> PlayerController::GetAllParties()
+{
+    return PlayerService::GetAllParties();
+}
