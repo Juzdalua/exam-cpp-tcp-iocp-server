@@ -80,11 +80,13 @@ void Room::UpdateMove(uint64 playerId, float posX, float posY)
 	}
 }
 
+// HP
 void Room::UpdateCurrentHP(uint64 playerId, uint64 currentHP)
 {
 	_players[playerId]->SetCurrentHP(currentHP);
 }
 
+// Room Item
 void Room::SetRoomItems(const vector<shared_ptr<RoomItem>>& roomItems)
 {
 	_roomItems.clear();
@@ -115,4 +117,23 @@ void Room::UpdateRoomItem(const shared_ptr<RoomItem>& roomItem)
 			return;
 		}
 	}
+}
+
+// Party
+set<uint64> Room::GetPartyIdsInRoom()
+{
+	lock_guard<mutex> lock(_lock);
+	return _partyIds;
+}
+
+void Room::CreateParty(uint64 partyId)
+{
+	lock_guard<mutex> lock(_lock);
+	_partyIds.insert(partyId);
+}
+
+void Room::RemoveParty(uint64 partyId)
+{
+	lock_guard<mutex> lock(_lock);
+	_partyIds.erase(partyId);
 }

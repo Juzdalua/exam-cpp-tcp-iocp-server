@@ -1,5 +1,17 @@
 #pragma once
 
+enum PartyStatus
+{
+	PARTY_STATUS_AVAILABLE = 0,
+	PARTY_STATUS_UNAVAILABLE = 1,
+};
+
+enum PartyPlayerStatus
+{
+	PARTY_PLAYER_STATUS_IN = 0,
+	PARTY_PLAYER_STATUS_OUT = 0,
+};
+
 class Player
 {
 public:
@@ -37,3 +49,35 @@ private:
 	GameProtobufSessionRef _ownerSession;
 };
 
+/*---------------
+	Party
+---------------*/
+class Party
+{
+public:
+	Party() = default;
+	~Party() {};
+
+public:
+
+
+private:
+	uint64 _partyId;
+	PartyStatus _status;
+};
+
+class PartyPlayer
+{
+public:
+	PartyPlayer() = default;
+	~PartyPlayer() {};
+
+public:
+	uint64 GetPartyId() { return _partyId; }
+	uint64 GetPlayerId() { return _playerId; }
+
+private:
+	uint64 _partyId;
+	uint64 _playerId;
+	PartyPlayerStatus _status;
+};
