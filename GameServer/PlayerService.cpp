@@ -310,6 +310,42 @@ void PlayerService::CloseParty(uint64 partyId)
 	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }
 
+bool PlayerService::JoinParty(uint64 playerId, uint64 partyId)
+{
+	string query = R"(
+		select
+			if( (select count(id) from party where id = ? and status = "0") > 0, 
+			if( (select count(id) from partyplayer where partyid = ? and status = "0") > 0, 
+			if((select count(id) from partyplayer where playerid = ? and status = "0") = 0, 
+			true, false), false ), false ) as canJoin;
+		)";
+	vector<string>params;
+	params.push_back(to_string(partyId));
+	params.push_back(to_string(partyId));
+	params.push_back(to_string(playerId));
+
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+	if (res->next())
+	{
+		bool canJoin = res->getBoolean("canJoin");
+		if (canJoin)
+		{
+			string query = R"(
+		insert into partyplayer (partyId, playerId) values(? ,?);
+		)";
+
+			vector<string>params;
+			params.push_back(to_string(partyId));
+			params.push_back(to_string(playerId));
+
+			shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+			return true;
+		}
+	}
+	return false;
+}
+
 uint64 PlayerService::GetMyPartyIdByPlayerId(uint64 playerId)
 {
 	string query = R"(
