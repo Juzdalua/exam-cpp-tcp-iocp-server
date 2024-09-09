@@ -12,6 +12,8 @@ public:
 	static int64 CreateParty(uint64 playerId);
 	static int64 WithdrawParty(uint64 playerId, uint64 partyId);
 	static void CloseParty(uint64 partyId);
+	static bool JoinParty(uint64 playerId, uint64 partyId);
+
 	static uint64 GetMyPartyIdByPlayerId(uint64 playerId);
 	static vector<shared_ptr<Player>> GetPartyPlayersByPartyId(uint64 partyId);
 	static vector<shared_ptr<Player>> GetPartyPlayersByPlayerId(uint64 playerId);

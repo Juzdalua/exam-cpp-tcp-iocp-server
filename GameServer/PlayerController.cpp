@@ -37,6 +37,11 @@ void PlayerController::CloseParty(uint64 partyId)
     return PlayerService::CloseParty(partyId);
 }
 
+bool PlayerController::JoinParty(uint64 playerId, uint64 partyId)
+{
+    return PlayerService::JoinParty(playerId, partyId);
+}
+
 uint64 PlayerController::GetMyPartyIdByPlayerId(uint64 playerId)
 {
     return PlayerService::GetMyPartyIdByPlayerId(playerId);

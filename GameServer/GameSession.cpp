@@ -89,10 +89,13 @@ void GameProtobufSession::OnConnected()
 
 void GameProtobufSession::OnDisconnected()
 {
-	if (_player != nullptr) {
+	// Room Leave
+	if (_player != nullptr) 
+	{
 		GRoom.Leave(_player);
 	}
 
+	// Remove Session Ref
 	GProtobufSessionManager.Remove(static_pointer_cast<GameProtobufSession>(shared_from_this()));
 }
 

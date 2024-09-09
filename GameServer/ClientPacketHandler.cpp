@@ -686,7 +686,37 @@ bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobu
 
 bool ClientPacketHandler::HandleJoinParty(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
-	return false;
+	Protocol::C_JOIN_PARTY recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	// Validation
+	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
+		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		return false;
+	}
+
+	bool join = PlayerController::JoinParty(recvPkt.playerid(), recvPkt.partyid());
+	if (!join)
+	{
+		// TODO Send Error
+		cout << "[ERROR: Join]" << endl;
+		return false;
+	}
+
+	uint16 packetId = PKT_S_JOIN_PARTY;
+	Protocol::S_JOIN_PARTY pkt;
+	pkt.set_success(true);
+	pkt.set_partyid(recvPkt.partyid());
+
+	auto playerPkt = new Protocol::Player();
+	playerPkt->set_id(recvPkt.playerid());
+	playerPkt->set_name(session->_player->GetPlayerName());
+	pkt.set_allocated_players(playerPkt);
+
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	return true;
 }
 
 bool ClientPacketHandler::HandleWithdrawParty(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
