@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "PlayerService.h"
 #include <ConnectionPool.h>
+#include "EnumMap.h"
 
 shared_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
 {
@@ -403,7 +404,7 @@ vector<shared_ptr<Player>> PlayerService::GetPartyPlayersByPlayerId(uint64 playe
 			where 
 				party.status = "0"
 				and partyplayer.status  = "0"
-				and party.id = (select partyId from partyplayer where playerId = ?)
+				and party.id = (select partyId from partyplayer where playerId = ? and status = "0")
 			order by partyplayer.createdAt asc;
 		)";
 	vector<string>params;
@@ -425,4 +426,44 @@ vector<shared_ptr<Player>> PlayerService::GetPartyPlayersByPlayerId(uint64 playe
 		players.push_back(make_shared<Player>(playerId, accountId, playerName, posX, posY, maxHP, currentHP));
 	}
 	return players;
+}
+
+vector<pair<shared_ptr<Party>, shared_ptr<PartyPlayer>>> PlayerService::GetAllParties()
+{
+	string query = R"(
+			select 
+				party.id as partyId,
+				party.status as partyStatus,
+				partyplayer.playerId as playerId,
+				partyplayer.status as partyplayerStatus
+			from 
+				party
+			left join
+				partyplayer 
+			on
+				party.id = partyplayer.partyId 
+			where 
+				party.status = "0"
+				and partyplayer.status = "0"
+			order by party.id asc;
+		)";
+	vector<string>params;
+
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+	vector<pair<shared_ptr<Party>, shared_ptr<PartyPlayer>>> parties;
+	while (res->next())
+	{
+		uint64 partyId = res->getUInt64("partyId");
+		string partyStatus = res->getString("partyStatus");
+
+		uint64 playerId = res->getUInt64("playerId");
+		string partyplayerStatus = res->getString("partyplayerStatus");
+
+		shared_ptr<Party> party = make_shared<Party>(partyId, EnumMap::PartyStatusMap(partyStatus));
+		shared_ptr<PartyPlayer> player = make_shared<PartyPlayer>(partyId, playerId, EnumMap::PartyPlayerStatusMap(partyplayerStatus));
+
+		parties.push_back(make_pair(party, player));
+	}
+	return parties;
 }

@@ -5,6 +5,7 @@
 
 class EnumMap
 {
+public:
 	static Protocol::ItemType ItemTypeMap(string column);
 	static Protocol::ItemEffect ItemEffectMap(ItemEffect effect);
 	static Protocol::RoomItemState RoomItemStateMap(RoomItemState state);

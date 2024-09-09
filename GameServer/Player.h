@@ -56,10 +56,13 @@ class Party
 {
 public:
 	Party() = default;
+	Party(uint64 partyId, PartyStatus status)
+		: _partyId(partyId), _status(status) {};
 	~Party() {};
 
 public:
-
+	uint64 GetPartyId() { return _partyId; }
+	PartyStatus GetPartyStatus() { return _status; }
 
 private:
 	uint64 _partyId;
@@ -70,11 +73,14 @@ class PartyPlayer
 {
 public:
 	PartyPlayer() = default;
+	PartyPlayer(uint64 partyId, uint64 playerId, PartyPlayerStatus status)
+		:_partyId(partyId), _playerId(playerId), _status(status) {};
 	~PartyPlayer() {};
 
 public:
 	uint64 GetPartyId() { return _partyId; }
 	uint64 GetPlayerId() { return _playerId; }
+	PartyPlayerStatus GetPartyPlayerStatus() { return _status; }
 
 private:
 	uint64 _partyId;

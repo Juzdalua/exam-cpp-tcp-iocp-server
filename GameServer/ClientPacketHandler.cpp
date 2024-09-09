@@ -70,6 +70,10 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 	case PKT_C_MY_PARTY:
 		ClientPacketHandler::HandleGetMyParty(buffer, len, session);
 		break;
+
+	case PKT_C_ALL_PARTY:
+		ClientPacketHandler::HandleGetAllParty(buffer, len, session);
+		break;
 	}
 
 	return false;
@@ -675,7 +679,7 @@ bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobu
 	Protocol::S_CREATE_PARTY pkt;
 	pkt.set_success(true);
 	pkt.set_partyid(createPartyId);
-	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	session->Send(MakeSendBuffer(pkt, packetId));
 
 	return true;
 }
@@ -758,6 +762,51 @@ bool ClientPacketHandler::HandleGetMyParty(BYTE* buffer, int32 len, GameProtobuf
 		}
 	}
 
+	session->Send(MakeSendBuffer(pkt, packetId));
+
+	return true;
+}
+
+bool ClientPacketHandler::HandleGetAllParty(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
+{
+	Protocol::C_MY_PARTY recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+	
+	// Validation
+	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
+		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		return false;
+	}
+
+	vector<pair<shared_ptr<Party>, shared_ptr<PartyPlayer>>> parties = PlayerController::GetAllParties();
+
+	uint16 packetId = PKT_S_ALL_PARTY;
+	Protocol::S_ALL_PARTY pkt;
+
+	// Set Party
+	map<uint64, Protocol::Party*> sendPartiesMap;
+	for (auto& pair : parties) 
+	{
+		if (sendPartiesMap[pair.first->GetPartyId()] == nullptr) {
+			Protocol::Party* repeatedParty = pkt.add_parties();
+			repeatedParty->set_partyid(pair.first->GetPartyId());
+			repeatedParty->set_partystatus(Protocol::PARTY_STATUS_AVAILABLE);
+			sendPartiesMap[pair.first->GetPartyId()] = repeatedParty;
+		}
+	}
+
+	// Set Party Player
+	for (auto& pair : parties)
+	{
+		auto sendPartyPlayer = new Protocol::PartyPlayer();
+		sendPartyPlayer->set_playerid(pair.second->GetPlayerId());
+
+		Protocol::PartyPlayer* repeatedPartyPlayer = sendPartiesMap[pair.second->GetPartyId()]->add_partyplayers();
+		repeatedPartyPlayer->set_playerid(pair.second->GetPlayerId());
+	}
+	
+	pkt.set_success(true);
 	session->Send(MakeSendBuffer(pkt, packetId));
 
 	return true;
