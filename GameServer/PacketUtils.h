@@ -44,6 +44,9 @@ unordered_map<uint16, string> packetIdToString =
 
 	{PKT_C_WITHDRAW_PARTY, "PKT_C_WITHDRAW_PARTY"},
 	{PKT_S_WITHDRAW_PARTY, "PKT_S_WITHDRAW_PARTY"},
+	
+	{PKT_C_MY_PARTY, "PKT_C_MY_PARTY"},
+	{PKT_S_MY_PARTY, "PKT_S_MY_PARTY"},
 };
 
 class PacketUtils

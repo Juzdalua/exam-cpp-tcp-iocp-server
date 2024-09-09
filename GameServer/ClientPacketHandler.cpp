@@ -58,6 +58,18 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 	case PKT_C_CREATE_PARTY:
 		ClientPacketHandler::HandleCreateParty(buffer, len, session);
 		break;
+
+	case PKT_C_JOIN_PARTY:
+		ClientPacketHandler::HandleJoinParty(buffer, len, session);
+		break;
+
+	case PKT_C_WITHDRAW_PARTY:
+		ClientPacketHandler::HandleWithdrawParty(buffer, len, session);
+		break;
+
+	case PKT_C_MY_PARTY:
+		ClientPacketHandler::HandleGetMyParty(buffer, len, session);
+		break;
 	}
 
 	return false;
@@ -643,7 +655,110 @@ bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobu
 	Protocol::C_USE_ITEM recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 	
+	// Validation
+	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
+		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		return false;
+	}
 
+	int64 createPartyId = PlayerController::CreateParty(recvPkt.playerid());
+	if (createPartyId == -1) {
+		cout << "[ERROR: Create Party" << endl;
+		return false;
+	}
+
+	// Update Room
+	GRoom.CreateParty(createPartyId);
+
+	uint16 packetId = PKT_S_CREATE_PARTY;
+	Protocol::S_CREATE_PARTY pkt;
+	pkt.set_success(true);
+	pkt.set_partyid(createPartyId);
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	return true;
+}
+
+bool ClientPacketHandler::HandleJoinParty(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
+{
+	return false;
+}
+
+bool ClientPacketHandler::HandleWithdrawParty(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
+{
+	Protocol::C_WITHDRAW_PARTY recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	// Validation
+	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
+		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		return false;
+	}
+
+	uint64 withDrawPartyAndGetCount = PlayerController::WithdrawParty(recvPkt.playerid(), recvPkt.partyid());
+	if (withDrawPartyAndGetCount == -1) {
+		cout << "[ERROR: Withdraw Party" << endl;
+		return false;
+	}
+	
+	// Update Room
+	if (withDrawPartyAndGetCount == 0) {
+		GRoom.RemoveParty(recvPkt.partyid());
+		PlayerController::CloseParty(recvPkt.partyid());
+	}
+
+	vector<shared_ptr<Player>> players = PlayerController::GetPartyPlayersByPartyId(recvPkt.partyid());
+
+	uint16 packetId = PKT_S_WITHDRAW_PARTY;
+	Protocol::S_WITHDRAW_PARTY pkt;
+	pkt.set_success(true);
+	pkt.set_partyid(recvPkt.partyid());
+	pkt.set_withdrawplayerid(recvPkt.playerid());
+
+	for (shared_ptr<Player>& player : players)
+	{
+		Protocol::Player* repeatedPlayer = pkt.add_players();
+		repeatedPlayer->set_id(player->GetPlayerId());
+		repeatedPlayer->set_name(player->GetPlayerName());
+	}
+
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	return true;
+}
+
+bool ClientPacketHandler::HandleGetMyParty(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
+{
+	Protocol::C_MY_PARTY recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+
+	// Validation
+	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
+		// TODO Send Error
+		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		return false;
+	}
+
+	int64 partyId = PlayerController::GetMyPartyIdByPlayerId(recvPkt.playerid());
+	vector<shared_ptr<Player>> players = PlayerController::GetPartyPlayersByPlayerId(recvPkt.playerid());
+
+	uint16 packetId = PKT_S_MY_PARTY;
+	Protocol::S_MY_PARTY pkt;
+	pkt.set_success(true);
+	pkt.set_partyid(partyId);
+	
+	if (partyId != 0) {
+		for (shared_ptr<Player>& player : players)
+		{
+			Protocol::Player* repeatedPlayer = pkt.add_players();
+			repeatedPlayer->set_id(player->GetPlayerId());
+			repeatedPlayer->set_name(player->GetPlayerName());
+		}
+	}
+
+	session->Send(MakeSendBuffer(pkt, packetId));
 
 	return true;
 }

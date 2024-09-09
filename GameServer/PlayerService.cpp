@@ -140,10 +140,29 @@ int64 PlayerService::CreateParty(uint64 playerId)
 	try {
 		conn->setAutoCommit(false);
 
-		string decreaseHPQuery = R"(
+		// Check isJoin player
+		string isJoinPartyQuery = R"(
+				select id 
+				from partyplayer
+				where status = "0"
+				and playerId = ?;
+			)";
+		shared_ptr<sql::PreparedStatement> pstmtIsJoin(conn->prepareStatement(isJoinPartyQuery));
+		pstmtIsJoin->setString(1, to_string(playerId));
+		shared_ptr<sql::ResultSet> exRes(pstmtIsJoin->executeQuery());
+
+		if (exRes->next())
+		{
+			conn->rollback();
+			CP->releaseConnection(move(conn));
+			return -1;
+		}
+
+		// Create Party
+		string createPartyQuery = R"(
             insert into party() values ();
         )";
-		shared_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(decreaseHPQuery));
+		shared_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(createPartyQuery));
 
 		pstmt->executeUpdate();
 
@@ -153,23 +172,6 @@ int64 PlayerService::CreateParty(uint64 playerId)
 		int insertId = 0;
 		if (res->next()) {
 			insertId = res->getInt(1);
-
-			string isJoinPartyQuery = R"(
-				select id 
-				from partyplayer
-				where status = "0"
-				and partyId = ?;
-			)";
-			shared_ptr<sql::PreparedStatement> pstmtPlayer(conn->prepareStatement(isJoinPartyQuery));
-			pstmtPlayer->setString(1, to_string(insertId));
-			shared_ptr<sql::ResultSet> nestRes(pstmtPlayer->executeQuery());
-
-			if (nestRes->next())
-			{
-				conn->rollback();
-				CP->releaseConnection(move(conn));
-				return -1;
-			}
 
 			// ÇÃ·¹ÀÌ¾î »ðÀÔ Äõ¸®
 			string partyPlayerInsertQuery = R"(
@@ -196,4 +198,231 @@ int64 PlayerService::CreateParty(uint64 playerId)
 		cerr << "SQL state: " << e.getSQLState() << endl;
 		return -1;
 	}
+}
+
+int64 PlayerService::WithdrawParty(uint64 playerId, uint64 partyId)
+{
+	auto conn = CP->getConnection();
+	if (!conn) {
+		cerr << "Failed to get a connection from the pool." << endl;
+		return -1;
+	}
+
+	try {
+		conn->setAutoCommit(false);
+
+		// Check Party
+		string isAvailablePartyQuery = R"(
+				select id 
+				from party
+				where status = "0"
+				and id = ?;
+			)";
+		shared_ptr<sql::PreparedStatement> pstmtIsAvailable(conn->prepareStatement(isAvailablePartyQuery));
+		pstmtIsAvailable->setString(1, to_string(partyId));
+		shared_ptr<sql::ResultSet> checkPartyRes(pstmtIsAvailable->executeQuery());
+
+		if (!checkPartyRes->next())
+		{
+			conn->rollback();
+			CP->releaseConnection(move(conn));
+			return -1;
+		}
+
+		// Check isJoin
+		string isJoinPartyQuery = R"(
+				select id
+				from partyplayer
+				where status = "0"
+				and playerId = ?
+				and partyId = ?;
+			)";
+		shared_ptr<sql::PreparedStatement> pstmtIsJoin(conn->prepareStatement(isJoinPartyQuery));
+		pstmtIsJoin->setString(1, to_string(playerId));
+		pstmtIsJoin->setString(2, to_string(partyId));
+		shared_ptr<sql::ResultSet> isJoinRes(pstmtIsJoin->executeQuery());
+
+		if (!isJoinRes->next())
+		{
+			conn->rollback();
+			CP->releaseConnection(move(conn));
+			return -1;
+		}
+
+		string withdrawPartyQuery = R"(
+            update partyplayer 
+			set status = "1"
+			where playerId  = ?
+			and partyId= ?;
+        )";
+		shared_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(withdrawPartyQuery));
+		pstmt->setString(1, to_string(playerId));
+		pstmt->setString(2, to_string(partyId));
+
+		pstmt->executeUpdate();
+
+		// Get Party Players Count
+		string getCountQuery = R"(
+            select count(id) as count
+			from partyplayer
+			where status = "0"
+			and partyId = ?;
+        )";
+
+		shared_ptr<sql::PreparedStatement> pstmtGetCount(conn->prepareStatement(getCountQuery));
+		pstmtGetCount->setString(1, to_string(partyId));
+		shared_ptr<sql::ResultSet> getCountRes(pstmtGetCount->executeQuery());
+
+		if (getCountRes->next()) {			
+			conn->commit();  // Ä¿¹Ô
+			CP->releaseConnection(move(conn));
+			return getCountRes->getInt(1);
+		}
+		conn->rollback();
+		CP->releaseConnection(move(conn));
+		return -1;
+	}
+	catch (sql::SQLException& e) {
+		conn->rollback();
+		CP->releaseConnection(move(conn));
+		cerr << "SQLException: " << e.what() << endl;
+		cerr << "Error code: " << e.getErrorCode() << endl;
+		cerr << "SQL state: " << e.getSQLState() << endl;
+		return -1;
+	}
+}
+
+void PlayerService::CloseParty(uint64 partyId)
+{
+	string query = R"(
+		update party 
+		set 
+			status = "1"
+		where 
+		id =?
+		and status = "0";
+		)";
+
+	vector<string>params;
+	params.push_back(to_string(partyId));
+
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+}
+
+uint64 PlayerService::GetMyPartyIdByPlayerId(uint64 playerId)
+{
+	string query = R"(
+			select partyId 
+			from partyplayer 
+			where 
+			status = "0"
+			and playerId = ?;
+		)";
+	vector<string>params;
+	params.push_back(to_string(playerId));
+
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+	if (res->next())
+	{
+		cout << "Party Id: " << res->getUInt64("partyId") << endl;
+		return res->getUInt64("partyId");
+	}
+	return 0;
+}
+
+vector<shared_ptr<Player>> PlayerService::GetPartyPlayersByPartyId(uint64 partyId)
+{
+	string query = R"(
+			select 
+				player.id as playerId,
+				player.name as playerName,
+				player.account_id as accountId,
+				player.posX,
+				player.posY ,
+				player.maxHP ,
+				player.currentHP
+			from 
+				party
+			left join 
+				partyplayer
+			on
+				party.id = partyplayer.partyId
+			left join
+				player
+			on
+				player.id = partyplayer.playerId 
+			where 
+				party.status = "0"
+				and partyplayer.status  = "0"
+				and party.id = ?
+			order by partyplayer.createdAt asc;
+		)";
+	vector<string>params;
+	params.push_back(to_string(partyId));
+
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+	vector<shared_ptr<Player>> players;
+	while (res->next())
+	{
+		uint64 playerId = res->getUInt64("playerId");
+		uint64 accountId = res->getUInt64("accountId");
+		string playerName = res->getString("playerName");
+		float posX = static_cast<float>(res->getDouble("posX"));
+		float posY = static_cast<float>(res->getDouble("posY"));
+		uint64 maxHP = res->getUInt64("maxHP");
+		uint64 currentHP = res->getUInt64("currentHP");
+
+		players.push_back(make_shared<Player>(playerId, accountId, playerName, posX, posY, maxHP, currentHP));
+	}
+	return players;
+}
+
+vector<shared_ptr<Player>> PlayerService::GetPartyPlayersByPlayerId(uint64 playerId)
+{
+	string query = R"(
+			select 
+				player.id as playerId,
+				player.account_id as accountId,
+				player.name as playerName,
+				player.posX,
+				player.posY ,
+				player.maxHP ,
+				player.currentHP
+			from 
+				party
+			left join 
+				partyplayer
+			on
+				party.id = partyplayer.partyId
+			left join
+				player
+			on
+				player.id = partyplayer.playerId 
+			where 
+				party.status = "0"
+				and partyplayer.status  = "0"
+				and party.id = (select partyId from partyplayer where playerId = ?)
+			order by partyplayer.createdAt asc;
+		)";
+	vector<string>params;
+	params.push_back(to_string(playerId));
+
+	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+
+	vector<shared_ptr<Player>> players;
+	while (res->next())
+	{
+		uint64 playerId = res->getUInt64("playerId");
+		uint64 accountId = res->getUInt64("accountId");
+		string playerName = res->getString("playerName");
+		float posX = static_cast<float>(res->getDouble("posX"));
+		float posY = static_cast<float>(res->getDouble("posY"));
+		uint64 maxHP = res->getUInt64("maxHP");
+		uint64 currentHP = res->getUInt64("currentHP");
+
+		players.push_back(make_shared<Player>(playerId, accountId, playerName, posX, posY, maxHP, currentHP));
+	}
+	return players;
 }

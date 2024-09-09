@@ -26,3 +26,28 @@ int64 PlayerController::CreateParty(uint64 playerId)
 {
     return PlayerService::CreateParty(playerId);
 }
+
+int64 PlayerController::WithdrawParty(uint64 playerId, uint64 partyId)
+{
+    return PlayerService::WithdrawParty(playerId, partyId);
+}
+
+void PlayerController::CloseParty(uint64 partyId)
+{
+    return PlayerService::CloseParty(partyId);
+}
+
+uint64 PlayerController::GetMyPartyIdByPlayerId(uint64 playerId)
+{
+    return PlayerService::GetMyPartyIdByPlayerId(playerId);
+}
+
+vector<shared_ptr<Player>> PlayerController::GetPartyPlayersByPartyId(uint64 partyId)
+{
+    return PlayerService::GetPartyPlayersByPartyId(partyId);
+}
+
+vector<shared_ptr<Player>> PlayerController::GetPartyPlayersByPlayerId(uint64 playerId)
+{
+    return PlayerService::GetPartyPlayersByPlayerId(playerId);
+}
