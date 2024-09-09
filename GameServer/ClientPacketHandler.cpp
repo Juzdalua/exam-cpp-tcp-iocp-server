@@ -54,6 +54,10 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 	case PKT_C_USE_ITEM:
 		ClientPacketHandler::HandleUseItem(buffer, len, session);
 		break;
+
+	case PKT_C_CREATE_PARTY:
+		ClientPacketHandler::HandleCreateParty(buffer, len, session);
+		break;
 	}
 
 	return false;
@@ -573,7 +577,6 @@ bool ClientPacketHandler::HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobu
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 
 	// Respawn Room Item
-	
 	thread([=]() {
 		this_thread::sleep_for(3s);
 		
@@ -630,6 +633,16 @@ bool ClientPacketHandler::HandleUseItem(BYTE* buffer, int32 len, GameProtobufSes
 	//const Protocol::Item& recvItem = recvPkt.item();
 	//shared_ptr<Item> item = ItemController::GetItemById(recvItem.itemid());
 
+
+
+	return true;
+}
+
+bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
+{
+	Protocol::C_USE_ITEM recvPkt;
+	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
+	
 
 
 	return true;

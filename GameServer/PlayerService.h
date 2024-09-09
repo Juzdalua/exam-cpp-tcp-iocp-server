@@ -8,5 +8,7 @@ public:
 	static void UpdateMove(uint64 playerId, float posX, float posY);
 	static uint64 DecreaseHP(uint64 playerId, uint64 damage);
 	static void UpdatePlayer(PlayerRef& player);
+
+	static int64 CreateParty(uint64 playerId);
 };
 

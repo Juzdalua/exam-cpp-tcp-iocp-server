@@ -21,3 +21,8 @@ void PlayerController::UpdatePlayer(PlayerRef& player)
 {
     return PlayerService::UpdatePlayer(player);
 }
+
+int64 PlayerController::CreateParty(uint64 playerId)
+{
+    return PlayerService::CreateParty(playerId);
+}

@@ -34,6 +34,15 @@ enum : uint16
 
 	PKT_C_USE_ITEM = 1018,
 	PKT_S_USE_ITEM = 1019,
+
+	PKT_C_CREATE_PARTY = 1020,
+	PKT_S_CREATE_PARTY = 1021,
+
+	PKT_C_JOIN_PARTY = 1022,
+	PKT_S_JOIN_PARTY = 1023,
+
+	PKT_C_WITHDRAW_PARTY = 1024,
+	PKT_S_WITHDRAW_PARTY = 1025,
 };
 
 class ClientPacketHandler
@@ -51,5 +60,6 @@ public:
 	static bool HandleHit(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 	static bool HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 	static bool HandleUseItem(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
+	static bool HandleCreateParty(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 };
 

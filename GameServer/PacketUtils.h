@@ -4,6 +4,7 @@
 unordered_map<uint16, string> packetIdToString =
 {
 	{PKT_S_SERVER_CHAT, "PKT_S_SERVER_CHAT"},
+	{PKT_S_CREATE_ROOM, "PKT_S_CREATE_ROOM"},
 
 	{PKT_C_TEST, "PKT_C_TEST"},
 	{PKT_S_TEST, "PKT_S_TEST"},
@@ -34,6 +35,15 @@ unordered_map<uint16, string> packetIdToString =
 
 	{PKT_C_USE_ITEM, "PKT_C_USE_ITEM"},
 	{PKT_S_USE_ITEM, "PKT_S_USE_ITEM"},
+
+	{PKT_C_CREATE_PARTY, "PKT_C_CREATE_PARTY"},
+	{PKT_S_CREATE_PARTY, "PKT_S_CREATE_PARTY"},
+
+	{PKT_C_JOIN_PARTY, "PKT_C_JOIN_PARTY"},
+	{PKT_S_JOIN_PARTY, "PKT_S_JOIN_PARTY"},
+
+	{PKT_C_WITHDRAW_PARTY, "PKT_C_WITHDRAW_PARTY"},
+	{PKT_S_WITHDRAW_PARTY, "PKT_S_WITHDRAW_PARTY"},
 };
 
 class PacketUtils
