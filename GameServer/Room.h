@@ -8,6 +8,7 @@ public:
 	void Enter(PlayerRef player);
 	void Leave(PlayerRef player);
 	void Broadcast(SendBufferRef sendBuffer);
+	void SendToTargetPlayer(uint64 targetPlayerId, SendBufferRef sendBuffer);
 
 	bool IsLogin(uint64 playerId);
 
