@@ -217,7 +217,7 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 
 	// Set Session
 	session->_player = playerRef;
-	session->_accountId = recvAccount.id();
+	session->_accountId = pairAccountPlayer.second->GetAccountId();
 
 	// Set SendBuffer
 	uint16 packetId = PKT_S_LOGIN;

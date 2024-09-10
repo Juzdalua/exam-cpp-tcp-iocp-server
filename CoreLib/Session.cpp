@@ -73,8 +73,11 @@ void Session::Dispatch(IocpEvent* iocpEvent, int32 numOfBytes)
 		break;
 
 	case EventType::Send:
-		ProcessSend(numOfBytes);
+	{
+		vector<SendBufferRef> sendVec = static_cast<SendEvent*>(iocpEvent)->sendBuffers;
+		ProcessSend(numOfBytes, sendVec);
 		break;
+	}
 
 	default:
 		break;
@@ -246,7 +249,7 @@ void Session::ProcessRecv(int32 numOfBytes)
 	}
 	int32 dataSize = _recvBuffer.DataSize();
 	int32 processLen = OnRecv(_recvBuffer.ReadPos(), dataSize);
-	
+
 	if (processLen < 0 || dataSize < processLen || _recvBuffer.OnRead(processLen) == false)
 	{
 		Disconnect(L"OnRead Overflow");
@@ -259,7 +262,7 @@ void Session::ProcessRecv(int32 numOfBytes)
 	RegisterRecv();
 }
 
-void Session::ProcessSend(int32 numOfBytes)
+void Session::ProcessSend(int32 numOfBytes, vector<SendBufferRef> sendVec)
 {
 	_sendEvent.owner = nullptr;	// shared_from_this RELEASE_REF
 	_sendEvent.sendBuffers.clear(); // shared_from_this RELEASE_REF
@@ -270,7 +273,8 @@ void Session::ProcessSend(int32 numOfBytes)
 		return;
 	}
 
-	OnSend(numOfBytes);
+	//OnSend(numOfBytes);
+	OnSend(numOfBytes, sendVec);
 
 	//WRITE_LOCK;
 	/*lock_guard<mutex> lock(_lock);
@@ -280,13 +284,13 @@ void Session::ProcessSend(int32 numOfBytes)
 		RegisterSend();*/
 
 	{
-		lock_guard<mutex> lock(_lock); 
+		lock_guard<mutex> lock(_lock);
 		if (_sendQueue.empty()) {
 			_sendRegistered.store(false);
-			return;  
+			return;
 		}
-	}  
-	
+	}
+
 	RegisterSend();
 }
 
@@ -320,7 +324,7 @@ PacketSession::~PacketSession()
 /*
 	[header(4)] [data]
 	[size(2)][id(2)][data]
-	size = sizeof(data) + sizeof(header) 
+	size = sizeof(data) + sizeof(header)
 	-> dataSize = len - HeaderSize(4byte)
 
 	10바이트의 데이터가 전송되면, [10][id][10byte data] -> 총 14byte가 전송된다.
@@ -330,7 +334,7 @@ int32 PacketSession::OnRecv(BYTE* buffer, int32 len)
 	int32 processLen = 0;
 
 	/*if (processLen == 0)
-	{ 
+	{
 		int32 dataSize = len;
 		if (dataSize < sizeof(PacketHeader))
 			return;
@@ -347,7 +351,7 @@ int32 PacketSession::OnRecv(BYTE* buffer, int32 len)
 		// 최소 4바이트(헤더 크기)만큼은 있어야한다. => 헤더 파싱
 		if (dataSize < sizeof(PacketHeader))
 			break;
-		
+
 		// *((PacketHeader*)&buffer[0])
 		PacketHeader header = *(reinterpret_cast<PacketHeader*>(&buffer[processLen]));
 
@@ -360,6 +364,6 @@ int32 PacketSession::OnRecv(BYTE* buffer, int32 len)
 
 		processLen += header.size;
 	}
-	
+
 	return processLen;
 }

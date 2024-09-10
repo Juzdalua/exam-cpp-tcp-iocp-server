@@ -163,6 +163,7 @@
     <ClInclude Include="CoreGlobal.h" />
     <ClInclude Include="CoreMacro.h" />
     <ClInclude Include="CorePch.h" />
+    <ClInclude Include="DebugLog.h" />
     <ClInclude Include="ENV.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="IocpCore.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="CoreGlobal.cpp" />
     <ClCompile Include="CoreLib.cpp" />
     <ClCompile Include="CorePch.cpp" />
+    <ClCompile Include="DebugLog.cpp" />
     <ClCompile Include="ENV.cpp" />
     <ClCompile Include="IocpCore.cpp" />
     <ClCompile Include="IocpEvent.cpp" />
