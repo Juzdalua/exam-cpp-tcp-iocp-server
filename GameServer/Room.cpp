@@ -5,6 +5,15 @@
 
 Room GRoom;
 
+Room::Room()
+{
+}
+
+Room::~Room()
+{
+	_players.clear();
+}
+
 void Room::Enter(PlayerRef player)
 {
 	//WRITE_LOCK;
@@ -31,10 +40,10 @@ void Room::Broadcast(SendBufferRef sendBuffer)
 
 void Room::SendToTargetPlayer(uint64 targetPlayerId, SendBufferRef sendBuffer)
 {
-	lock_guard<mutex> lock(_lock);
-	if (_players[targetPlayerId] != nullptr)
+	auto it = _players.find(targetPlayerId);
+	if (it != _players.end() && it->second != nullptr)
 	{
-		_players[targetPlayerId]->GetOwnerSession()->Send(sendBuffer);
+		it->second->GetOwnerSession()->Send(sendBuffer);
 	}
 }
 
@@ -67,7 +76,8 @@ bool Room::CanGo(uint64 playerId, float posX, float posY)
 	for (auto& pair : _players)
 	{
 		PlayerRef player = pair.second;
-		if (playerId == pair.second->GetAccountId())
+		
+		if (playerId == pair.second->GetPlayerId())
 			continue;
 
 		if (player->GetPosX() == posX && player->GetPosY() == posY) {
