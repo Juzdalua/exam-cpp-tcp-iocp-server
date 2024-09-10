@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ItemService.h"
 #include <ConnectionPool.h>
+#include "EnumMap.h"
 
 shared_ptr<Item> ItemService::GetItemById(uint64 id)
 {
@@ -29,7 +30,7 @@ shared_ptr<Item> ItemService::GetItemById(uint64 id)
 		cout << "effect: " << effect << endl;
 		cout << "value: " << value << endl;
 		
-		return  make_shared<Item>(id, name, effect, value);
+		return  make_shared<Item>(id, name, EnumMap::ItemEffectMap(effect), value);
 	}
 	return nullptr;
 }
@@ -57,7 +58,7 @@ shared_ptr<Item> ItemService::GetItemByName(string name)
 		string effect = res->getString("itemEffect");
 		int value= res->getInt("itemValue");
 
-		return  make_shared<Item>(id, name, effect, value);
+		return  make_shared<Item>(id, name, EnumMap::ItemEffectMap(effect), value);
 	}
 	return nullptr;
 }
@@ -103,18 +104,7 @@ vector<shared_ptr<RoomItem>> ItemService::GetRoomItemsByRoomId(uint64 roomId)
 		float posY = static_cast<float>(res->getDouble("posY"));
 		string state = res->getString("state");
 
-		//TODO ENUM MAP
-		RoomItemState convertState;
-		if (state == "0")
-		{
-			convertState = RoomItemState::AVAILABLE;
-		}
-		else if(state == "1")
-		{
-			convertState = RoomItemState::RESPAWN_PENDING;
-		}
-
-		roomItems.push_back(make_shared<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue, convertState));
+		roomItems.push_back(make_shared<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, EnumMap::ItemEffectMap(itemEffect), itemValue, EnumMap::RoomItemStateMap(state)));
 	}
 	return roomItems;
 }
@@ -159,17 +149,7 @@ shared_ptr<RoomItem> ItemService::GetRoomItemByRoomItemId(uint64 roomItemId)
 		float posY = static_cast<float>(res->getDouble("posY"));
 		string state = res->getString("state");
 
-		//TODO ENUM MAP
-		RoomItemState convertState;
-		if (state == "0")
-		{
-			convertState = RoomItemState::AVAILABLE;
-		}
-		else if (state == "1")
-		{
-			convertState = RoomItemState::RESPAWN_PENDING;
-		}
-		return  make_shared<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, itemEffect, itemValue, convertState);
+		return make_shared<RoomItem>(roomId, roomItemId, posX, posY, itemId, itemName, EnumMap::ItemEffectMap(itemEffect), itemValue, EnumMap::RoomItemStateMap(state));
 	}
 	return nullptr;
 }

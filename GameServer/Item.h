@@ -2,36 +2,36 @@
 
 enum ItemEffect
 {
-	HP,
-	MP,
-	ATK,
-	DEF,
+	HP = 0,
+	MP = 1,
+	ATK = 2,
+	DEF = 3,
 };
 
 enum RoomItemState 
 {
-	AVAILABLE,
-	RESPAWN_PENDING
+	AVAILABLE = 0,
+	RESPAWN_PENDING = 1,
 };
 
 class Item
 {
 public:
 	Item() = default;
-	Item(uint64 itemId, string itemName, string itemEffect, int64 value)
+	Item(uint64 itemId, string itemName, ItemEffect itemEffect, int64 value)
 		:_itemId(itemId), _itemName(itemName), _itemEffect(itemEffect), _itemValue(value) {};
 	~Item() {};
 
 public:
 	uint64 GetItemId() { return _itemId; }
 	string GetItemName() { return _itemName; }
-	string GetItemEffect() { return _itemEffect; }
+	ItemEffect GetItemEffect() { return _itemEffect; }
 	int64 GetItemValue() { return _itemValue; }
 
 protected:
 	uint64 _itemId;
 	string _itemName;
-	string _itemEffect;
+	ItemEffect _itemEffect;
 	int64 _itemValue;
 };
 
@@ -39,7 +39,7 @@ class RoomItem : public Item
 {
 public:
 	RoomItem() = default;
-	RoomItem(uint64 roomId, uint64 roomItemId, float posX, float posY, uint64 itemId, string itemName, string itemEffect, int64 value, RoomItemState state);
+	RoomItem(uint64 roomId, uint64 roomItemId, float posX, float posY, uint64 itemId, string itemName, ItemEffect itemEffect, int64 value, RoomItemState state);
 	~RoomItem() {};
 
 public:

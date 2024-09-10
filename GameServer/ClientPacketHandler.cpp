@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Room.h"
 #include "ItemController.h"
+#include "EnumMap.h"
 
 mutex _lock;
 bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
@@ -362,15 +363,9 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		sendItem->set_itemid(roomItem->GetItemId());
 		sendItem->set_value(roomItem->GetItemValue());
 		sendItem->set_amount(1);
-		if (roomItem->GetItemEffect() == "0") //  HP -> TODO ENUMMAP
-		{
-			sendItem->set_type(Protocol::ITEM_TYPE_HEAL);
-			sendItem->set_effect(Protocol::ITEM_EFFECT_HP);
-		}
-		// TODO 
-		else {
-
-		}
+		sendItem->set_type(EnumMap::ItemTypeProtocolMap(roomItem->GetItemEffect()));
+		sendItem->set_effect(EnumMap::ItemEffectProtocolMap(roomItem->GetItemEffect()));
+		
 		repeatedItem->set_allocated_item(sendItem);
 	}
 
@@ -653,15 +648,8 @@ bool ClientPacketHandler::HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobu
 		sendItem->set_value(roomItem->GetItemValue());
 		sendItem->set_amount(1);
 
-		if (roomItem->GetItemEffect() == "0") //  HP -> TODO ENUMMAP
-		{
-			sendItem->set_type(Protocol::ITEM_TYPE_HEAL);
-			sendItem->set_effect(Protocol::ITEM_EFFECT_HP);
-		}
-		// TODO OTHER ITEM
-		else {
-
-		}
+		sendItem->set_type(EnumMap::ItemTypeProtocolMap(roomItem->GetItemEffect()));
+		sendItem->set_effect(EnumMap::ItemEffectProtocolMap(roomItem->GetItemEffect()));
 		repeatedItem->set_allocated_item(sendItem);
 
 
@@ -708,9 +696,6 @@ bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobu
 		cout << "[ERROR: Create Party" << endl;
 		return false;
 	}
-
-	// Update Room
-	GRoom.CreateParty(createPartyId);
 
 	uint16 packetId = PKT_S_CREATE_PARTY;
 	Protocol::S_CREATE_PARTY pkt;
@@ -778,7 +763,6 @@ bool ClientPacketHandler::HandleWithdrawParty(BYTE* buffer, int32 len, GameProto
 	
 	// Update Room
 	if (withDrawPartyAndGetCount == 0) {
-		GRoom.RemoveParty(recvPkt.partyid());
 		PlayerController::CloseParty(recvPkt.partyid());
 	}
 

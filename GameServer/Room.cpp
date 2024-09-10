@@ -138,21 +138,3 @@ void Room::UpdateRoomItem(const shared_ptr<RoomItem>& roomItem)
 	}
 }
 
-// Party
-set<uint64> Room::GetPartyIdsInRoom()
-{
-	lock_guard<mutex> lock(_lock);
-	return _partyIds;
-}
-
-void Room::CreateParty(uint64 partyId)
-{
-	lock_guard<mutex> lock(_lock);
-	_partyIds.insert(partyId);
-}
-
-void Room::RemoveParty(uint64 partyId)
-{
-	lock_guard<mutex> lock(_lock);
-	_partyIds.erase(partyId);
-}
