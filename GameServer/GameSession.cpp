@@ -106,6 +106,8 @@ void GameProtobufSession::OnDisconnected()
 
 	// Remove Session Ref
 	GProtobufSessionManager.Remove(static_pointer_cast<GameProtobufSession>(shared_from_this()));
+	
+	// Session Close
 	if (_player != nullptr && _player->GetOwnerSession() != nullptr)
 	{
 		_player->SetOwnerSession(nullptr);
