@@ -31,11 +31,6 @@ public:
 	void SetRoomItems(const vector<shared_ptr<RoomItem>>& roomItems);
 	void UpdateRoomItem(const shared_ptr<RoomItem>& roomItem);
 
-	// Party
-	set<uint64> GetPartyIdsInRoom();
-	void CreateParty(uint64 partyId);
-	void RemoveParty(uint64 partyId);
-
 	// TEMP
 	void CheckPlayers();
 
@@ -44,7 +39,6 @@ private:
 	mutex _lock;
 	map<uint64, PlayerRef> _players;
 	vector <shared_ptr<RoomItem>> _roomItems;
-	set<uint64> _partyIds;
 };
 
 extern Room GRoom;

@@ -5,7 +5,7 @@
 #include "Room.h"
 #include "Player.h"
 
-extern unordered_map<uint16_t, string> packetIdToString;
+extern unordered_map<uint16, string> packetIdToString;
 
 /*---------------
 	Game Session

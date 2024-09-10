@@ -7,8 +7,33 @@
 #include "Player.h"
 #include "Room.h"
 #include "ItemController.h"
+#include "EnumMap.h"
 
 mutex _lock;
+
+bool isInvalidId(GameProtobufSessionRef& session, uint64 pktPlayerId, ErrorCode errorCode)
+{
+	if (session->_player->GetPlayerId() != pktPlayerId) {
+		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
+		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
+
+		auto errorPkt = new Protocol::ErrorObj();
+		errorPkt->set_errorcode(errorCode);
+		errorPkt->set_errormsg("Invalid ID");
+
+		uint16 packetId = PKT_S_INVALID_ID;
+		Protocol::S_INVALID_ID pkt;
+		pkt.set_playerid(session->_player->GetPlayerId());
+		pkt.set_success(false);
+		pkt.set_allocated_error(errorPkt);
+
+		session->Send(MakeSendBuffer(pkt, packetId));
+		
+		return true;
+	}
+	return false;
+}
+
 bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
@@ -127,16 +152,16 @@ bool ClientPacketHandler::HandleSignup(BYTE* buffer, int32 len, GameProtobufSess
 			return true;
 		}
 	}
-
+	
 	auto errorPkt = new Protocol::ErrorObj();
-	errorPkt->set_errorcode(-PKT_C_SIGNUP);
+	errorPkt->set_errorcode(ErrorCode::ERROR_S_SIGNUP);
 	errorPkt->set_errormsg("ID has exists");
 
 	uint16 packetId = PKT_S_SIGNUP;
-	Protocol::S_SIGNUP pkt;
-	pkt.set_success(false);
-	pkt.set_allocated_error(errorPkt);
-	session->Send(MakeSendBuffer(pkt, packetId));
+	Protocol::S_SIGNUP ePkt;
+	ePkt.set_success(false);
+	ePkt.set_allocated_error(errorPkt);
+	session->Send(MakeSendBuffer(ePkt, packetId));
 
 	return false;
 }
@@ -155,7 +180,7 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	// Invalid Id
 	if (pairAccountPlayer.first == nullptr) {
 		auto errorPkt = new Protocol::ErrorObj();
-		errorPkt->set_errorcode(-PKT_C_LOGIN);
+		errorPkt->set_errorcode(ErrorCode::ERROR_S_LOGIN_ID);
 		errorPkt->set_errormsg("ID not exists");
 
 		uint16 packetId = PKT_S_LOGIN;
@@ -164,7 +189,7 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 		pkt.set_allocated_player(nullptr);
 		pkt.set_allocated_error(errorPkt); // 소유권을 protobuf에 넘긴다 -> 메모리 해제를 자동으로 함.
 		session->Send(MakeSendBuffer(pkt, packetId));
-
+		
 		return false;
 	}
 
@@ -172,7 +197,7 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	if (pairAccountPlayer.first->GetHashedPwd() != recvAccount.password())
 	{
 		auto errorPkt = new Protocol::ErrorObj();
-		errorPkt->set_errorcode(-PKT_C_LOGIN);
+		errorPkt->set_errorcode(ErrorCode::ERROR_S_LOGIN_PWD);
 		errorPkt->set_errormsg("Password not correct");
 
 		uint16 packetId = PKT_S_LOGIN;
@@ -188,9 +213,8 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	// Already login
 	if (GRoom.IsLogin(pairAccountPlayer.second->GetPlayerId()))
 	{
-		cout << pairAccountPlayer.second->GetPlayerId() << " is Already Login" << endl;
 		auto errorPkt = new Protocol::ErrorObj();
-		errorPkt->set_errorcode(-PKT_C_LOGIN);
+		errorPkt->set_errorcode(ErrorCode::ERROR_S_LOGIN_SESSION);
 		errorPkt->set_errormsg("Already Login");
 
 		uint16 packetId = PKT_S_LOGIN;
@@ -250,15 +274,8 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 	// Get Player in Session
 	PlayerRef player = session->_player;
 
-	// Validation
-	if (player->GetPlayerId() != recvPkt.playerid()) {
-		uint16 packetId = PKT_S_ENTER_GAME;
-		Protocol::S_ENTER_GAME pkt;
-		pkt.set_success(false);
-		pkt.set_toplayer(Protocol::TO_PLAYER_OWNER);
-		session->Send(MakeSendBuffer(pkt, packetId));
+	if(isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_ENTER_GAME))
 		return false;
-	}
 
 	// Broadcast new player info to all players in room
 	uint16 packetId = PKT_S_ENTER_GAME;
@@ -275,8 +292,7 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		repeatPlayer->set_maxhp(player->GetMaxHP());
 		repeatPlayer->set_currenthp(player->GetCurrentHP());
 	}
-	/*auto m = pkt.mutable_players();
-	m->Add();*/
+	
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 
 	// Send all players in room to new player
@@ -362,18 +378,12 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		sendItem->set_itemid(roomItem->GetItemId());
 		sendItem->set_value(roomItem->GetItemValue());
 		sendItem->set_amount(1);
-		if (roomItem->GetItemEffect() == "0") //  HP -> TODO ENUMMAP
-		{
-			sendItem->set_type(Protocol::ITEM_TYPE_HEAL);
-			sendItem->set_effect(Protocol::ITEM_EFFECT_HP);
-		}
-		// TODO 
-		else {
-
-		}
+		sendItem->set_type(EnumMap::ItemTypeProtocolMap(roomItem->GetItemEffect()));
+		sendItem->set_effect(EnumMap::ItemEffectProtocolMap(roomItem->GetItemEffect()));
+		
 		repeatedItem->set_allocated_item(sendItem);
 	}
-
+	
 	session->Send(MakeSendBuffer(createRoomPkt, createRoomPacketId));
 
 	return true;
@@ -385,13 +395,8 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 	Protocol::C_CHAT recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	// Validation
-	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
-		// TODO Send Error
-		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
-		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
+	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_CHAT))
 		return false;
-	}
 
 	shared_ptr<Account> account = AccountController::GetAccountByPlayerId(recvPkt.playerid());
 
@@ -401,16 +406,13 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 	pkt.set_playerid(recvPkt.playerid());
 	pkt.set_playername(account->GetAccountName());
 	pkt.set_msg(recvPkt.msg());
+	pkt.set_success(true);
 
-	// TODO Type check
 	switch (recvPkt.type())
 	{
-		// nomal chat
 	default:
 	case Protocol::CHAT_TYPE_NORMAL:
-	{
 		GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
-	}
 	break;
 
 	case Protocol::CHAT_TYPE_WHISPER:
@@ -462,17 +464,20 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 	Protocol::C_MOVE recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	// Validation
-	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
-		// TODO Send Error
-		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
-		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
+	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_MOVE))
 		return false;
-	}
 
 	if (!GRoom.CanGo(session->_player->GetPlayerId(), recvPkt.posx(), recvPkt.posy())) {
-		//TODO ERROR SEND
-		cout << "CAN'T GO" << endl;
+		auto errorPkt = new Protocol::ErrorObj();
+		errorPkt->set_errorcode(ErrorCode::ERROR_S_MOVE);
+		errorPkt->set_errormsg("Can't go");
+
+		uint16 packetId = PKT_S_MOVE;
+		Protocol::S_MOVE pkt;
+		pkt.set_success(false);
+		pkt.set_allocated_error(errorPkt);
+
+		session->Send(MakeSendBuffer(pkt, packetId));
 		return false;
 	}
 
@@ -494,6 +499,7 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 
 	uint16 packetId = PKT_S_MOVE;
 	Protocol::S_MOVE pkt;
+	pkt.set_success(true);
 	pkt.set_dir(recvPkt.dir());
 	pkt.set_allocated_player(sendPlayer);
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
@@ -507,12 +513,9 @@ bool ClientPacketHandler::HandleShot(BYTE* buffer, int32 len, GameProtobufSessio
 	Protocol::C_SHOT recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	cout << "[SHOT PLAYER: " << session->_player->GetPlayerId() << "]" << endl;
-	// TODO DB LOG SAVE
-
-
 	uint16 packetId = PKT_S_SHOT;
 	Protocol::S_SHOT pkt;
+	pkt.set_success(true);
 	pkt.set_playerid(recvPkt.playerid());
 	pkt.set_spawnposx(recvPkt.spawnposx());
 	pkt.set_spawnposy(recvPkt.spawnposy());
@@ -529,15 +532,9 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 	Protocol::C_HIT recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	// Validation
-	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
-		// TODO Send Error
-		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
-		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
+	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_HIT))
 		return false;
-	}
 
-	// Check Shot Player is Party Player
 	vector<shared_ptr<Player>> myPartyPlayers = PlayerController::GetPartyPlayersByPlayerId(recvPkt.playerid());
 	if (myPartyPlayers.size() > 0)
 	{
@@ -545,7 +542,16 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 		{
 			if (partyPlayer->GetPlayerId() == recvPkt.shotplayerid())
 			{
-				cout << "Shot My PartyPlayer" << endl;
+				auto errorPkt = new Protocol::ErrorObj();
+				errorPkt->set_errorcode(ErrorCode::ERROR_S_HIT);
+				errorPkt->set_errormsg("Shot My Party Player");
+
+				uint16 packetId = PKT_S_MOVE;
+				Protocol::S_MOVE pkt;
+				pkt.set_success(false);
+				pkt.set_allocated_error(errorPkt);
+
+				session->Send(MakeSendBuffer(pkt, packetId));
 				return false;
 			}
 		}
@@ -554,15 +560,22 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 
 	uint64 currentHP = PlayerController::DecreaseHP(recvPkt.playerid(), recvPkt.damage());
 	if (currentHP < 0) {
-		// TODO error
-		cout << "ERROR: currentHP = -1 " << endl;
+		auto errorPkt = new Protocol::ErrorObj();
+		errorPkt->set_errorcode(ErrorCode::ERROR_S_HIT);
+		errorPkt->set_errormsg("DB Error");
+
+		uint16 packetId = PKT_S_HIT;
+		Protocol::S_HIT pkt;
+		pkt.set_success(false);
+		pkt.set_allocated_error(errorPkt);
+
+		session->Send(MakeSendBuffer(pkt, packetId));
 		return false;
 	}
 
 	// Session & Room Update
 	session->_player->DecreaseHP(recvPkt.damage());
 	GRoom.UpdateCurrentHP(session->_player->GetPlayerId(), currentHP);
-	cout << "[HIT PLAYER: " << session->_player->GetPlayerId() << ", CURRENTHP: " << currentHP << "]" << endl;
 
 	uint16 packetId = PKT_S_HIT;
 	Protocol::S_HIT pkt;
@@ -586,13 +599,8 @@ bool ClientPacketHandler::HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobu
 	Protocol::C_EAT_ROOM_ITEM recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	// Validation
-	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
-		// TODO Send Error
-		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
-		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
+	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_EAT_ROOM_ITEM))
 		return false;
-	}
 
 	const Protocol::RoomItem& recvItem = recvPkt.item();
 	shared_ptr<RoomItem> roomItem = ItemController::GetRoomItemByRoomItemId(recvItem.roomitemid());
@@ -653,15 +661,8 @@ bool ClientPacketHandler::HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobu
 		sendItem->set_value(roomItem->GetItemValue());
 		sendItem->set_amount(1);
 
-		if (roomItem->GetItemEffect() == "0") //  HP -> TODO ENUMMAP
-		{
-			sendItem->set_type(Protocol::ITEM_TYPE_HEAL);
-			sendItem->set_effect(Protocol::ITEM_EFFECT_HP);
-		}
-		// TODO OTHER ITEM
-		else {
-
-		}
+		sendItem->set_type(EnumMap::ItemTypeProtocolMap(roomItem->GetItemEffect()));
+		sendItem->set_effect(EnumMap::ItemEffectProtocolMap(roomItem->GetItemEffect()));
 		repeatedItem->set_allocated_item(sendItem);
 
 
@@ -677,12 +678,8 @@ bool ClientPacketHandler::HandleUseItem(BYTE* buffer, int32 len, GameProtobufSes
 	//Protocol::C_USE_ITEM recvPkt;
 	//recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	//// Validation
-	//if (session->_player->GetPlayerId() != recvPkt.playerid()) {
-	//	// TODO Send Error
-	//	cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
-	//	return false;
-	//}
+	//if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_USE_ITEM))
+		//return false;
 
 	//const Protocol::Item& recvItem = recvPkt.item();
 	//shared_ptr<Item> item = ItemController::GetItemById(recvItem.itemid());
@@ -695,22 +692,23 @@ bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobu
 	Protocol::C_USE_ITEM recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 	
-	// Validation
-	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
-		// TODO Send Error
-		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
-		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
+	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_CREATE_PARTY))
 		return false;
-	}
 
 	int64 createPartyId = PlayerController::CreateParty(recvPkt.playerid());
 	if (createPartyId == -1) {
-		cout << "[ERROR: Create Party" << endl;
+		auto errorPkt = new Protocol::ErrorObj();
+		errorPkt->set_errorcode(ErrorCode::ERROR_S_CREATE_PARTY);
+		errorPkt->set_errormsg("Create Party Error");
+
+		uint16 packetId = PKT_S_MOVE;
+		Protocol::S_CREATE_PARTY pkt;
+		pkt.set_success(false);
+		pkt.set_allocated_error(errorPkt);
+
+		session->Send(MakeSendBuffer(pkt, packetId));
 		return false;
 	}
-
-	// Update Room
-	GRoom.CreateParty(createPartyId);
 
 	uint16 packetId = PKT_S_CREATE_PARTY;
 	Protocol::S_CREATE_PARTY pkt;
@@ -726,19 +724,22 @@ bool ClientPacketHandler::HandleJoinParty(BYTE* buffer, int32 len, GameProtobufS
 	Protocol::C_JOIN_PARTY recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	// Validation
-	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
-		// TODO Send Error
-		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
-		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
+	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_JOIN_PARTY))
 		return false;
-	}
 
 	bool join = PlayerController::JoinParty(recvPkt.playerid(), recvPkt.partyid());
 	if (!join)
 	{
-		// TODO Send Error
-		cout << "[ERROR: Join]" << endl;
+		auto errorPkt = new Protocol::ErrorObj();
+		errorPkt->set_errorcode(ErrorCode::ERROR_S_JOIN_PARTY);
+		errorPkt->set_errormsg("JOIN PARTY ERROR");
+
+		uint16 packetId = PKT_S_JOIN_PARTY;
+		Protocol::S_JOIN_PARTY pkt;
+		pkt.set_success(false);
+		pkt.set_allocated_error(errorPkt);
+
+		session->Send(MakeSendBuffer(pkt, packetId));
 		return false;
 	}
 
@@ -762,23 +763,26 @@ bool ClientPacketHandler::HandleWithdrawParty(BYTE* buffer, int32 len, GameProto
 	Protocol::C_WITHDRAW_PARTY recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	// Validation
-	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
-		// TODO Send Error
-		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
-		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
+	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_WITHDRAW_PARTY))
 		return false;
-	}
 
 	uint64 withDrawPartyAndGetCount = PlayerController::WithdrawParty(recvPkt.playerid(), recvPkt.partyid());
 	if (withDrawPartyAndGetCount == -1) {
-		cout << "[ERROR: Withdraw Party" << endl;
+		auto errorPkt = new Protocol::ErrorObj();
+		errorPkt->set_errorcode(ErrorCode::ERROR_S_WITHDRAW_PARTY);
+		errorPkt->set_errormsg("Withdraw Party Error");
+
+		uint16 packetId = PKT_S_WITHDRAW_PARTY;
+		Protocol::S_WITHDRAW_PARTY pkt;
+		pkt.set_success(false);
+		pkt.set_allocated_error(errorPkt);
+
+		session->Send(MakeSendBuffer(pkt, packetId));
 		return false;
 	}
 	
 	// Update Room
 	if (withDrawPartyAndGetCount == 0) {
-		GRoom.RemoveParty(recvPkt.partyid());
 		PlayerController::CloseParty(recvPkt.partyid());
 	}
 
@@ -807,13 +811,8 @@ bool ClientPacketHandler::HandleGetMyParty(BYTE* buffer, int32 len, GameProtobuf
 	Protocol::C_MY_PARTY recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	// Validation
-	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
-		// TODO Send Error
-		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
-		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
+	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_MY_PARTY))
 		return false;
-	}
 
 	int64 partyId = PlayerController::GetMyPartyIdByPlayerId(recvPkt.playerid());
 	vector<shared_ptr<Player>> players = PlayerController::GetPartyPlayersByPlayerId(recvPkt.playerid());
@@ -842,13 +841,8 @@ bool ClientPacketHandler::HandleGetAllParty(BYTE* buffer, int32 len, GameProtobu
 	Protocol::C_MY_PARTY recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 	
-	// Validation
-	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
-		// TODO Send Error
-		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
-		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
+	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_ALL_PARTY))
 		return false;
-	}
 
 	vector<pair<shared_ptr<Party>, shared_ptr<PartyPlayer>>> parties = PlayerController::GetAllParties();
 
