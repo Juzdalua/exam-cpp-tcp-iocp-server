@@ -5,6 +5,8 @@ enum : uint16
 	PKT_S_SERVER_CHAT = 9999,
 	PKT_S_CREATE_ROOM = 9998,
 
+	PKT_S_DISCONNECT = 999,
+
 	PKT_C_TEST = 1000,
 	PKT_S_TEST = 1001,
 
@@ -55,6 +57,9 @@ class ClientPacketHandler
 {
 public:
 	static bool HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
+
+	// Disconnect
+	static bool HandleDisconnect(GameProtobufSessionRef& session);
 
 	// Ping-Pong
 	static bool HandleTest(BYTE* buffer, int32 len, GameProtobufSessionRef& session);

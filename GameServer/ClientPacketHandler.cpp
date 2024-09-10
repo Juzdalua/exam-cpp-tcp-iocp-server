@@ -79,6 +79,16 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 	return false;
 }
 
+bool ClientPacketHandler::HandleDisconnect(GameProtobufSessionRef& session)
+{
+	uint16 packetId = PKT_S_DISCONNECT;
+	Protocol::S_DISCONNECT pkt;
+	pkt.set_playerid(session->_player->GetPlayerId());
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	return true;
+}
+
 /*--------------------
 	Test Ping-Pong
 --------------------*/
