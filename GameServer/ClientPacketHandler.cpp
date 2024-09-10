@@ -532,6 +532,21 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 		return false;
 	}
 
+	// Check Shot Player is Party Player
+	vector<shared_ptr<Player>> myPartyPlayers = PlayerController::GetPartyPlayersByPlayerId(recvPkt.playerid());
+	if (myPartyPlayers.size() > 0)
+	{
+		for (auto& partyPlayer : myPartyPlayers)
+		{
+			if (partyPlayer->GetPlayerId() == recvPkt.shotplayerid())
+			{
+				cout << "Shot My PartyPlayer" << endl;
+				return false;
+			}
+		}
+	}
+	
+
 	uint64 currentHP = PlayerController::DecreaseHP(recvPkt.playerid(), recvPkt.damage());
 	if (currentHP < 0) {
 		// TODO error
