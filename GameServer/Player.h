@@ -46,7 +46,7 @@ private:
 	float _posY;
 	uint64 _maxHP;
 	uint64 _currentHP;
-	GameProtobufSessionRef _ownerSession;
+	GameProtobufSessionRef _ownerSession = nullptr;
 };
 
 /*---------------

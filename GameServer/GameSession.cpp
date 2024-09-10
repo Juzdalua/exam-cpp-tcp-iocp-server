@@ -89,6 +89,15 @@ void GameProtobufSession::OnConnected()
 
 void GameProtobufSession::OnDisconnected()
 {
+	if (_accountId && _accountId != 0) {
+		DebugLog::PrintColorText(LogColor::YELLOW, "[AccountId-> ", to_string(_accountId), false, false);
+	}
+	if (_player) {
+		DebugLog::PrintColorText(LogColor::YELLOW, " / PlayerId-> ", to_string(_player->GetPlayerId()), false, false);
+	}
+
+	DebugLog::PrintColorText(LogColor::YELLOW, "]", "", false, true);
+
 	// Room Leave
 	if (_player != nullptr)
 	{
@@ -97,6 +106,12 @@ void GameProtobufSession::OnDisconnected()
 
 	// Remove Session Ref
 	GProtobufSessionManager.Remove(static_pointer_cast<GameProtobufSession>(shared_from_this()));
+	
+	// Session Close
+	if (_player != nullptr && _player->GetOwnerSession() != nullptr)
+	{
+		_player->SetOwnerSession(nullptr);
+	}
 }
 
 void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)

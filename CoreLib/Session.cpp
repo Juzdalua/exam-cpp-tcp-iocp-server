@@ -46,7 +46,7 @@ void Session::Disconnect(const WCHAR* cause)
 		return;
 
 	// TEMP
-	wcout << "Disconnect: " << cause << endl;
+	DebugLog::PrintColorText(LogColor::YELLOW, "[Disconnect]", "", true, false);
 
 	RegisterDisconnect();
 }

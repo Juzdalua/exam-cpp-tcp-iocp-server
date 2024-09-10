@@ -57,10 +57,16 @@ class GameProtobufSession : public PacketSession
 public:
 	virtual ~GameProtobufSession()
 	{
+		DebugLog::PrintColorText(LogColor::YELLOW, "[Session Close]", "", true, false);
 		if (_player != nullptr) {
 			GRoom.Leave(_player);
+			
+			if (_accountId && _accountId != 0) {
+				DebugLog::PrintColorText(LogColor::YELLOW, "[AccountId-> ", to_string(_accountId), false, false);
+			}
+			DebugLog::PrintColorText(LogColor::YELLOW, " / PlayerId-> ", to_string(_player->GetPlayerId()), false, false);
+			DebugLog::PrintColorText(LogColor::YELLOW, "]", "", false, true);
 		}
-		cout << "~GameProtobufSession" << endl;
 	}
 
 	GameProtobufSessionRef GetProtobufSessionRef() { return static_pointer_cast<GameProtobufSession>(shared_from_this()); }
@@ -73,6 +79,6 @@ public:
 	virtual void OnSend(int32 len, vector<SendBufferRef>& sendVec) override;
 
 public:
-	PlayerRef _player;
+	PlayerRef _player = nullptr;
 	uint64 _accountId;
 };
