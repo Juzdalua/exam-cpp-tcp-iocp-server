@@ -102,6 +102,8 @@ void GameProtobufSession::OnDisconnected()
 	if (_player != nullptr)
 	{
 		GRoom.Leave(_player);
+		GameProtobufSessionRef session = _player->GetOwnerSession();
+		ClientPacketHandler::HandleDisconnect(session);
 	}
 
 	// Remove Session Ref

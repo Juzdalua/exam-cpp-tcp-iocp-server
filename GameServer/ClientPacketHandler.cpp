@@ -79,6 +79,16 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 	return false;
 }
 
+bool ClientPacketHandler::HandleDisconnect(GameProtobufSessionRef& session)
+{
+	uint16 packetId = PKT_S_DISCONNECT;
+	Protocol::S_DISCONNECT pkt;
+	pkt.set_playerid(session->_player->GetPlayerId());
+	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+
+	return true;
+}
+
 /*--------------------
 	Test Ping-Pong
 --------------------*/
@@ -521,6 +531,21 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
 		return false;
 	}
+
+	// Check Shot Player is Party Player
+	vector<shared_ptr<Player>> myPartyPlayers = PlayerController::GetPartyPlayersByPlayerId(recvPkt.playerid());
+	if (myPartyPlayers.size() > 0)
+	{
+		for (auto& partyPlayer : myPartyPlayers)
+		{
+			if (partyPlayer->GetPlayerId() == recvPkt.shotplayerid())
+			{
+				cout << "Shot My PartyPlayer" << endl;
+				return false;
+			}
+		}
+	}
+	
 
 	uint64 currentHP = PlayerController::DecreaseHP(recvPkt.playerid(), recvPkt.damage());
 	if (currentHP < 0) {
