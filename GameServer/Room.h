@@ -5,6 +5,10 @@
 class Room
 {
 public:
+
+	Room();
+	~Room();
+public:
 	void Enter(PlayerRef player);
 	void Leave(PlayerRef player);
 	void Broadcast(SendBufferRef sendBuffer);

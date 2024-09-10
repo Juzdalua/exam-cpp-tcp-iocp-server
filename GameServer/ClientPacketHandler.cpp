@@ -379,9 +379,7 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 	return true;
 }
 
-/*--------------------
-	Chat
---------------------*/
+// Chat
 bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
 	Protocol::C_CHAT recvPkt;
@@ -427,8 +425,15 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 
 	case Protocol::CHAT_TYPE_PARTY:
 	{
-		// TODO check session -> Broadcast to party
-		GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+		vector<shared_ptr<Player>> myPartyPlayer = PlayerController::GetPartyPlayersByPlayerId(recvPkt.playerid());
+		pkt.set_targetid(recvPkt.targetid());
+		if (myPartyPlayer.size() > 0)
+		{
+			for (auto& partyPlayer : myPartyPlayer)
+			{
+				GRoom.SendToTargetPlayer(partyPlayer->GetPlayerId(), MakeSendBuffer(pkt, packetId));
+			}
+		}
 	}
 	break;
 
