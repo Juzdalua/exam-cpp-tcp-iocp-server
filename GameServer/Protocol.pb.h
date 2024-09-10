@@ -1616,6 +1616,7 @@ class C_CHAT final :
     kPlayerNameFieldNumber = 3,
     kMsgFieldNumber = 4,
     kPlayerIdFieldNumber = 2,
+    kTargetIdFieldNumber = 5,
     kTypeFieldNumber = 1,
   };
   // string playerName = 3;
@@ -1655,6 +1656,15 @@ class C_CHAT final :
   void _internal_set_playerid(uint64_t value);
   public:
 
+  // uint64 targetId = 5;
+  void clear_targetid();
+  uint64_t targetid() const;
+  void set_targetid(uint64_t value);
+  private:
+  uint64_t _internal_targetid() const;
+  void _internal_set_targetid(uint64_t value);
+  public:
+
   // .Protocol.ChatType type = 1;
   void clear_type();
   ::Protocol::ChatType type() const;
@@ -1675,6 +1685,7 @@ class C_CHAT final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr playername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
     uint64_t playerid_;
+    uint64_t targetid_;
     int type_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -1807,6 +1818,7 @@ class S_CHAT final :
     kPlayerNameFieldNumber = 3,
     kMsgFieldNumber = 4,
     kPlayerIdFieldNumber = 2,
+    kTargetIdFieldNumber = 5,
     kTypeFieldNumber = 1,
   };
   // string playerName = 3;
@@ -1846,6 +1858,15 @@ class S_CHAT final :
   void _internal_set_playerid(uint64_t value);
   public:
 
+  // uint64 targetId = 5;
+  void clear_targetid();
+  uint64_t targetid() const;
+  void set_targetid(uint64_t value);
+  private:
+  uint64_t _internal_targetid() const;
+  void _internal_set_targetid(uint64_t value);
+  public:
+
   // .Protocol.ChatType type = 1;
   void clear_type();
   ::Protocol::ChatType type() const;
@@ -1866,6 +1887,7 @@ class S_CHAT final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr playername_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
     uint64_t playerid_;
+    uint64_t targetid_;
     int type_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -2729,7 +2751,8 @@ class C_HIT final :
 
   enum : int {
     kPlayerIdFieldNumber = 1,
-    kDamageFieldNumber = 2,
+    kShotPlayerIdFieldNumber = 2,
+    kDamageFieldNumber = 3,
   };
   // uint64 playerId = 1;
   void clear_playerid();
@@ -2740,7 +2763,16 @@ class C_HIT final :
   void _internal_set_playerid(uint64_t value);
   public:
 
-  // uint64 damage = 2;
+  // uint64 shotPlayerId = 2;
+  void clear_shotplayerid();
+  uint64_t shotplayerid() const;
+  void set_shotplayerid(uint64_t value);
+  private:
+  uint64_t _internal_shotplayerid() const;
+  void _internal_set_shotplayerid(uint64_t value);
+  public:
+
+  // uint64 damage = 3;
   void clear_damage();
   uint64_t damage() const;
   void set_damage(uint64_t value);
@@ -2758,6 +2790,7 @@ class C_HIT final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     uint64_t playerid_;
+    uint64_t shotplayerid_;
     uint64_t damage_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -6173,6 +6206,26 @@ inline void C_CHAT::set_allocated_msg(std::string* msg) {
   // @@protoc_insertion_point(field_set_allocated:Protocol.C_CHAT.msg)
 }
 
+// uint64 targetId = 5;
+inline void C_CHAT::clear_targetid() {
+  _impl_.targetid_ = uint64_t{0u};
+}
+inline uint64_t C_CHAT::_internal_targetid() const {
+  return _impl_.targetid_;
+}
+inline uint64_t C_CHAT::targetid() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_CHAT.targetId)
+  return _internal_targetid();
+}
+inline void C_CHAT::_internal_set_targetid(uint64_t value) {
+  
+  _impl_.targetid_ = value;
+}
+inline void C_CHAT::set_targetid(uint64_t value) {
+  _internal_set_targetid(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_CHAT.targetId)
+}
+
 // -------------------------------------------------------------------
 
 // S_CHAT
@@ -6315,6 +6368,26 @@ inline void S_CHAT::set_allocated_msg(std::string* msg) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_CHAT.msg)
+}
+
+// uint64 targetId = 5;
+inline void S_CHAT::clear_targetid() {
+  _impl_.targetid_ = uint64_t{0u};
+}
+inline uint64_t S_CHAT::_internal_targetid() const {
+  return _impl_.targetid_;
+}
+inline uint64_t S_CHAT::targetid() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_CHAT.targetId)
+  return _internal_targetid();
+}
+inline void S_CHAT::_internal_set_targetid(uint64_t value) {
+  
+  _impl_.targetid_ = value;
+}
+inline void S_CHAT::set_targetid(uint64_t value) {
+  _internal_set_targetid(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_CHAT.targetId)
 }
 
 // -------------------------------------------------------------------
@@ -6742,7 +6815,27 @@ inline void C_HIT::set_playerid(uint64_t value) {
   // @@protoc_insertion_point(field_set:Protocol.C_HIT.playerId)
 }
 
-// uint64 damage = 2;
+// uint64 shotPlayerId = 2;
+inline void C_HIT::clear_shotplayerid() {
+  _impl_.shotplayerid_ = uint64_t{0u};
+}
+inline uint64_t C_HIT::_internal_shotplayerid() const {
+  return _impl_.shotplayerid_;
+}
+inline uint64_t C_HIT::shotplayerid() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_HIT.shotPlayerId)
+  return _internal_shotplayerid();
+}
+inline void C_HIT::_internal_set_shotplayerid(uint64_t value) {
+  
+  _impl_.shotplayerid_ = value;
+}
+inline void C_HIT::set_shotplayerid(uint64_t value) {
+  _internal_set_shotplayerid(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_HIT.shotPlayerId)
+}
+
+// uint64 damage = 3;
 inline void C_HIT::clear_damage() {
   _impl_.damage_ = uint64_t{0u};
 }

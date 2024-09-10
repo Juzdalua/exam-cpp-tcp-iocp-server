@@ -12,7 +12,7 @@ int32 MAX_CLIENT_COUNT = 1;
 int32 MAX_WORKER_COUNT = 2;
 
 // System Server Message
-void SystemMessageFromServer() 
+void SystemMessageFromServer()
 {
 	int32 i = 0;
 	while (true)
@@ -24,7 +24,7 @@ void SystemMessageFromServer()
 		Protocol::S_SERVER_CHAT pkt;
 		pkt.set_type(Protocol::CHAT_TYPE_SYSTEM);
 		pkt.set_msg(input);
-		
+
 		cout << pkt.msg() << endl;
 
 		SendBufferRef sendBuffer = MakeSendBuffer(pkt, packetId);
@@ -77,7 +77,7 @@ int main()
 	SocketUtils::Clear();
 	cout << "===== Server has been shut down. =====" << endl;
 }
-	
+
 /*
 	Listener -> Socket Set -> Register Accept (AcceptEx)
 	Process Accept -> Client Session Set -> Process Connect -> Register Recv (WSARecv)

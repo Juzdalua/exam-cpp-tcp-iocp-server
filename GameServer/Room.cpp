@@ -29,6 +29,15 @@ void Room::Broadcast(SendBufferRef sendBuffer)
 	}
 }
 
+void Room::SendToTargetPlayer(uint64 targetPlayerId, SendBufferRef sendBuffer)
+{
+	lock_guard<mutex> lock(_lock);
+	if (_players[targetPlayerId] != nullptr)
+	{
+		_players[targetPlayerId]->GetOwnerSession()->Send(sendBuffer);
+	}
+}
+
 void Room::CheckPlayers()
 {
 	cout << "[Check Room Count: " << _players.size() << "]" << endl;

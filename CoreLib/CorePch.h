@@ -26,3 +26,4 @@ using namespace std;
 
 #include "Session.h"
 #include "SendBuffer.h"
+#include "DebugLog.h"

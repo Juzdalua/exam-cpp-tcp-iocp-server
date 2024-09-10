@@ -90,7 +90,7 @@ void GameProtobufSession::OnConnected()
 void GameProtobufSession::OnDisconnected()
 {
 	// Room Leave
-	if (_player != nullptr) 
+	if (_player != nullptr)
 	{
 		GRoom.Leave(_player);
 	}
@@ -104,20 +104,22 @@ void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 	GameProtobufSessionRef session = GetProtobufSessionRef();
 
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
-	
+
 	// Log
-	cout << endl << "[ PacketId-> " << recvHeader->id << " : " << packetIdToString[recvHeader->id] << " / Size-> " << recvHeader->size;
+	cout << endl;
+	DebugLog::PrintColorText(LogColor::GREEN, "[RECV] [PacketId-> ", to_string(recvHeader->id), true, false);
+	DebugLog::PrintColorText(LogColor::GREEN, " : ", packetIdToString[recvHeader->id], false, false);
+	DebugLog::PrintColorText(LogColor::GREEN, " / Size-> ", to_string(recvHeader->size), false, false);
+
 	if (session->_accountId && session->_accountId != 0) {
-		cout << " / AccountId: " << session->_accountId;
+		DebugLog::PrintColorText(LogColor::GREEN, " / AccountId-> ", to_string(session->_accountId), false, false);
 	}
 	if (session->_player) {
-		cout << " / PlayerId: " << session->_player->GetPlayerId();
+		DebugLog::PrintColorText(LogColor::GREEN, " / PlayerId-> ", to_string(session->_player->GetPlayerId()), false, false);
 	}
-	cout << "]" << endl;
+	DebugLog::PrintColorText(LogColor::GREEN, "]", "", false, true);
 
 	ClientPacketHandler::HandlePacket(buffer, len, session);
-
-	//GProtobufSessionManager.Broadcast(sendBuffer);
 }
 
 void GameProtobufSession::OnSend(int32 len)
@@ -125,3 +127,23 @@ void GameProtobufSession::OnSend(int32 len)
 	cout << "OnSend Len = " << len << endl;
 }
 
+void GameProtobufSession::OnSend(int32 len, vector<SendBufferRef>& sendVec)
+{
+	if (sendVec.size() > 0)
+	{
+		GameProtobufSessionRef session = GetProtobufSessionRef();
+		PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(sendVec.back()->Buffer());
+		
+		DebugLog::PrintColorText(LogColor::BLUE, "[SEND] [PacketId-> ", to_string(recvHeader->id), true, false);
+		DebugLog::PrintColorText(LogColor::BLUE, " : ", packetIdToString[recvHeader->id], false, false);
+		DebugLog::PrintColorText(LogColor::BLUE, " / Size-> ", to_string(recvHeader->size), false, false);
+
+		if (session->_accountId && session->_accountId != 0) {
+			DebugLog::PrintColorText(LogColor::BLUE, " / AccountId-> ", to_string(session->_accountId), false, false);
+		}
+		if (session->_player) {
+			DebugLog::PrintColorText(LogColor::BLUE, " / PlayerId-> ", to_string(session->_player->GetPlayerId()), false, false);
+		}
+		DebugLog::PrintColorText(LogColor::BLUE, "]", "", false, true);
+	}
+}

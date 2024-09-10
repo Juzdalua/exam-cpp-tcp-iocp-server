@@ -217,7 +217,7 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 
 	// Set Session
 	session->_player = playerRef;
-	session->_accountId = recvAccount.id();
+	session->_accountId = pairAccountPlayer.second->GetAccountId();
 
 	// Set SendBuffer
 	uint16 packetId = PKT_S_LOGIN;
@@ -380,7 +380,8 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
-		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
+		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
 		return false;
 	}
 
@@ -404,6 +405,16 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 	}
 	break;
 
+	case Protocol::CHAT_TYPE_WHISPER:
+	{
+		uint64 recvPlayerId = recvPkt.targetid();
+		pkt.set_targetid(recvPkt.targetid());
+
+		GRoom.SendToTargetPlayer(recvPlayerId, MakeSendBuffer(pkt, packetId));
+		session->Send(MakeSendBuffer(pkt, packetId));
+	}
+	break;
+
 	case Protocol::CHAT_TYPE_PARTY:
 	{
 		// TODO check session -> Broadcast to party
@@ -414,13 +425,7 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 	case Protocol::CHAT_TYPE_GUILD:
 	{
 		// TODO check session -> Broadcast to guild
-		GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
-	}
-	break;
-
-	case Protocol::CHAT_TYPE_WHISPER:
-	{
-		// TODO check session -> Send
+		//GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
 	}
 	break;
 
@@ -445,7 +450,8 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
-		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
+		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
 		return false;
 	}
 
@@ -511,7 +517,8 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
-		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
+		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
 		return false;
 	}
 
@@ -552,7 +559,8 @@ bool ClientPacketHandler::HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobu
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
-		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
+		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
 		return false;
 	}
 
@@ -649,8 +657,6 @@ bool ClientPacketHandler::HandleUseItem(BYTE* buffer, int32 len, GameProtobufSes
 	//const Protocol::Item& recvItem = recvPkt.item();
 	//shared_ptr<Item> item = ItemController::GetItemById(recvItem.itemid());
 
-
-
 	return true;
 }
 
@@ -662,7 +668,8 @@ bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobu
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
-		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
+		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
 		return false;
 	}
 
@@ -692,7 +699,8 @@ bool ClientPacketHandler::HandleJoinParty(BYTE* buffer, int32 len, GameProtobufS
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
-		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
+		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
 		return false;
 	}
 
@@ -727,7 +735,8 @@ bool ClientPacketHandler::HandleWithdrawParty(BYTE* buffer, int32 len, GameProto
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
-		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
+		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
 		return false;
 	}
 
@@ -771,7 +780,8 @@ bool ClientPacketHandler::HandleGetMyParty(BYTE* buffer, int32 len, GameProtobuf
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
-		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
+		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
 		return false;
 	}
 
@@ -805,7 +815,8 @@ bool ClientPacketHandler::HandleGetAllParty(BYTE* buffer, int32 len, GameProtobu
 	// Validation
 	if (session->_player->GetPlayerId() != recvPkt.playerid()) {
 		// TODO Send Error
-		cout << "[ERROR: " << session->_player->GetPlayerId() << "is Invalid ID" << "]" << endl;
+		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
+		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
 		return false;
 	}
 

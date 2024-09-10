@@ -55,7 +55,8 @@ private:
 	void ProcessConnect();
 	void ProcessDisconnect();
 	void ProcessRecv(int32 numOfBytes);
-	void ProcessSend(int32 numOfBytes);
+	//void ProcessSend(int32 numOfBytes);
+	void ProcessSend(int32 numOfBytes, vector<SendBufferRef> sendVec);
 
 	void HandleError(int32 errorCode);
 
@@ -64,6 +65,7 @@ protected:
 	virtual void OnConnected() {}
 	virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }
 	virtual void OnSend(int32 len) {}
+	virtual void OnSend(int32 len, vector<SendBufferRef>& sendVec) {}
 	virtual void OnDisconnected() {}
 
 private:
