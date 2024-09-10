@@ -24,4 +24,3 @@ private:
     mutex _lock;
     condition_variable _cv;
 };
-
