@@ -1,44 +1,43 @@
 ﻿#include "pch.h"
-#include "ConnectionPool.h"
-#include "SocketUtils.h"
 #include "IocpCore.h"
 #include "GameSession.h"
 #include "Service.h"
 #include "Protocol.pb.h"
-#include "Room.h"
+#include "PacketPriorityQueue.h"
+
 
 CoreGlobal GCoreGlobal;
 int32 MAX_CLIENT_COUNT = 1;
 int32 MAX_WORKER_COUNT = thread::hardware_concurrency();
 
-
 // System Server Message
-void SystemMessageFromServer()
-{
-	int32 i = 0;
-	while (true)
-	{
-		string input;
-		getline(cin, input);
-
-		uint16 packetId = PKT_S_SERVER_CHAT;
-		Protocol::S_SERVER_CHAT pkt;
-		pkt.set_type(Protocol::CHAT_TYPE_SYSTEM);
-		pkt.set_msg(input);
-
-		cout << pkt.msg() << endl;
-
-		SendBufferRef sendBuffer = MakeSendBuffer(pkt, packetId);
-
-		GRoom.Broadcast(sendBuffer);
-		break;
-	}
-}
+//void SystemMessageFromServer()
+//{
+//	int32 i = 0;
+//	while (true)
+//	{
+//		string input;
+//		getline(cin, input);
+//
+//		uint16 packetId = PKT_S_SERVER_CHAT;
+//		Protocol::S_SERVER_CHAT pkt;
+//		pkt.set_type(Protocol::CHAT_TYPE_SYSTEM);
+//		pkt.set_msg(input);
+//
+//		cout << pkt.msg() << endl;
+//
+//		SendBufferRef sendBuffer = MakeSendBuffer(pkt, packetId);
+//
+//		GRoom.Broadcast(sendBuffer);
+//		break;
+//	}
+//}
 
 int main()
 {
-	SocketUtils::Init();
 	cout << "Max Thread Count: " << MAX_WORKER_COUNT << endl;
+
+	shared_ptr<PacketPriorityQueue> pktChecker = make_shared<PacketPriorityQueue>();
 
 	ServerServiceRef service = ServerServiceRef(
 		new ServerService(
@@ -46,7 +45,7 @@ int main()
 			IocpCoreRef(new IocpCore()),
 			//[&]() {return shared_ptr<GameSession>(new GameSession());},
 			//[&]() {return shared_ptr<GamePacketSession>(new GamePacketSession());},
-			[&]() {return shared_ptr<GameProtobufSession>(new GameProtobufSession());},
+			[&]() {return GameProtobufSessionRef(new GameProtobufSession());},
 			MAX_CLIENT_COUNT
 		)
 	);
@@ -76,7 +75,6 @@ int main()
 			t.join();
 	}
 	cout << "===== Worker Thread Exit =====" << endl;
-	SocketUtils::Clear();
 	cout << "===== Server has been shut down. =====" << endl;
 }
 

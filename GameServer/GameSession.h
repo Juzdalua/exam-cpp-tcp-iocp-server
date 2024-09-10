@@ -1,6 +1,5 @@
 #pragma once
 #include "Session.h"
-#include "ClientPacketHandler.h"
 #include "Room.h"
 
 /*---------------
