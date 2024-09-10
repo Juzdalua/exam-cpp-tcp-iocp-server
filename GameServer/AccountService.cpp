@@ -128,8 +128,8 @@ pair<shared_ptr<Account>, shared_ptr<Player>> AccountService::GetAccountAndPlaye
 		string hashedPwd = res->getString("password");
 		uint64 playerId = res->getUInt64("playerId");
 		string playerName = res->getString("playerName");
-		float posX = res->getDouble("posX");
-		float posY = res->getDouble("posY");
+		float posX = static_cast<float>(res->getDouble("posX"));
+		float posY = static_cast<float>(res->getDouble("posY"));
 		uint64 maxHP = res->getUInt64("maxHP");
 		uint64 currentHP = res->getUInt64("currentHP");
 

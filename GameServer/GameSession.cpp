@@ -1,11 +1,12 @@
+#pragma once
 #include "pch.h"
 #include "GameSession.h"
 #include "GameSessionManager.h"
 #include "Protocol.pb.h"
 #include "Room.h"
 #include "Player.h"
-
-extern unordered_map<uint16, string> packetIdToString;
+#include "ClientPacketHandler.h"
+#include "PacketUtils.h"
 
 /*---------------
 	Game Session

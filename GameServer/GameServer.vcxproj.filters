@@ -84,6 +84,7 @@
     <ClCompile Include="EnumMap.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="PacketPriorityQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -143,6 +144,7 @@
     <ClInclude Include="EnumMap.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="PacketPriorityQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\Protobuf\bin\Protocol.proto">
