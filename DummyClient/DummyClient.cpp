@@ -2,46 +2,18 @@
 #include "Service.h"
 #include "SocketUtils.h"
 #include "ServerSession.h"
+#include "Protocol.pb.h"
 
 int32 MAX_WORKER_COUNT = 2;
-
-// ServerSession
-void Chat(ClientServiceRef service)
-{
-	while (true)
-	{
-		char sendData[100];
-		cin >> sendData;
-
-		SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
-		sendBuffer->CopyData(sendData, sizeof(sendData));
-		service->Broadcast(sendBuffer);
-	}
-}
-
-// ServerPacketSession
-void ChatPacket(ClientServiceRef service)
-{
-	while (true)
-	{
-		char sendData[100];
-		cin >> sendData;
-
-		SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
-		PacketHeader* header = reinterpret_cast<PacketHeader*>(sendBuffer->Buffer());
-		header->id = 1;
-		header->size = sizeof(sendData) + sizeof(PacketHeader);
-		sendBuffer->CopyPacket(&sendBuffer->Buffer()[4], &sendData, sizeof(sendData));
-		service->Broadcast(sendBuffer);
-	}
-}
-
-// ServerProtobufSession
+int32 CLIENT_COUNT = 1;
 
 int main()
 {
 	this_thread::sleep_for(1s);
 	SocketUtils::Init();
+
+	cout << "추가할 클라이언트 수를 입력하세요 (0 입력 시 종료): ";
+	cin >> CLIENT_COUNT;
 
 	ClientServiceRef service = ClientServiceRef(
 		new ClientService(
@@ -50,7 +22,7 @@ int main()
 			//[&]() {return shared_ptr<ServerSession>(new ServerSession());},
 			//[&]() {return shared_ptr<ServerPacketSession>(new ServerPacketSession());},
 			[&]() {return shared_ptr<ServerProtobufSession>(new ServerProtobufSession());},
-			1
+			CLIENT_COUNT
 		)
 	);
 
@@ -69,24 +41,6 @@ int main()
 			}));
 	}
 
-	// Chat
-	//Chat(service);
-	//ChatPacket(service);
-
-	// Room
-	/*Protocol::C_CHAT chatPkt;
-	chatPkt.set_msg(u8"Hello World");
-
-	SendBufferRef sendBuffer = SendBufferRef(new SendBuffer(4096));
-	sendBuffer->CopyData(&chatPkt, chatPkt.ByteSizeLong());
-	service->Broadcast(sendBuffer);
-
-	while (true)
-	{
-		service->Broadcast(sendBuffer);
-		this_thread::sleep_for(1s);
-	}*/
-	
 	for (thread& t : workers)
 	{
 		if (t.joinable())
