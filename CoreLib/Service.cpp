@@ -71,7 +71,7 @@ bool ClientService::Start()
 		if (session->Connect() == false)
 			return false;
 	}
-	cout << "===== Client Accecc Done! =====" << endl;
+	cout << "===== Client Accept Done! =====" << endl;
 
 	return true;
 }

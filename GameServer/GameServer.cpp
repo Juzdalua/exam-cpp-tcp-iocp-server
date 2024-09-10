@@ -9,7 +9,8 @@
 
 CoreGlobal GCoreGlobal;
 int32 MAX_CLIENT_COUNT = 1;
-int32 MAX_WORKER_COUNT = 2;
+int32 MAX_WORKER_COUNT = thread::hardware_concurrency();
+
 
 // System Server Message
 void SystemMessageFromServer()
@@ -37,6 +38,7 @@ void SystemMessageFromServer()
 int main()
 {
 	SocketUtils::Init();
+	cout << "Max Thread Count: " << MAX_WORKER_COUNT << endl;
 
 	ServerServiceRef service = ServerServiceRef(
 		new ServerService(
