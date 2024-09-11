@@ -85,7 +85,10 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="PacketPriorityQueue.cpp">
-      <Filter>Utils</Filter>
+      <Filter>GameContents</Filter>
+    </ClCompile>
+    <ClCompile Include="Job.cpp">
+      <Filter>GameContents</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -147,7 +150,10 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="PacketPriorityQueue.h">
-      <Filter>Utils</Filter>
+      <Filter>GameContents</Filter>
+    </ClInclude>
+    <ClInclude Include="Job.h">
+      <Filter>GameContents</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

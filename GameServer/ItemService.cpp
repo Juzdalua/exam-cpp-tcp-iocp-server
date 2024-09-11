@@ -17,7 +17,7 @@ shared_ptr<Item> ItemService::GetItemById(uint64 id)
 	vector<string>params;
 	params.push_back(to_string(id));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -49,7 +49,7 @@ shared_ptr<Item> ItemService::GetItemByName(string name)
 	vector<string>params;
 	params.push_back(name);
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -89,7 +89,7 @@ vector<shared_ptr<RoomItem>> ItemService::GetRoomItemsByRoomId(uint64 roomId)
 	vector<string>params;
 	params.push_back(to_string(roomId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	vector<shared_ptr<RoomItem>> roomItems;
 	while (res->next())
@@ -135,7 +135,7 @@ shared_ptr<RoomItem> ItemService::GetRoomItemByRoomItemId(uint64 roomItemId)
 	vector<string>params;
 	params.push_back(to_string(roomItemId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -164,7 +164,7 @@ void ItemService::InitRoomItems()
 
 	vector<string>params;
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }
 
 void ItemService::UpdateRoomItemByRoomItem(shared_ptr<RoomItem> roomItem)
@@ -184,5 +184,5 @@ void ItemService::UpdateRoomItemByRoomItem(shared_ptr<RoomItem> roomItem)
 	params.push_back(to_string(roomItem->GetState()));
 	params.push_back(to_string(roomItem->GetRoomItemId()));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }

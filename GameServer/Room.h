@@ -1,13 +1,14 @@
 #pragma once
 #include "Item.h"
 #include "Player.h"
+#include "Job.h"
 
 class Room
 {
 public:
-
 	Room();
 	~Room();
+
 public:
 	void Enter(PlayerRef player);
 	void Leave(PlayerRef player);
