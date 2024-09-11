@@ -3,6 +3,7 @@
 #include "Types.h"
 #include "CoreMacro.h"
 #include "CoreGlobal.h"
+#include "CoreTLS.h"
 
 #include <string>
 #include <array>

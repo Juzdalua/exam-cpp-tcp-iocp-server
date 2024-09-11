@@ -39,11 +39,26 @@ Room::~Room()
 
 void Room::FlushJob()
 {
+	{
+		lock_guard<mutex> lock(_lock);
+		if (_isExecute.exchange(true) == true)
+			return;
+	}
+
 	while (true)
 	{
-		JobRef job = _jobs.Pop();
-		if (job == nullptr)
+		uint64 now = ::GetTickCount64();
+		if (now > LEndTickCount) 
+		{
+			_isExecute.store(false);
 			break;
+		}
+
+		JobRef job = _jobs.Pop();
+		if (job == nullptr) {
+			_isExecute.store(false);
+			break;
+		}
 
 		job->Execute();
 	}
