@@ -81,3 +81,5 @@ public:
 	PlayerRef _player = nullptr;
 	uint64 _accountId;
 };
+
+void HandlePacketStartLog(string type, LogColor color, PacketHeader* recvHeader, GameProtobufSessionRef& session);

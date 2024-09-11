@@ -40,7 +40,7 @@ bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSess
 	GRoom.CheckPlayers();
 	switch (recvHeader->id)
 	{
-	case PKT_C_TEST:
+	case PKT_C_PING:
 		ClientPacketHandler::HandleTest(buffer, len, session);
 		break;
 
@@ -123,7 +123,7 @@ bool ClientPacketHandler::HandleTest(BYTE* buffer, int32 len, GameProtobufSessio
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 	cout << recvPkt.msg() << endl;
 
-	uint16 packetId = PKT_S_TEST;
+	uint16 packetId = PKT_S_PING;
 	Protocol::S_CHAT pkt;
 	pkt.set_msg("Pong");
 	session->Send(MakeSendBuffer(pkt, packetId));

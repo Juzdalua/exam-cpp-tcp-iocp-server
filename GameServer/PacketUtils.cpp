@@ -8,8 +8,8 @@ unordered_map<uint16, string> packetIdToString =
 	{PKT_S_CREATE_ROOM, "PKT_S_CREATE_ROOM"},
 	{PKT_S_INVALID_ID, "PKT_S_INVALID_ID"},
 
-	{PKT_C_TEST, "PKT_C_TEST"},
-	{PKT_S_TEST, "PKT_S_TEST"},
+	{PKT_C_PING, "PKT_C_PING"},
+	{PKT_S_PING, "PKT_S_PING"},
 
 	{PKT_C_SIGNUP, "PKT_C_SIGNUP"},
 	{PKT_S_SIGNUP, "PKT_S_SIGNUP"},
