@@ -21,4 +21,5 @@ private:
 };
 
 // 쿼리문을 받아서 실행하는 함수
+bool executeQueryUpdate(ConnectionPool& pool, const string& query, const vector<string>& params);
 unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& query, vector<string>& params);

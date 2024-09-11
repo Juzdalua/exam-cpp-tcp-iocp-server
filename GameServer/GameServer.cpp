@@ -35,11 +35,11 @@ int32 MAX_WORKER_COUNT = thread::hardware_concurrency();
 void DoWorkerJob(ServerServiceRef& service, mutex& _lock)
 {
 	while (true) {
-		unique_lock<mutex> guard(_lock);
+		lock_guard<mutex> guard(_lock);
 
 		if (GPacketPriorityQueue->IsEmpty()) {
 			// 큐가 비어 있을 때만 IOCP 디스패치 호출
-			service->GetIocpCore()->Dispatch();
+			service->GetIocpCore()->Dispatch(10);
 		}
 
 		// 큐가 비어있든 아니든 패킷 처리
@@ -77,6 +77,12 @@ int main()
 			}));
 	}
 	cout << "===== Worker Thread Start =====" << endl;
+
+	// Main Thread Work Job
+	while (true)
+	{
+		GRoom.FlushJob();
+	}
 
 	//SystemMessageFromServer();
 

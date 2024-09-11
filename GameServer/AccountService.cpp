@@ -154,7 +154,7 @@ bool AccountService::CreateAccount(string name, string password)
 		params.push_back(name);
 		params.push_back(password);
 
-		unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+		executeQueryUpdate(*CP, query, params);
 
 		return true;
 	}

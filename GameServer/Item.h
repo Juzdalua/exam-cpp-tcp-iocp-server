@@ -12,6 +12,7 @@ enum RoomItemState
 {
 	AVAILABLE = 0,
 	RESPAWN_PENDING = 1,
+	NONE = 2,
 };
 
 class Item
