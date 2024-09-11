@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "ClientPacketHandler.h"
 #include "PacketUtils.h"
+#include "PacketPriorityQueue.h"
 
 /*---------------
 	Game Session
@@ -123,21 +124,19 @@ void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
 
-	// Log
-	cout << endl;
-	DebugLog::PrintColorText(LogColor::GREEN, "[RECV] [PacketId-> ", to_string(recvHeader->id), true, false);
-	DebugLog::PrintColorText(LogColor::GREEN, " : ", packetIdToString[recvHeader->id], false, false);
-	DebugLog::PrintColorText(LogColor::GREEN, " / Size-> ", to_string(recvHeader->size), false, false);
-
-	if (session->_accountId && session->_accountId != 0) {
-		DebugLog::PrintColorText(LogColor::GREEN, " / AccountId-> ", to_string(session->_accountId), false, false);
+	// Check Packet Priority
+	auto it = packetIdToPriority.find(recvHeader->id);
+	if (it != packetIdToPriority.end())
+	{
+		GPacketPriorityQueue->PushPacket(buffer, len, session);
 	}
-	if (session->_player) {
-		DebugLog::PrintColorText(LogColor::GREEN, " / PlayerId-> ", to_string(session->_player->GetPlayerId()), false, false);
-	}
-	DebugLog::PrintColorText(LogColor::GREEN, "]", "", false, true);
+	else {
+		// Log
+		cout << endl;
+		HandlePacketStartLog("RECV", LogColor::GREEN, recvHeader, session);
 
-	ClientPacketHandler::HandlePacket(buffer, len, session);
+		ClientPacketHandler::HandlePacket(buffer, len, session);
+	}
 }
 
 void GameProtobufSession::OnSend(int32 len)
@@ -152,16 +151,21 @@ void GameProtobufSession::OnSend(int32 len, vector<SendBufferRef>& sendVec)
 		GameProtobufSessionRef session = GetProtobufSessionRef();
 		PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(sendVec.back()->Buffer());
 		
-		DebugLog::PrintColorText(LogColor::BLUE, "[SEND] [PacketId-> ", to_string(recvHeader->id), true, false);
-		DebugLog::PrintColorText(LogColor::BLUE, " : ", packetIdToString[recvHeader->id], false, false);
-		DebugLog::PrintColorText(LogColor::BLUE, " / Size-> ", to_string(recvHeader->size), false, false);
-
-		if (session->_accountId && session->_accountId != 0) {
-			DebugLog::PrintColorText(LogColor::BLUE, " / AccountId-> ", to_string(session->_accountId), false, false);
-		}
-		if (session->_player) {
-			DebugLog::PrintColorText(LogColor::BLUE, " / PlayerId-> ", to_string(session->_player->GetPlayerId()), false, false);
-		}
-		DebugLog::PrintColorText(LogColor::BLUE, "]", "", false, true);
+		HandlePacketStartLog("SEND", LogColor::BLUE, recvHeader, session);
 	}
+}
+
+void HandlePacketStartLog(string type, LogColor color, PacketHeader* recvHeader, GameProtobufSessionRef& session)
+{
+	DebugLog::PrintColorText(color, "[" + type + "] [PacketId-> ", to_string(recvHeader->id), true, false);
+	DebugLog::PrintColorText(color, " : ", packetIdToString[recvHeader->id], false, false);
+	DebugLog::PrintColorText(color, " / Size-> ", to_string(recvHeader->size), false, false);
+
+	if (session->_accountId && session->_accountId != 0) {
+		DebugLog::PrintColorText(color, " / AccountId-> ", to_string(session->_accountId), false, false);
+	}
+	if (session->_player) {
+		DebugLog::PrintColorText(color, " / PlayerId-> ", to_string(session->_player->GetPlayerId()), false, false);
+	}
+	DebugLog::PrintColorText(color, "]", "", false, true);
 }

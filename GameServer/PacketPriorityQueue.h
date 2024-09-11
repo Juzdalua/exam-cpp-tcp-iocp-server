@@ -2,25 +2,35 @@
 #include "ClientPacketHandler.h"
 
 extern unordered_map<uint16, uint16> packetIdToPriority;
+extern class PacketPriorityQueue* GPacketPriorityQueue;
+
+struct PacketData
+{
+    BYTE* buffer;
+    int32 len;
+    GameProtobufSessionRef session;
+};
 
 struct ComparePacket
 {
-    bool operator()(BYTE* buffer1, BYTE* buffer2)
+    bool operator()(const PacketData& p1, const PacketData& p2) const
     {
-        return packetIdToPriority[reinterpret_cast<PacketHeader*>(buffer1)->id] > packetIdToPriority[reinterpret_cast<PacketHeader*>(buffer2)->id];  // 높은 숫자가 우선순위가 높음
+        return packetIdToPriority[reinterpret_cast<PacketHeader*>(p1.buffer)->id] >
+            packetIdToPriority[reinterpret_cast<PacketHeader*>(p2.buffer)->id];
     }
 };
 
 class PacketPriorityQueue
 {
 public:
-    void PushPacket(BYTE* buffer);
-    void ProcessPackets(int32 len, GameProtobufSessionRef& session);
+    void PushPacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
+    void ProcessPackets();
+    bool IsEmpty();
 
 private:
     void HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session);
 
-    priority_queue<BYTE*, vector<BYTE*>, ComparePacket> _packetQueue;
+    priority_queue<PacketData, vector<PacketData>, ComparePacket> _packetQueue;
     mutex _lock;
     condition_variable _cv;
 };

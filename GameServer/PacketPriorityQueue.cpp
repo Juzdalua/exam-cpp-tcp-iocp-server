@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "PacketPriorityQueue.h"
+#include "GameSession.h"
+
+PacketPriorityQueue* GPacketPriorityQueue = nullptr;
 
 unordered_map<uint16, uint16> packetIdToPriority =
 {
@@ -8,36 +11,40 @@ unordered_map<uint16, uint16> packetIdToPriority =
     {PKT_C_MOVE, 2},
 };
 
-void PacketPriorityQueue::PushPacket(BYTE* buffer)
+void PacketPriorityQueue::PushPacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
     lock_guard<mutex> lock(_lock);
-    _packetQueue.push(buffer);
+
+    PacketData packetData = { buffer, len, session };
+    _packetQueue.push(packetData);
     _cv.notify_one();
 }
 
-void PacketPriorityQueue::ProcessPackets(int32 len, GameProtobufSessionRef& session)
+void PacketPriorityQueue::ProcessPackets()
 {
-    while (true)
+    unique_lock<mutex> lock(_lock);
+
+    while (!_packetQueue.empty())
     {
-        unique_lock<mutex> lock(_lock);
-        _cv.wait(lock, [this]() { return !_packetQueue.empty(); });
+        PacketData packetData = _packetQueue.top();
+        _packetQueue.pop();
 
-        while (!_packetQueue.empty())
-        {
-            BYTE* buffer = _packetQueue.top();
-            _packetQueue.pop();
-            lock.unlock();
-
-            // 패킷 처리 로직
-            HandlePacket(buffer, len, session);
-            lock.lock();
-        }
+        HandlePacket(packetData.buffer, packetData.len, packetData.session);
     }
+}
+
+bool PacketPriorityQueue::IsEmpty()
+{
+    lock_guard<mutex> lock(_lock);
+    return _packetQueue.empty();
 }
 
 void PacketPriorityQueue::HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
     PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
+
+    HandlePacketStartLog("RECV", LogColor::GREEN, recvHeader, session);
+
     switch (recvHeader->id)
     {
     case PKT_C_MOVE:

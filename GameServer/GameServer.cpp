@@ -5,7 +5,6 @@
 #include "Protocol.pb.h"
 #include "PacketPriorityQueue.h"
 
-
 CoreGlobal GCoreGlobal;
 int32 MAX_CLIENT_COUNT = 1;
 int32 MAX_WORKER_COUNT = thread::hardware_concurrency();
@@ -33,11 +32,26 @@ int32 MAX_WORKER_COUNT = thread::hardware_concurrency();
 //	}
 //}
 
+void DoWorkerJob(ServerServiceRef& service, mutex& _lock)
+{
+	while (true) {
+		unique_lock<mutex> guard(_lock);
+
+		if (GPacketPriorityQueue->IsEmpty()) {
+			// 큐가 비어 있을 때만 IOCP 디스패치 호출
+			service->GetIocpCore()->Dispatch();
+		}
+
+		// 큐가 비어있든 아니든 패킷 처리
+		GPacketPriorityQueue->ProcessPackets();
+	}
+}
+
 int main()
 {
-	cout << "Max Thread Count: " << MAX_WORKER_COUNT << endl;
+	GPacketPriorityQueue = new PacketPriorityQueue();
 
-	shared_ptr<PacketPriorityQueue> pktChecker = make_shared<PacketPriorityQueue>();
+	cout << "Max Thread Count: " << MAX_WORKER_COUNT << endl;
 
 	ServerServiceRef service = ServerServiceRef(
 		new ServerService(
@@ -53,16 +67,13 @@ int main()
 	ASSERT_CRASH(service->Start());
 
 	// Worker Threads
-	mutex m;
+	mutex _lock;
 	vector<thread> workers;
 	for (int32 i = 0; i < MAX_WORKER_COUNT; i++)
 	{
 		workers.push_back(thread([&]()
 			{
-				while (true) {
-					lock_guard<mutex> guard(m);
-					service->GetIocpCore()->Dispatch();
-				}
+				DoWorkerJob(service, _lock);
 			}));
 	}
 	cout << "===== Worker Thread Start =====" << endl;
@@ -76,6 +87,11 @@ int main()
 	}
 	cout << "===== Worker Thread Exit =====" << endl;
 	cout << "===== Server has been shut down. =====" << endl;
+
+	if (GPacketPriorityQueue != nullptr) {
+		delete GPacketPriorityQueue;
+		GPacketPriorityQueue = nullptr;
+	}
 }
 
 /*
