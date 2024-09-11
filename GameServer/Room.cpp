@@ -141,4 +141,3 @@ void Room::UpdateRoomItem(const shared_ptr<RoomItem>& roomItem)
 		}
 	}
 }
-
