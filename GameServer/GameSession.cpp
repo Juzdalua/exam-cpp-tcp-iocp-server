@@ -103,7 +103,7 @@ void GameProtobufSession::OnDisconnected()
 	// Room Leave
 	if (_player != nullptr)
 	{
-		GRoom.Leave(_player);
+		GRoom.PushJob(make_shared<LeaveRoomJob>(GRoom, _player));
 		GameProtobufSessionRef session = _player->GetOwnerSession();
 		ClientPacketHandler::HandleDisconnect(session);
 	}

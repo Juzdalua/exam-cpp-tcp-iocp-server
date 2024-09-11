@@ -58,7 +58,7 @@ public:
 	{
 		DebugLog::PrintColorText(LogColor::YELLOW, "[Session Close]", "", true, false);
 		if (_player != nullptr) {
-			GRoom.Leave(_player);
+			GRoom.PushJob(make_shared<LeaveRoomJob>(GRoom, _player));
 			
 			if (_accountId && _accountId != 0) {
 				DebugLog::PrintColorText(LogColor::YELLOW, "[AccountId-> ", to_string(_accountId), false, false);

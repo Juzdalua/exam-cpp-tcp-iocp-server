@@ -51,6 +51,33 @@ void ConnectionPool::releaseConnection(unique_ptr<sql::Connection> conn) {
 }
 
 // 쿼리문을 받아서 실행하는 함수
+bool executeQueryUpdate(ConnectionPool& pool, const string& query, const vector<string>& params) {
+    try {
+        auto conn = pool.getConnection();
+        if (conn) {
+            auto pstmt = conn->prepareStatement(query);
+
+            for (int32 i = 0; i < params.size(); ++i) {
+                pstmt->setString(i + 1, params[i]);
+            }
+
+            pstmt->executeUpdate();  // 쿼리 실행
+
+            pool.releaseConnection(move(conn));
+            return true;
+        }
+        else {
+            cerr << "Failed to get a connection from the pool." << endl;
+        }
+    }
+    catch (sql::SQLException& e) {
+        cerr << "[SQLException: " << e.what() << "]" << endl;
+        cerr << "[Error code: " << e.getErrorCode() << "]" << endl;
+        cerr << "[SQL state: " << e.getSQLState() << "]" << endl;
+    }
+    return false;
+}
+
 unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& query, vector<string>& params) {
     try {
         auto conn = pool.getConnection();
