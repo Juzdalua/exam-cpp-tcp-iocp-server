@@ -9,8 +9,6 @@
 #include "ItemController.h"
 #include "EnumMap.h"
 
-mutex _lock;
-
 bool isInvalidId(GameProtobufSessionRef& session, uint64 pktPlayerId, ErrorCode errorCode)
 {
 	if (session->_player->GetPlayerId() != pktPlayerId) {

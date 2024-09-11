@@ -62,6 +62,8 @@ private:
 	map<uint64, PlayerRef> _players;
 	vector <shared_ptr<RoomItem>> _roomItems;
 	JobQueue _jobs;
+	atomic<bool> _isExecute = false;
+	mutex _lock;
 };
 
 extern Room GRoom;

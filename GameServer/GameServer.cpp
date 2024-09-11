@@ -32,9 +32,17 @@ int32 MAX_WORKER_COUNT = thread::hardware_concurrency();
 //	}
 //}
 
+enum
+{
+	WORKER_TICK = 64 // ms
+};
 void DoWorkerJob(ServerServiceRef& service)
 {
-	while (true) {
+	while (true) 
+	{
+		LEndTickCount = ::GetTickCount64() + WORKER_TICK;
+
+		GRoom.FlushJob();
 		if (GPacketPriorityQueue->IsEmpty()) 
 		{
 			service->GetIocpCore()->Dispatch(10);
@@ -76,10 +84,7 @@ int main()
 	cout << "===== Worker Thread Start =====" << endl;
 
 	// Main Thread Work Job
-	while (true)
-	{
-		GRoom.FlushJob();
-	}
+	DoWorkerJob(service);
 
 	//SystemMessageFromServer();
 
@@ -91,7 +96,8 @@ int main()
 	cout << "===== Worker Thread Exit =====" << endl;
 	cout << "===== Server has been shut down. =====" << endl;
 
-	if (GPacketPriorityQueue != nullptr) {
+	if (GPacketPriorityQueue != nullptr) 
+	{
 		delete GPacketPriorityQueue;
 		GPacketPriorityQueue = nullptr;
 	}
