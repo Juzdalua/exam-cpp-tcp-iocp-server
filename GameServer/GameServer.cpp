@@ -32,17 +32,13 @@ int32 MAX_WORKER_COUNT = thread::hardware_concurrency();
 //	}
 //}
 
-void DoWorkerJob(ServerServiceRef& service, mutex& _lock)
+void DoWorkerJob(ServerServiceRef& service)
 {
 	while (true) {
-		lock_guard<mutex> guard(_lock);
-
-		if (GPacketPriorityQueue->IsEmpty()) {
-			// 큐가 비어 있을 때만 IOCP 디스패치 호출
+		if (GPacketPriorityQueue->IsEmpty()) 
+		{
 			service->GetIocpCore()->Dispatch(10);
 		}
-
-		// 큐가 비어있든 아니든 패킷 처리
 		GPacketPriorityQueue->ProcessPackets();
 	}
 }
@@ -71,9 +67,10 @@ int main()
 	vector<thread> workers;
 	for (int32 i = 0; i < MAX_WORKER_COUNT; i++)
 	{
+		//lock_guard<mutex> guard(_lock);
 		workers.push_back(thread([&]()
 			{
-				DoWorkerJob(service, _lock);
+				DoWorkerJob(service);
 			}));
 	}
 	cout << "===== Worker Thread Start =====" << endl;
