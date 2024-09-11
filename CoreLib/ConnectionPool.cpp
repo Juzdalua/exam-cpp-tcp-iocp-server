@@ -57,7 +57,7 @@ unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& quer
         if (conn) {
 
             // Prepare the statement
-            unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(query));
+            auto pstmt = conn->prepareStatement(query);
 
             for (int32 i = 0; i < params.size(); ++i) {
                 pstmt->setString(i + 1, params[i]);
@@ -66,7 +66,8 @@ unique_ptr<sql::ResultSet> executeQuery(ConnectionPool& pool, const string& quer
             //LogQueryParams(query, params);
 
             // Execute the query
-            unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+            auto resultSetPtr = pstmt->executeQuery();
+            unique_ptr<sql::ResultSet> res(resultSetPtr);
 
             // Process results
             /*while (res->next()) {

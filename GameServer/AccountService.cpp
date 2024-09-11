@@ -19,7 +19,7 @@ shared_ptr<Account> AccountService::GetAccountById(uint64 accountId)
 	vector<string>params;
 	params.push_back(to_string(accountId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -48,7 +48,7 @@ shared_ptr<Account> AccountService::GetAccountByName(string accountName)
 	vector<string>params;
 	params.push_back(accountName);
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -79,7 +79,7 @@ shared_ptr<Account> AccountService::GetAccountByPlayerId(uint64 playerId)
 	vector<string>params;
 	params.push_back(to_string(playerId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -116,7 +116,7 @@ pair<shared_ptr<Account>, shared_ptr<Player>> AccountService::GetAccountAndPlaye
 	vector<string>params;
 	params.push_back(accountName);
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	shared_ptr<Account> account = nullptr;
 	shared_ptr<Player> player = nullptr;
@@ -154,7 +154,7 @@ bool AccountService::CreateAccount(string name, string password)
 		params.push_back(name);
 		params.push_back(password);
 
-		shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+		unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 		return true;
 	}
@@ -179,7 +179,7 @@ bool AccountService::CreateAccountAndPlayer(string name, string password)
 		string accountInsertQuery = R"(
             INSERT INTO account (name, password) VALUES (?, ?);
         )";
-		shared_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(accountInsertQuery));
+		auto pstmt(conn->prepareStatement(accountInsertQuery));
 
 		// 계정 삽입 쿼리 파라미터 설정
 		pstmt->setString(1, name);
@@ -188,7 +188,7 @@ bool AccountService::CreateAccountAndPlayer(string name, string password)
 
 		// 마지막 삽입된 ID 가져오기
 		shared_ptr<sql::Statement> stmt(conn->createStatement());
-		shared_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
+		unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
 
 		int insertId = 0;
 		if (res->next()) {
@@ -198,7 +198,7 @@ bool AccountService::CreateAccountAndPlayer(string name, string password)
 			string playerInsertQuery = R"(
 				INSERT INTO player (account_id, name) VALUES (?, ?);
 			)";
-			shared_ptr<sql::PreparedStatement> pstmtPlayer(conn->prepareStatement(playerInsertQuery));
+			auto pstmtPlayer(conn->prepareStatement(playerInsertQuery));
 			pstmtPlayer->setInt(1, insertId);
 			pstmtPlayer->setString(2, name);
 			pstmtPlayer->executeUpdate();

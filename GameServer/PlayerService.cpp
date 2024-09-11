@@ -23,7 +23,7 @@ shared_ptr<Player> PlayerService::GetPlayerByAccountId(uint64 accountId)
 	vector<string>params;
 	params.push_back(to_string(accountId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -55,7 +55,7 @@ void PlayerService::UpdateMove(uint64 playerId, float posX, float posY)
 	params.push_back(to_string(posY));
 	params.push_back(to_string(playerId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }
 
 uint64 PlayerService::DecreaseHP(uint64 playerId, uint64 damage)
@@ -74,7 +74,7 @@ uint64 PlayerService::DecreaseHP(uint64 playerId, uint64 damage)
 			set currentHP = if (currentHP <= ?, 0, currentHP - ?)
 			where id = ?;
         )";
-		shared_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(decreaseHPQuery));
+		auto pstmt(conn->prepareStatement(decreaseHPQuery));
 
 		pstmt->setString(1, to_string(damage));
 		pstmt->setString(2, to_string(damage));
@@ -84,9 +84,9 @@ uint64 PlayerService::DecreaseHP(uint64 playerId, uint64 damage)
 		string getCurrentHPQuery = R"(
 				SELECT currentHP FROM player WHERE id = ?
 			)";
-		shared_ptr<sql::PreparedStatement> pstmtPlayer(conn->prepareStatement(getCurrentHPQuery));
+		auto pstmtPlayer(conn->prepareStatement(getCurrentHPQuery));
 		pstmtPlayer->setString(1, to_string(playerId));
-		shared_ptr<sql::ResultSet> res(pstmtPlayer->executeQuery());
+		unique_ptr<sql::ResultSet> res(pstmtPlayer->executeQuery());
 
 		if (res->next())
 		{
@@ -127,7 +127,7 @@ void PlayerService::UpdatePlayer(PlayerRef& player)
 	params.push_back(to_string(player->GetCurrentHP()));
 	params.push_back(to_string(player->GetPlayerId()));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }
 
 int64 PlayerService::CreateParty(uint64 playerId)
@@ -148,7 +148,7 @@ int64 PlayerService::CreateParty(uint64 playerId)
 				where status = "0"
 				and playerId = ?;
 			)";
-		shared_ptr<sql::PreparedStatement> pstmtIsJoin(conn->prepareStatement(isJoinPartyQuery));
+		auto pstmtIsJoin(conn->prepareStatement(isJoinPartyQuery));
 		pstmtIsJoin->setString(1, to_string(playerId));
 		shared_ptr<sql::ResultSet> exRes(pstmtIsJoin->executeQuery());
 
@@ -163,12 +163,12 @@ int64 PlayerService::CreateParty(uint64 playerId)
 		string createPartyQuery = R"(
             insert into party() values ();
         )";
-		shared_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(createPartyQuery));
+		auto pstmt(conn->prepareStatement(createPartyQuery));
 
 		pstmt->executeUpdate();
 
 		shared_ptr<sql::Statement> stmt(conn->createStatement());
-		shared_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
+		unique_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT LAST_INSERT_ID()"));
 
 		int insertId = 0;
 		if (res->next()) {
@@ -178,7 +178,7 @@ int64 PlayerService::CreateParty(uint64 playerId)
 			string partyPlayerInsertQuery = R"(
 				insert into partyplayer (partyId, playerId) values(?, ?);
 			)";
-			shared_ptr<sql::PreparedStatement> pstmtPlayer(conn->prepareStatement(partyPlayerInsertQuery));
+			auto pstmtPlayer(conn->prepareStatement(partyPlayerInsertQuery));
 			pstmtPlayer->setInt(1, insertId);
 			pstmtPlayer->setString(2, to_string(playerId));
 			pstmtPlayer->executeUpdate();
@@ -219,7 +219,7 @@ int64 PlayerService::WithdrawParty(uint64 playerId, uint64 partyId)
 				where status = "0"
 				and id = ?;
 			)";
-		shared_ptr<sql::PreparedStatement> pstmtIsAvailable(conn->prepareStatement(isAvailablePartyQuery));
+		auto pstmtIsAvailable(conn->prepareStatement(isAvailablePartyQuery));
 		pstmtIsAvailable->setString(1, to_string(partyId));
 		shared_ptr<sql::ResultSet> checkPartyRes(pstmtIsAvailable->executeQuery());
 
@@ -238,7 +238,7 @@ int64 PlayerService::WithdrawParty(uint64 playerId, uint64 partyId)
 				and playerId = ?
 				and partyId = ?;
 			)";
-		shared_ptr<sql::PreparedStatement> pstmtIsJoin(conn->prepareStatement(isJoinPartyQuery));
+		auto pstmtIsJoin(conn->prepareStatement(isJoinPartyQuery));
 		pstmtIsJoin->setString(1, to_string(playerId));
 		pstmtIsJoin->setString(2, to_string(partyId));
 		shared_ptr<sql::ResultSet> isJoinRes(pstmtIsJoin->executeQuery());
@@ -256,7 +256,7 @@ int64 PlayerService::WithdrawParty(uint64 playerId, uint64 partyId)
 			where playerId  = ?
 			and partyId= ?;
         )";
-		shared_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(withdrawPartyQuery));
+		auto pstmt(conn->prepareStatement(withdrawPartyQuery));
 		pstmt->setString(1, to_string(playerId));
 		pstmt->setString(2, to_string(partyId));
 
@@ -270,7 +270,7 @@ int64 PlayerService::WithdrawParty(uint64 playerId, uint64 partyId)
 			and partyId = ?;
         )";
 
-		shared_ptr<sql::PreparedStatement> pstmtGetCount(conn->prepareStatement(getCountQuery));
+		auto pstmtGetCount(conn->prepareStatement(getCountQuery));
 		pstmtGetCount->setString(1, to_string(partyId));
 		shared_ptr<sql::ResultSet> getCountRes(pstmtGetCount->executeQuery());
 
@@ -307,7 +307,7 @@ void PlayerService::CloseParty(uint64 partyId)
 	vector<string>params;
 	params.push_back(to_string(partyId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 }
 
 bool PlayerService::JoinParty(uint64 playerId, uint64 partyId)
@@ -324,7 +324,7 @@ bool PlayerService::JoinParty(uint64 playerId, uint64 partyId)
 	params.push_back(to_string(partyId));
 	params.push_back(to_string(playerId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -339,7 +339,7 @@ bool PlayerService::JoinParty(uint64 playerId, uint64 partyId)
 			params.push_back(to_string(partyId));
 			params.push_back(to_string(playerId));
 
-			shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+			unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 			return true;
 		}
 	}
@@ -358,7 +358,7 @@ uint64 PlayerService::GetMyPartyIdByPlayerId(uint64 playerId)
 	vector<string>params;
 	params.push_back(to_string(playerId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	if (res->next())
 	{
@@ -398,7 +398,7 @@ vector<shared_ptr<Player>> PlayerService::GetPartyPlayersByPartyId(uint64 partyI
 	vector<string>params;
 	params.push_back(to_string(partyId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	vector<shared_ptr<Player>> players;
 	while (res->next())
@@ -446,7 +446,7 @@ vector<shared_ptr<Player>> PlayerService::GetPartyPlayersByPlayerId(uint64 playe
 	vector<string>params;
 	params.push_back(to_string(playerId));
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	vector<shared_ptr<Player>> players;
 	while (res->next())
@@ -485,7 +485,7 @@ vector<pair<shared_ptr<Party>, shared_ptr<PartyPlayer>>> PlayerService::GetAllPa
 		)";
 	vector<string>params;
 
-	shared_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
 
 	vector<pair<shared_ptr<Party>, shared_ptr<PartyPlayer>>> parties;
 	while (res->next())
