@@ -134,7 +134,6 @@ void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 		// Log
 		cout << endl;
 		HandlePacketStartLog("RECV", LogColor::GREEN, recvHeader, session);
-
 		ClientPacketHandler::HandlePacket(buffer, len, session);
 	}
 }

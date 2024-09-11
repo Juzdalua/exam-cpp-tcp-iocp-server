@@ -164,7 +164,7 @@ void ItemService::InitRoomItems()
 
 	vector<string>params;
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	executeQueryUpdate(*CP, query, params);
 }
 
 void ItemService::UpdateRoomItemByRoomItem(shared_ptr<RoomItem> roomItem)

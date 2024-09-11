@@ -55,7 +55,7 @@ void PlayerService::UpdateMove(uint64 playerId, float posX, float posY)
 	params.push_back(to_string(posY));
 	params.push_back(to_string(playerId));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	executeQueryUpdate(*CP, query, params);
 }
 
 uint64 PlayerService::DecreaseHP(uint64 playerId, uint64 damage)
@@ -127,7 +127,7 @@ void PlayerService::UpdatePlayer(PlayerRef& player)
 	params.push_back(to_string(player->GetCurrentHP()));
 	params.push_back(to_string(player->GetPlayerId()));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	executeQueryUpdate(*CP, query, params);
 }
 
 int64 PlayerService::CreateParty(uint64 playerId)
@@ -307,7 +307,7 @@ void PlayerService::CloseParty(uint64 partyId)
 	vector<string>params;
 	params.push_back(to_string(partyId));
 
-	unique_ptr<sql::ResultSet> res = executeQuery(*CP, query, params);
+	executeQueryUpdate(*CP, query, params);
 }
 
 bool PlayerService::JoinParty(uint64 playerId, uint64 partyId)
