@@ -69,6 +69,7 @@
     <ClInclude Include="CoreTLS.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Job.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CoreLib.cpp">
@@ -122,6 +123,7 @@
     <ClCompile Include="CoreTLS.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Job.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".env">

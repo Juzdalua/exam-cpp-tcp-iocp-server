@@ -2,10 +2,11 @@
 #include "CoreGlobal.h"
 #include "SocketUtils.h"
 #include "ConnectionPool.h"
+#include "Job.h"
 
 extern CoreGlobal GCoreGlobal;
-ConnectionManager* GConnectionManager = nullptr;
 ConnectionPool* CP = nullptr;
+GlobalSendQueue* GSendQueue = nullptr;
 
 CoreGlobal::CoreGlobal()
 {
@@ -14,6 +15,9 @@ CoreGlobal::CoreGlobal()
 
 	// DB
 	CP = new ConnectionPool(5);
+
+	// SendQueue
+	GSendQueue = new GlobalSendQueue();
 }
 
 CoreGlobal::~CoreGlobal()
@@ -23,4 +27,7 @@ CoreGlobal::~CoreGlobal()
 
 	// DB
 	delete CP;
+
+	// SendQueue
+	delete GSendQueue;
 }

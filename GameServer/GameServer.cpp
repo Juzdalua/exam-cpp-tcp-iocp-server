@@ -42,6 +42,7 @@ void DoWorkerJob(ServerServiceRef& service)
 	{
 		LEndTickCount = ::GetTickCount64() + WORKER_TICK;
 
+		GSendQueue->DoAsync();
 		GRoom.FlushJob();
 		if (GPacketPriorityQueue->IsEmpty()) 
 		{

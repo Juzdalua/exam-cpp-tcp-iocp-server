@@ -192,7 +192,6 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemController.cpp" />
     <ClCompile Include="ItemService.cpp" />
-    <ClCompile Include="Job.cpp" />
     <ClCompile Include="PacketPriorityQueue.cpp" />
     <ClCompile Include="PacketUtils.cpp" />
     <ClCompile Include="pch.cpp">
@@ -230,7 +229,6 @@
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemController.h" />
     <ClInclude Include="ItemService.h" />
-    <ClInclude Include="Job.h" />
     <ClInclude Include="PacketPriorityQueue.h" />
     <ClInclude Include="PacketUtils.h" />
     <ClInclude Include="pch.h" />

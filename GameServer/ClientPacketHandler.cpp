@@ -124,7 +124,9 @@ bool ClientPacketHandler::HandleTest(BYTE* buffer, int32 len, GameProtobufSessio
 	uint16 packetId = PKT_S_PING;
 	Protocol::S_CHAT pkt;
 	pkt.set_msg("Pong");
-	GRoom.PushJob(make_shared<SendWithSessionJob>(GRoom, session, MakeSendBuffer(pkt, packetId)));
+
+	GSendQueue->Push(make_shared<SendWithSessionJob>(GRoom, session, MakeSendBuffer(pkt, packetId)));
+	//GRoom.PushJob(make_shared<SendWithSessionJob>(GRoom, session, MakeSendBuffer(pkt, packetId)));
 
 	return true;
 }

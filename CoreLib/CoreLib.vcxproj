@@ -169,6 +169,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="IocpCore.h" />
     <ClInclude Include="IocpEvent.h" />
+    <ClInclude Include="Job.h" />
     <ClInclude Include="Listener.h" />
     <ClInclude Include="NetAddress.h" />
     <ClInclude Include="pch.h" />
@@ -189,6 +190,7 @@
     <ClCompile Include="ENV.cpp" />
     <ClCompile Include="IocpCore.cpp" />
     <ClCompile Include="IocpEvent.cpp" />
+    <ClCompile Include="Job.cpp" />
     <ClCompile Include="Listener.cpp" />
     <ClCompile Include="NetAddress.cpp" />
     <ClCompile Include="pch.cpp">

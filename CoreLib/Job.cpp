@@ -12,9 +12,29 @@ JobRef JobQueue::Pop()
 	lock_guard<mutex> lock(_lock);
 	if (_jobs.empty())
 		return nullptr;
-	
+
 	JobRef job = _jobs.front();
 	_jobs.pop();
 
 	return job;
+}
+
+void GlobalSendQueue::DoAsync()
+{
+	JobRef job = nullptr;
+
+	{
+		lock_guard<mutex> lock(_lock);
+		if (_jobs.empty())
+			return;
+
+		job = _jobs.front();
+		_jobs.pop();
+	}
+
+	if (job == nullptr) {
+		return;
+	}
+
+	job->Execute();
 }
