@@ -204,7 +204,6 @@ void Session::RegisterSend()
 			_sendEvent.owner = nullptr;	// shared_from_this RELEASE_REF
 			_sendEvent.sendBuffers.clear(); // shared_from_this RELEASE_REF
 			_sendRegistered.store(false);
-
 		}
 	}
 }

@@ -6,7 +6,7 @@
 #include "PacketPriorityQueue.h"
 
 CoreGlobal GCoreGlobal;
-int32 MAX_CLIENT_COUNT = 1;
+int32 MAX_CLIENT_COUNT = 5000;
 int32 MAX_WORKER_COUNT = thread::hardware_concurrency();
 
 // System Server Message
@@ -51,6 +51,7 @@ void DoWorkerJob(ServerServiceRef& service)
 		GPacketPriorityQueue->ProcessPackets();
 	}
 }
+
 
 int main()
 {
