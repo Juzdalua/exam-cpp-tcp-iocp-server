@@ -19,8 +19,6 @@ int main()
 		new ClientService(
 			NetAddress(L"127.0.0.1", 7777),
 			IocpCoreRef(new IocpCore()),
-			//[&]() {return shared_ptr<ServerSession>(new ServerSession());},
-			//[&]() {return shared_ptr<ServerPacketSession>(new ServerPacketSession());},
 			[&]() {return shared_ptr<ServerProtobufSession>(new ServerProtobufSession());},
 			CLIENT_COUNT
 		)

@@ -25,7 +25,6 @@ bool Listener::StartAccept(ServerServiceRef service)
 	_service = service;
 	if (_service == nullptr)
 		return false;
-	cout << "===== Set Service =====" << endl;
 
 	_listenSocket = SocketUtils::CreateSocket();
 	if (_listenSocket == INVALID_SOCKET)
@@ -77,7 +76,6 @@ HANDLE Listener::GetHandle()
 void Listener::RegisterAccept(AcceptEvent* acceptEvent)
 {
 	SessionRef session = _service->CreateSession(); // Register IOCP
-	cout << "===== Create Session =====" << endl;
 
 	acceptEvent->Init();
 	acceptEvent->session = session;
