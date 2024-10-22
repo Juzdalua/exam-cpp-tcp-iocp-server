@@ -677,16 +677,19 @@ bool ClientPacketHandler::HandleUseItem(BYTE* buffer, int32 len, GameProtobufSes
 	return true;
 }
 
+/*------------------
+	Create Party
+------------------*/
 bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
-	Protocol::C_USE_ITEM recvPkt;
+	Protocol::C_CREATE_PARTY recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 	
 	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_CREATE_PARTY))
 		return false;
-
-	int64 createPartyId = PlayerController::CreateParty(recvPkt.playerid());
-	if (createPartyId == -1) {
+	
+	if (session->_player->GetPartyId() != 0 || recvPkt.partyid() == -1)
+	{
 		auto errorPkt = new Protocol::ErrorObj();
 		errorPkt->set_errorcode(ErrorCode::ERROR_S_CREATE_PARTY);
 		errorPkt->set_errormsg("Create Party Error");
@@ -700,10 +703,13 @@ bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobu
 		return false;
 	}
 
+	session->_player->SetPartyId(recvPkt.partyid());
+	GRoom.CreateParty(recvPkt.partyid(), session->_player);
+
 	uint16 packetId = PKT_S_CREATE_PARTY;
 	Protocol::S_CREATE_PARTY pkt;
 	pkt.set_success(true);
-	pkt.set_partyid(createPartyId);
+	pkt.set_partyid(recvPkt.partyid());
 	session->Send(MakeSendBuffer(pkt, packetId));
 
 	return true;

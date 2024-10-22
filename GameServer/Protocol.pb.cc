@@ -381,6 +381,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR C_CREATE_PARTY::C_CREATE_PARTY(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.playerid_)*/uint64_t{0u}
+  , /*decltype(_impl_.partyid_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct C_CREATE_PARTYDefaultTypeInternal {
   PROTOBUF_CONSTEXPR C_CREATE_PARTYDefaultTypeInternal()
@@ -751,6 +752,7 @@ const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::Protocol::C_CREATE_PARTY, _impl_.playerid_),
+  PROTOBUF_FIELD_OFFSET(::Protocol::C_CREATE_PARTY, _impl_.partyid_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::Protocol::S_CREATE_PARTY, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -857,15 +859,15 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 197, -1, -1, sizeof(::Protocol::C_USE_ITEM)},
   { 205, -1, -1, sizeof(::Protocol::S_USE_ITEM)},
   { 214, -1, -1, sizeof(::Protocol::C_CREATE_PARTY)},
-  { 221, -1, -1, sizeof(::Protocol::S_CREATE_PARTY)},
-  { 230, -1, -1, sizeof(::Protocol::C_JOIN_PARTY)},
-  { 238, -1, -1, sizeof(::Protocol::S_JOIN_PARTY)},
-  { 248, -1, -1, sizeof(::Protocol::C_WITHDRAW_PARTY)},
-  { 256, -1, -1, sizeof(::Protocol::S_WITHDRAW_PARTY)},
-  { 267, -1, -1, sizeof(::Protocol::C_MY_PARTY)},
-  { 274, -1, -1, sizeof(::Protocol::S_MY_PARTY)},
-  { 284, -1, -1, sizeof(::Protocol::C_ALL_PARTY)},
-  { 291, -1, -1, sizeof(::Protocol::S_ALL_PARTY)},
+  { 222, -1, -1, sizeof(::Protocol::S_CREATE_PARTY)},
+  { 231, -1, -1, sizeof(::Protocol::C_JOIN_PARTY)},
+  { 239, -1, -1, sizeof(::Protocol::S_JOIN_PARTY)},
+  { 249, -1, -1, sizeof(::Protocol::C_WITHDRAW_PARTY)},
+  { 257, -1, -1, sizeof(::Protocol::S_WITHDRAW_PARTY)},
+  { 268, -1, -1, sizeof(::Protocol::C_MY_PARTY)},
+  { 275, -1, -1, sizeof(::Protocol::S_MY_PARTY)},
+  { 285, -1, -1, sizeof(::Protocol::C_ALL_PARTY)},
+  { 292, -1, -1, sizeof(::Protocol::S_ALL_PARTY)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -958,26 +960,27 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "\030\002 \001(\0132\016.Protocol.Item\"b\n\nS_USE_ITEM\022 \n\006"
   "player\030\001 \001(\0132\020.Protocol.Player\022\017\n\007succes"
   "s\030\002 \001(\010\022!\n\005error\030\003 \001(\0132\022.Protocol.ErrorO"
-  "bj\"\"\n\016C_CREATE_PARTY\022\020\n\010playerId\030\001 \001(\004\"U"
-  "\n\016S_CREATE_PARTY\022\017\n\007success\030\001 \001(\010\022\017\n\007par"
-  "tyId\030\002 \001(\004\022!\n\005error\030\003 \001(\0132\022.Protocol.Err"
-  "orObj\"1\n\014C_JOIN_PARTY\022\020\n\010playerId\030\001 \001(\004\022"
-  "\017\n\007partyId\030\002 \001(\004\"v\n\014S_JOIN_PARTY\022\017\n\007succ"
-  "ess\030\001 \001(\010\022!\n\005error\030\002 \001(\0132\022.Protocol.Erro"
-  "rObj\022\017\n\007partyId\030\003 \001(\004\022!\n\007players\030\004 \001(\0132\020"
-  ".Protocol.Player\"5\n\020C_WITHDRAW_PARTY\022\020\n\010"
-  "playerId\030\001 \001(\004\022\017\n\007partyId\030\002 \001(\004\"\224\001\n\020S_WI"
-  "THDRAW_PARTY\022\017\n\007success\030\001 \001(\010\022!\n\005error\030\002"
-  " \001(\0132\022.Protocol.ErrorObj\022\017\n\007partyId\030\003 \001("
-  "\004\022!\n\007players\030\004 \003(\0132\020.Protocol.Player\022\030\n\020"
-  "withdrawPlayerId\030\005 \001(\004\"\036\n\nC_MY_PARTY\022\020\n\010"
-  "playerId\030\001 \001(\004\"t\n\nS_MY_PARTY\022\017\n\007success\030"
-  "\001 \001(\010\022!\n\005error\030\002 \001(\0132\022.Protocol.ErrorObj"
-  "\022\017\n\007partyId\030\003 \001(\004\022!\n\007players\030\004 \003(\0132\020.Pro"
-  "tocol.Player\"\037\n\013C_ALL_PARTY\022\020\n\010playerId\030"
-  "\001 \001(\004\"c\n\013S_ALL_PARTY\022\017\n\007success\030\001 \001(\010\022!\n"
-  "\005error\030\002 \001(\0132\022.Protocol.ErrorObj\022 \n\007part"
-  "ies\030\003 \003(\0132\017.Protocol.Partyb\006proto3"
+  "bj\"3\n\016C_CREATE_PARTY\022\020\n\010playerId\030\001 \001(\004\022\017"
+  "\n\007partyId\030\002 \001(\004\"U\n\016S_CREATE_PARTY\022\017\n\007suc"
+  "cess\030\001 \001(\010\022\017\n\007partyId\030\002 \001(\004\022!\n\005error\030\003 \001"
+  "(\0132\022.Protocol.ErrorObj\"1\n\014C_JOIN_PARTY\022\020"
+  "\n\010playerId\030\001 \001(\004\022\017\n\007partyId\030\002 \001(\004\"v\n\014S_J"
+  "OIN_PARTY\022\017\n\007success\030\001 \001(\010\022!\n\005error\030\002 \001("
+  "\0132\022.Protocol.ErrorObj\022\017\n\007partyId\030\003 \001(\004\022!"
+  "\n\007players\030\004 \001(\0132\020.Protocol.Player\"5\n\020C_W"
+  "ITHDRAW_PARTY\022\020\n\010playerId\030\001 \001(\004\022\017\n\007party"
+  "Id\030\002 \001(\004\"\224\001\n\020S_WITHDRAW_PARTY\022\017\n\007success"
+  "\030\001 \001(\010\022!\n\005error\030\002 \001(\0132\022.Protocol.ErrorOb"
+  "j\022\017\n\007partyId\030\003 \001(\004\022!\n\007players\030\004 \003(\0132\020.Pr"
+  "otocol.Player\022\030\n\020withdrawPlayerId\030\005 \001(\004\""
+  "\036\n\nC_MY_PARTY\022\020\n\010playerId\030\001 \001(\004\"t\n\nS_MY_"
+  "PARTY\022\017\n\007success\030\001 \001(\010\022!\n\005error\030\002 \001(\0132\022."
+  "Protocol.ErrorObj\022\017\n\007partyId\030\003 \001(\004\022!\n\007pl"
+  "ayers\030\004 \003(\0132\020.Protocol.Player\"\037\n\013C_ALL_P"
+  "ARTY\022\020\n\010playerId\030\001 \001(\004\"c\n\013S_ALL_PARTY\022\017\n"
+  "\007success\030\001 \001(\010\022!\n\005error\030\002 \001(\0132\022.Protocol"
+  ".ErrorObj\022 \n\007parties\030\003 \003(\0132\017.Protocol.Pa"
+  "rtyb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -985,7 +988,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 2874, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 2891, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
     &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 34,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
@@ -7130,10 +7133,13 @@ C_CREATE_PARTY::C_CREATE_PARTY(const C_CREATE_PARTY& from)
   C_CREATE_PARTY* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.playerid_){}
+    , decltype(_impl_.partyid_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _this->_impl_.playerid_ = from._impl_.playerid_;
+  ::memcpy(&_impl_.playerid_, &from._impl_.playerid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.partyid_) -
+    reinterpret_cast<char*>(&_impl_.playerid_)) + sizeof(_impl_.partyid_));
   // @@protoc_insertion_point(copy_constructor:Protocol.C_CREATE_PARTY)
 }
 
@@ -7143,6 +7149,7 @@ inline void C_CREATE_PARTY::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.playerid_){uint64_t{0u}}
+    , decltype(_impl_.partyid_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -7170,7 +7177,9 @@ void C_CREATE_PARTY::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.playerid_ = uint64_t{0u};
+  ::memset(&_impl_.playerid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.partyid_) -
+      reinterpret_cast<char*>(&_impl_.playerid_)) + sizeof(_impl_.partyid_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -7184,6 +7193,14 @@ const char* C_CREATE_PARTY::_InternalParse(const char* ptr, ::_pbi::ParseContext
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _impl_.playerid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 partyId = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.partyid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -7223,6 +7240,12 @@ uint8_t* C_CREATE_PARTY::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_playerid(), target);
   }
 
+  // uint64 partyId = 2;
+  if (this->_internal_partyid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_partyid(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -7242,6 +7265,11 @@ size_t C_CREATE_PARTY::ByteSizeLong() const {
   // uint64 playerId = 1;
   if (this->_internal_playerid() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_playerid());
+  }
+
+  // uint64 partyId = 2;
+  if (this->_internal_partyid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_partyid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -7265,6 +7293,9 @@ void C_CREATE_PARTY::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const :
   if (from._internal_playerid() != 0) {
     _this->_internal_set_playerid(from._internal_playerid());
   }
+  if (from._internal_partyid() != 0) {
+    _this->_internal_set_partyid(from._internal_partyid());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -7282,7 +7313,12 @@ bool C_CREATE_PARTY::IsInitialized() const {
 void C_CREATE_PARTY::InternalSwap(C_CREATE_PARTY* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_.playerid_, other->_impl_.playerid_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(C_CREATE_PARTY, _impl_.partyid_)
+      + sizeof(C_CREATE_PARTY::_impl_.partyid_)
+      - PROTOBUF_FIELD_OFFSET(C_CREATE_PARTY, _impl_.playerid_)>(
+          reinterpret_cast<char*>(&_impl_.playerid_),
+          reinterpret_cast<char*>(&other->_impl_.playerid_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata C_CREATE_PARTY::GetMetadata() const {

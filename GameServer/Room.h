@@ -32,6 +32,9 @@ public:
 	void SetRoomItems(const vector<shared_ptr<RoomItem>>& roomItems);
 	void UpdateRoomItem(const shared_ptr<RoomItem>& roomItem);
 
+	// Party
+	void CreateParty(uint64 partyId, PlayerRef playerRef);
+
 	// TEMP
 	void CheckPlayers();
 
@@ -40,6 +43,7 @@ private:
 	mutex _lock;
 	map<uint64, PlayerRef> _players; // PlayerId
 	vector <shared_ptr<RoomItem>> _roomItems;
+	map<uint64, vector<PlayerRef>> _parties;
 };
 
 extern Room GRoom;

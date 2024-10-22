@@ -28,6 +28,7 @@ public:
 	void DecreaseHP(uint64 damage) { _currentHP -= damage; if (_currentHP < 0) _currentHP = 0; }
 	void HealHP(uint64 heal) { _currentHP += heal; if (_currentHP > _maxHP) _currentHP = _maxHP; }
 	void SetCurrentHP(uint64 currentHP) { _currentHP = currentHP; }
+	void SetPartyId(uint64 partyId) { _partyId = partyId; }
 
 public:
 	uint64 GetPlayerId() { return _playerId; }
@@ -37,6 +38,8 @@ public:
 	float GetPosY() { return _posY; }
 	uint64 GetMaxHP() { return _maxHP; }
 	uint64 GetCurrentHP() { return _currentHP; }
+	
+	uint64 GetPartyId() { return _partyId; }
 
 private:
 	uint64 _playerId = 0;
@@ -46,6 +49,8 @@ private:
 	float _posY;
 	uint64 _maxHP;
 	uint64 _currentHP;
+	
+	uint64 _partyId = 0;
 	GameProtobufSessionRef _ownerSession = nullptr;
 };
 

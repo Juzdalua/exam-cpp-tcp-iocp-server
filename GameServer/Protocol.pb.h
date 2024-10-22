@@ -4566,6 +4566,7 @@ class C_CREATE_PARTY final :
 
   enum : int {
     kPlayerIdFieldNumber = 1,
+    kPartyIdFieldNumber = 2,
   };
   // uint64 playerId = 1;
   void clear_playerid();
@@ -4574,6 +4575,15 @@ class C_CREATE_PARTY final :
   private:
   uint64_t _internal_playerid() const;
   void _internal_set_playerid(uint64_t value);
+  public:
+
+  // uint64 partyId = 2;
+  void clear_partyid();
+  uint64_t partyid() const;
+  void set_partyid(uint64_t value);
+  private:
+  uint64_t _internal_partyid() const;
+  void _internal_set_partyid(uint64_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.C_CREATE_PARTY)
@@ -4585,6 +4595,7 @@ class C_CREATE_PARTY final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     uint64_t playerid_;
+    uint64_t partyid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -9123,6 +9134,26 @@ inline void C_CREATE_PARTY::_internal_set_playerid(uint64_t value) {
 inline void C_CREATE_PARTY::set_playerid(uint64_t value) {
   _internal_set_playerid(value);
   // @@protoc_insertion_point(field_set:Protocol.C_CREATE_PARTY.playerId)
+}
+
+// uint64 partyId = 2;
+inline void C_CREATE_PARTY::clear_partyid() {
+  _impl_.partyid_ = uint64_t{0u};
+}
+inline uint64_t C_CREATE_PARTY::_internal_partyid() const {
+  return _impl_.partyid_;
+}
+inline uint64_t C_CREATE_PARTY::partyid() const {
+  // @@protoc_insertion_point(field_get:Protocol.C_CREATE_PARTY.partyId)
+  return _internal_partyid();
+}
+inline void C_CREATE_PARTY::_internal_set_partyid(uint64_t value) {
+  
+  _impl_.partyid_ = value;
+}
+inline void C_CREATE_PARTY::set_partyid(uint64_t value) {
+  _internal_set_partyid(value);
+  // @@protoc_insertion_point(field_set:Protocol.C_CREATE_PARTY.partyId)
 }
 
 // -------------------------------------------------------------------

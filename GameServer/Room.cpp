@@ -93,7 +93,7 @@ bool Room::CanGo(uint64 playerId, float posX, float posY)
 	for (auto& pair : _players)
 	{
 		PlayerRef player = pair.second;
-		
+
 		if (playerId == pair.second->GetPlayerId())
 			continue;
 
@@ -157,4 +157,11 @@ void Room::UpdateRoomItem(const shared_ptr<RoomItem>& roomItem)
 			return;
 		}
 	}
+}
+
+// Party
+void Room::CreateParty(uint64 partyId, PlayerRef playerRef)
+{
+	if (_parties.find(partyId) == _parties.end() || find(_parties[partyId].begin(), _parties[partyId].end(), playerRef) == _parties[partyId].end())
+		_parties[partyId].push_back(playerRef);
 }
