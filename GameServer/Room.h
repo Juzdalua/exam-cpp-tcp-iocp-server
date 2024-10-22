@@ -17,8 +17,8 @@ public:
 
 	bool IsLogin(uint64 playerId);
 
-	uint64 GetSize();
 	map<uint64, PlayerRef>* GetPlayersInRoom() { return &_players; }
+	PlayerRef GetPlayerInRoomByPlayerId(uint64 playerId) { return _players[playerId]; }
 
 	// Move
 	bool CanGo(uint64 playerId, float posX, float posY);
@@ -38,7 +38,7 @@ public:
 private:
 	//USE_LOCK;
 	mutex _lock;
-	map<uint64, PlayerRef> _players;
+	map<uint64, PlayerRef> _players; // PlayerId
 	vector <shared_ptr<RoomItem>> _roomItems;
 };
 

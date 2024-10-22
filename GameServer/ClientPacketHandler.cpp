@@ -121,7 +121,6 @@ bool ClientPacketHandler::HandleTest(BYTE* buffer, int32 len, GameProtobufSessio
 {
 	Protocol::C_CHAT recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
-	cout << recvPkt.msg() << endl;
 
 	uint16 packetId = PKT_S_PING;
 	Protocol::S_CHAT pkt;
@@ -278,10 +277,9 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		errorPkt->set_errorcode(ErrorCode::ERROR_S_LOGIN_SESSION);
 		errorPkt->set_errormsg("Already Login");
 
-		uint16 packetId = PKT_S_LOGIN;
-		Protocol::S_LOGIN pkt;
+		uint16 packetId = PKT_S_ENTER_GAME;
+		Protocol::S_ENTER_GAME pkt;
 		pkt.set_success(false);
-		pkt.set_allocated_player(nullptr);
 		pkt.set_allocated_error(errorPkt);
 		session->Send(MakeSendBuffer(pkt, packetId));
 
@@ -339,7 +337,6 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		}
 		pkt.set_toplayer(Protocol::TO_PLAYER_OWNER);
 
-		cout << endl;
 		session->Send(MakeSendBuffer(pkt, packetId));
 	}
 
@@ -394,13 +391,13 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 	if (isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_CHAT))
 		return false;
 
-	shared_ptr<Account> account = AccountController::GetAccountByPlayerId(recvPkt.playerid());
+	string chatPlayerName = GRoom.GetPlayerInRoomByPlayerId(recvPkt.playerid())->GetPlayerName();
 
 	uint16 packetId = PKT_S_CHAT;
 	Protocol::S_CHAT pkt;
 	pkt.set_type(recvPkt.type());
 	pkt.set_playerid(recvPkt.playerid());
-	pkt.set_playername(account->GetAccountName());
+	pkt.set_playername(chatPlayerName);
 	pkt.set_msg(recvPkt.msg());
 	pkt.set_success(true);
 
@@ -480,9 +477,6 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 	// Update Session & Room
 	session->_player->SetPosition(recvPkt.posx(), recvPkt.posy());
 	GRoom.UpdateMove(recvPkt.playerid(), recvPkt.posx(), recvPkt.posy());
-
-	// Update DB
-	PlayerController::UpdateMove(recvPkt.playerid(), recvPkt.posx(), recvPkt.posy());
 
 	// Broadcast players in room
 	auto sendPlayer = new Protocol::Player();
