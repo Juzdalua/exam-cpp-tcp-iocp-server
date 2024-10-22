@@ -23,6 +23,7 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/arena.h>
 #include <google/protobuf/arenastring.h>
+#include <google/protobuf/generated_message_bases.h>
 #include <google/protobuf/generated_message_util.h>
 #include <google/protobuf/metadata_lite.h>
 #include <google/protobuf/generated_message_reflection.h>
@@ -53,6 +54,9 @@ extern C_ALL_PARTYDefaultTypeInternal _C_ALL_PARTY_default_instance_;
 class C_CHAT;
 struct C_CHATDefaultTypeInternal;
 extern C_CHATDefaultTypeInternal _C_CHAT_default_instance_;
+class C_CHECK_ROOM;
+struct C_CHECK_ROOMDefaultTypeInternal;
+extern C_CHECK_ROOMDefaultTypeInternal _C_CHECK_ROOM_default_instance_;
 class C_CREATE_PARTY;
 struct C_CREATE_PARTYDefaultTypeInternal;
 extern C_CREATE_PARTYDefaultTypeInternal _C_CREATE_PARTY_default_instance_;
@@ -95,6 +99,9 @@ extern S_ALL_PARTYDefaultTypeInternal _S_ALL_PARTY_default_instance_;
 class S_CHAT;
 struct S_CHATDefaultTypeInternal;
 extern S_CHATDefaultTypeInternal _S_CHAT_default_instance_;
+class S_CHECK_ROOM;
+struct S_CHECK_ROOMDefaultTypeInternal;
+extern S_CHECK_ROOMDefaultTypeInternal _S_CHECK_ROOM_default_instance_;
 class S_CREATE_PARTY;
 struct S_CREATE_PARTYDefaultTypeInternal;
 extern S_CREATE_PARTYDefaultTypeInternal _S_CREATE_PARTY_default_instance_;
@@ -147,6 +154,7 @@ extern S_WITHDRAW_PARTYDefaultTypeInternal _S_WITHDRAW_PARTY_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Protocol::C_ALL_PARTY* Arena::CreateMaybeMessage<::Protocol::C_ALL_PARTY>(Arena*);
 template<> ::Protocol::C_CHAT* Arena::CreateMaybeMessage<::Protocol::C_CHAT>(Arena*);
+template<> ::Protocol::C_CHECK_ROOM* Arena::CreateMaybeMessage<::Protocol::C_CHECK_ROOM>(Arena*);
 template<> ::Protocol::C_CREATE_PARTY* Arena::CreateMaybeMessage<::Protocol::C_CREATE_PARTY>(Arena*);
 template<> ::Protocol::C_EAT_ROOM_ITEM* Arena::CreateMaybeMessage<::Protocol::C_EAT_ROOM_ITEM>(Arena*);
 template<> ::Protocol::C_ENTER_GAME* Arena::CreateMaybeMessage<::Protocol::C_ENTER_GAME>(Arena*);
@@ -161,6 +169,7 @@ template<> ::Protocol::C_USE_ITEM* Arena::CreateMaybeMessage<::Protocol::C_USE_I
 template<> ::Protocol::C_WITHDRAW_PARTY* Arena::CreateMaybeMessage<::Protocol::C_WITHDRAW_PARTY>(Arena*);
 template<> ::Protocol::S_ALL_PARTY* Arena::CreateMaybeMessage<::Protocol::S_ALL_PARTY>(Arena*);
 template<> ::Protocol::S_CHAT* Arena::CreateMaybeMessage<::Protocol::S_CHAT>(Arena*);
+template<> ::Protocol::S_CHECK_ROOM* Arena::CreateMaybeMessage<::Protocol::S_CHECK_ROOM>(Arena*);
 template<> ::Protocol::S_CREATE_PARTY* Arena::CreateMaybeMessage<::Protocol::S_CREATE_PARTY>(Arena*);
 template<> ::Protocol::S_CREATE_ROOM* Arena::CreateMaybeMessage<::Protocol::S_CREATE_ROOM>(Arena*);
 template<> ::Protocol::S_DISCONNECT* Arena::CreateMaybeMessage<::Protocol::S_DISCONNECT>(Arena*);
@@ -525,6 +534,272 @@ class S_SERVER_CHAT final :
 };
 // -------------------------------------------------------------------
 
+class C_CHECK_ROOM final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:Protocol.C_CHECK_ROOM) */ {
+ public:
+  inline C_CHECK_ROOM() : C_CHECK_ROOM(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR C_CHECK_ROOM(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  C_CHECK_ROOM(const C_CHECK_ROOM& from);
+  C_CHECK_ROOM(C_CHECK_ROOM&& from) noexcept
+    : C_CHECK_ROOM() {
+    *this = ::std::move(from);
+  }
+
+  inline C_CHECK_ROOM& operator=(const C_CHECK_ROOM& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline C_CHECK_ROOM& operator=(C_CHECK_ROOM&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const C_CHECK_ROOM& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const C_CHECK_ROOM* internal_default_instance() {
+    return reinterpret_cast<const C_CHECK_ROOM*>(
+               &_C_CHECK_ROOM_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(C_CHECK_ROOM& a, C_CHECK_ROOM& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(C_CHECK_ROOM* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(C_CHECK_ROOM* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  C_CHECK_ROOM* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C_CHECK_ROOM>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const C_CHECK_ROOM& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const C_CHECK_ROOM& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.C_CHECK_ROOM";
+  }
+  protected:
+  explicit C_CHECK_ROOM(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:Protocol.C_CHECK_ROOM)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
+class S_CHECK_ROOM final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_CHECK_ROOM) */ {
+ public:
+  inline S_CHECK_ROOM() : S_CHECK_ROOM(nullptr) {}
+  ~S_CHECK_ROOM() override;
+  explicit PROTOBUF_CONSTEXPR S_CHECK_ROOM(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  S_CHECK_ROOM(const S_CHECK_ROOM& from);
+  S_CHECK_ROOM(S_CHECK_ROOM&& from) noexcept
+    : S_CHECK_ROOM() {
+    *this = ::std::move(from);
+  }
+
+  inline S_CHECK_ROOM& operator=(const S_CHECK_ROOM& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline S_CHECK_ROOM& operator=(S_CHECK_ROOM&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const S_CHECK_ROOM& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const S_CHECK_ROOM* internal_default_instance() {
+    return reinterpret_cast<const S_CHECK_ROOM*>(
+               &_S_CHECK_ROOM_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(S_CHECK_ROOM& a, S_CHECK_ROOM& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(S_CHECK_ROOM* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(S_CHECK_ROOM* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  S_CHECK_ROOM* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S_CHECK_ROOM>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const S_CHECK_ROOM& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const S_CHECK_ROOM& from) {
+    S_CHECK_ROOM::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(S_CHECK_ROOM* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.S_CHECK_ROOM";
+  }
+  protected:
+  explicit S_CHECK_ROOM(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kCountFieldNumber = 1,
+  };
+  // uint64 count = 1;
+  void clear_count();
+  uint64_t count() const;
+  void set_count(uint64_t value);
+  private:
+  uint64_t _internal_count() const;
+  void _internal_set_count(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.S_CHECK_ROOM)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    uint64_t count_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
 class S_CREATE_ROOM final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.S_CREATE_ROOM) */ {
  public:
@@ -573,7 +848,7 @@ class S_CREATE_ROOM final :
                &_S_CREATE_ROOM_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    4;
 
   friend void swap(S_CREATE_ROOM& a, S_CREATE_ROOM& b) {
     a.Swap(&b);
@@ -730,7 +1005,7 @@ class S_DISCONNECT final :
                &_S_DISCONNECT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    5;
 
   friend void swap(S_DISCONNECT& a, S_DISCONNECT& b) {
     a.Swap(&b);
@@ -878,7 +1153,7 @@ class C_SIGNUP final :
                &_C_SIGNUP_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    6;
 
   friend void swap(C_SIGNUP& a, C_SIGNUP& b) {
     a.Swap(&b);
@@ -1035,7 +1310,7 @@ class S_SIGNUP final :
                &_S_SIGNUP_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    7;
 
   friend void swap(S_SIGNUP& a, S_SIGNUP& b) {
     a.Swap(&b);
@@ -1203,7 +1478,7 @@ class C_LOGIN final :
                &_C_LOGIN_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    8;
 
   friend void swap(C_LOGIN& a, C_LOGIN& b) {
     a.Swap(&b);
@@ -1360,7 +1635,7 @@ class S_LOGIN final :
                &_S_LOGIN_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    9;
 
   friend void swap(S_LOGIN& a, S_LOGIN& b) {
     a.Swap(&b);
@@ -1548,7 +1823,7 @@ class C_ENTER_GAME final :
                &_C_ENTER_GAME_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    10;
 
   friend void swap(C_ENTER_GAME& a, C_ENTER_GAME& b) {
     a.Swap(&b);
@@ -1705,7 +1980,7 @@ class S_ENTER_GAME final :
                &_S_ENTER_GAME_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    11;
 
   friend void swap(S_ENTER_GAME& a, S_ENTER_GAME& b) {
     a.Swap(&b);
@@ -1904,7 +2179,7 @@ class C_CHAT final :
                &_C_CHAT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    12;
 
   friend void swap(C_CHAT& a, C_CHAT& b) {
     a.Swap(&b);
@@ -2106,7 +2381,7 @@ class S_CHAT final :
                &_S_CHAT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    13;
 
   friend void swap(S_CHAT& a, S_CHAT& b) {
     a.Swap(&b);
@@ -2339,7 +2614,7 @@ class C_MOVE final :
                &_C_MOVE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    14;
 
   friend void swap(C_MOVE& a, C_MOVE& b) {
     a.Swap(&b);
@@ -2520,7 +2795,7 @@ class S_MOVE final :
                &_S_MOVE_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    15;
 
   friend void swap(S_MOVE& a, S_MOVE& b) {
     a.Swap(&b);
@@ -2719,7 +2994,7 @@ class C_SHOT final :
                &_C_SHOT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    16;
 
   friend void swap(C_SHOT& a, C_SHOT& b) {
     a.Swap(&b);
@@ -2911,7 +3186,7 @@ class S_SHOT final :
                &_S_SHOT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    17;
 
   friend void swap(S_SHOT& a, S_SHOT& b) {
     a.Swap(&b);
@@ -3134,7 +3409,7 @@ class C_HIT final :
                &_C_HIT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    18;
 
   friend void swap(C_HIT& a, C_HIT& b) {
     a.Swap(&b);
@@ -3304,7 +3579,7 @@ class S_HIT final :
                &_S_HIT_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    19;
 
   friend void swap(S_HIT& a, S_HIT& b) {
     a.Swap(&b);
@@ -3505,7 +3780,7 @@ class C_EAT_ROOM_ITEM final :
                &_C_EAT_ROOM_ITEM_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    20;
 
   friend void swap(C_EAT_ROOM_ITEM& a, C_EAT_ROOM_ITEM& b) {
     a.Swap(&b);
@@ -3673,7 +3948,7 @@ class S_EAT_ROOM_ITEM final :
                &_S_EAT_ROOM_ITEM_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    21;
 
   friend void swap(S_EAT_ROOM_ITEM& a, S_EAT_ROOM_ITEM& b) {
     a.Swap(&b);
@@ -3861,7 +4136,7 @@ class C_USE_ITEM final :
                &_C_USE_ITEM_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    22;
 
   friend void swap(C_USE_ITEM& a, C_USE_ITEM& b) {
     a.Swap(&b);
@@ -4029,7 +4304,7 @@ class S_USE_ITEM final :
                &_S_USE_ITEM_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    23;
 
   friend void swap(S_USE_ITEM& a, S_USE_ITEM& b) {
     a.Swap(&b);
@@ -4217,7 +4492,7 @@ class C_CREATE_PARTY final :
                &_C_CREATE_PARTY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    24;
 
   friend void swap(C_CREATE_PARTY& a, C_CREATE_PARTY& b) {
     a.Swap(&b);
@@ -4365,7 +4640,7 @@ class S_CREATE_PARTY final :
                &_S_CREATE_PARTY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    25;
 
   friend void swap(S_CREATE_PARTY& a, S_CREATE_PARTY& b) {
     a.Swap(&b);
@@ -4544,7 +4819,7 @@ class C_JOIN_PARTY final :
                &_C_JOIN_PARTY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    24;
+    26;
 
   friend void swap(C_JOIN_PARTY& a, C_JOIN_PARTY& b) {
     a.Swap(&b);
@@ -4703,7 +4978,7 @@ class S_JOIN_PARTY final :
                &_S_JOIN_PARTY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    25;
+    27;
 
   friend void swap(S_JOIN_PARTY& a, S_JOIN_PARTY& b) {
     a.Swap(&b);
@@ -4902,7 +5177,7 @@ class C_WITHDRAW_PARTY final :
                &_C_WITHDRAW_PARTY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    26;
+    28;
 
   friend void swap(C_WITHDRAW_PARTY& a, C_WITHDRAW_PARTY& b) {
     a.Swap(&b);
@@ -5061,7 +5336,7 @@ class S_WITHDRAW_PARTY final :
                &_S_WITHDRAW_PARTY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    27;
+    29;
 
   friend void swap(S_WITHDRAW_PARTY& a, S_WITHDRAW_PARTY& b) {
     a.Swap(&b);
@@ -5271,7 +5546,7 @@ class C_MY_PARTY final :
                &_C_MY_PARTY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    28;
+    30;
 
   friend void swap(C_MY_PARTY& a, C_MY_PARTY& b) {
     a.Swap(&b);
@@ -5419,7 +5694,7 @@ class S_MY_PARTY final :
                &_S_MY_PARTY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    29;
+    31;
 
   friend void swap(S_MY_PARTY& a, S_MY_PARTY& b) {
     a.Swap(&b);
@@ -5618,7 +5893,7 @@ class C_ALL_PARTY final :
                &_C_ALL_PARTY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    30;
+    32;
 
   friend void swap(C_ALL_PARTY& a, C_ALL_PARTY& b) {
     a.Swap(&b);
@@ -5766,7 +6041,7 @@ class S_ALL_PARTY final :
                &_S_ALL_PARTY_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    31;
+    33;
 
   friend void swap(S_ALL_PARTY& a, S_ALL_PARTY& b) {
     a.Swap(&b);
@@ -6112,6 +6387,34 @@ inline void S_SERVER_CHAT::set_allocated_msg(std::string* msg) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:Protocol.S_SERVER_CHAT.msg)
+}
+
+// -------------------------------------------------------------------
+
+// C_CHECK_ROOM
+
+// -------------------------------------------------------------------
+
+// S_CHECK_ROOM
+
+// uint64 count = 1;
+inline void S_CHECK_ROOM::clear_count() {
+  _impl_.count_ = uint64_t{0u};
+}
+inline uint64_t S_CHECK_ROOM::_internal_count() const {
+  return _impl_.count_;
+}
+inline uint64_t S_CHECK_ROOM::count() const {
+  // @@protoc_insertion_point(field_get:Protocol.S_CHECK_ROOM.count)
+  return _internal_count();
+}
+inline void S_CHECK_ROOM::_internal_set_count(uint64_t value) {
+  
+  _impl_.count_ = value;
+}
+inline void S_CHECK_ROOM::set_count(uint64_t value) {
+  _internal_set_count(value);
+  // @@protoc_insertion_point(field_set:Protocol.S_CHECK_ROOM.count)
 }
 
 // -------------------------------------------------------------------
@@ -9802,6 +10105,10 @@ S_ALL_PARTY::parties() const {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

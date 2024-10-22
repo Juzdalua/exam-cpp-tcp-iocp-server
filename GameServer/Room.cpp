@@ -2,11 +2,34 @@
 #include "Room.h"
 #include "Player.h"
 #include "GameSession.h"
+#include "ItemController.h"
 
 Room GRoom;
 
 Room::Room()
 {
+	// TODO -> MAKE Room ID
+	vector<shared_ptr<RoomItem>> roomItems = ItemController::GetRoomItemsByRoomId(1);
+
+	bool updateFlag = false;
+	// Init Room
+	for (auto& roomItem : roomItems)
+	{
+		if (roomItem->GetState() == RoomItemState::RESPAWN_PENDING)
+		{
+			updateFlag = true;
+			roomItem->SetState(RoomItemState::AVAILABLE);
+			break;
+		}
+	}
+
+	// Update DB
+	if (updateFlag)
+	{
+		ItemController::InitRoomItems();
+	}
+
+	GRoom.SetRoomItems(roomItems);
 }
 
 Room::~Room()

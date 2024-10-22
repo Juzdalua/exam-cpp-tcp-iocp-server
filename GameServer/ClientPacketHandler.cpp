@@ -347,38 +347,7 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 	Protocol::S_CREATE_ROOM createRoomPkt;
 	uint16 createRoomPacketId = PKT_S_CREATE_ROOM;
 
-	vector<shared_ptr<RoomItem>> roomItems = {};
-	if (GRoom.GetSize() == 0)
-	{
-		lock_guard<mutex> lock(_lock);
-		// TODO -> MAKE Room ID
-		roomItems = ItemController::GetRoomItemsByRoomId(1);
-
-		bool updateFlag = false;
-		// Init Room
-		for (auto& roomItem : roomItems)
-		{
-			if (roomItem->GetState() == RoomItemState::RESPAWN_PENDING)
-			{
-				updateFlag = true;
-				roomItem->SetState(RoomItemState::AVAILABLE);
-				break;
-			}
-		}
-
-		// Update DB
-		if (updateFlag)
-		{
-			ItemController::InitRoomItems();
-		}
-
-		GRoom.SetRoomItems(roomItems);
-	}
-	else
-	{
-		roomItems = GRoom.GetRoomItems();
-	}
-
+	vector<shared_ptr<RoomItem>> roomItems = GRoom.GetRoomItems();
 	GRoom.Enter(playerRef); // WRITE_LOCK
 
 	for (shared_ptr<RoomItem>& roomItem : roomItems)
