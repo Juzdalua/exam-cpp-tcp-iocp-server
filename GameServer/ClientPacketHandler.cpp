@@ -271,11 +271,38 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 	Protocol::C_ENTER_GAME recvPkt;
 	recvPkt.ParseFromArray(buffer + sizeof(PacketHeader), len - sizeof(PacketHeader));
 
-	// Get Player in Session
-	PlayerRef player = session->_player;
+	// Already login
+	if (GRoom.IsLogin(recvPkt.player().id()))
+	{
+		auto errorPkt = new Protocol::ErrorObj();
+		errorPkt->set_errorcode(ErrorCode::ERROR_S_LOGIN_SESSION);
+		errorPkt->set_errormsg("Already Login");
 
-	if(isInvalidId(session, recvPkt.playerid(), ErrorCode::ERROR_S_ENTER_GAME))
+		uint16 packetId = PKT_S_LOGIN;
+		Protocol::S_LOGIN pkt;
+		pkt.set_success(false);
+		pkt.set_allocated_player(nullptr);
+		pkt.set_allocated_error(errorPkt);
+		session->Send(MakeSendBuffer(pkt, packetId));
+
 		return false;
+	}
+
+	// Set Player in Session
+	PlayerRef playerRef = make_shared<Player>(
+		recvPkt.player().id(),
+		recvPkt.player().accountid(),
+		recvPkt.player().name(),
+		recvPkt.player().posx(),
+		recvPkt.player().posy(),
+		recvPkt.player().maxhp(),
+		recvPkt.player().currenthp()
+	);
+	playerRef->SetOwnerSession(session);
+	
+	// Set Session
+	session->_player = playerRef;
+	session->_accountId = recvPkt.player().accountid();
 
 	// Broadcast new player info to all players in room
 	uint16 packetId = PKT_S_ENTER_GAME;
@@ -284,13 +311,13 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 	pkt.set_toplayer(Protocol::TO_PLAYER_ALL);
 	{
 		Protocol::Player* repeatPlayer = pkt.add_players();
-		repeatPlayer->set_id(player->GetPlayerId());
-		repeatPlayer->set_accountid(player->GetAccountId());
-		repeatPlayer->set_name(player->GetPlayerName());
-		repeatPlayer->set_posx(player->GetPosX());
-		repeatPlayer->set_posy(player->GetPosY());
-		repeatPlayer->set_maxhp(player->GetMaxHP());
-		repeatPlayer->set_currenthp(player->GetCurrentHP());
+		repeatPlayer->set_id(playerRef->GetPlayerId());
+		repeatPlayer->set_accountid(playerRef->GetAccountId());
+		repeatPlayer->set_name(playerRef->GetPlayerName());
+		repeatPlayer->set_posx(playerRef->GetPosX());
+		repeatPlayer->set_posy(playerRef->GetPosY());
+		repeatPlayer->set_maxhp(playerRef->GetMaxHP());
+		repeatPlayer->set_currenthp(playerRef->GetCurrentHP());
 	}
 	
 	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
@@ -352,7 +379,7 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		roomItems = GRoom.GetRoomItems();
 	}
 
-	GRoom.Enter(player); // WRITE_LOCK
+	GRoom.Enter(playerRef); // WRITE_LOCK
 
 	for (shared_ptr<RoomItem>& roomItem : roomItems)
 	{
