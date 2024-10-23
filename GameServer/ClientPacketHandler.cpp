@@ -8,15 +8,11 @@
 #include "Room.h"
 #include "ItemController.h"
 #include "EnumMap.h"
-
-mutex _lock;
+#include "ThreadQueue.h"
 
 bool isInvalidId(GameProtobufSessionRef& session, uint64 pktPlayerId, ErrorCode errorCode)
 {
 	if (session->_player->GetPlayerId() != pktPlayerId) {
-		DebugLog::PrintColorText(LogColor::RED, "[ERROR: ", to_string(session->_player->GetPlayerId()), false, false);
-		DebugLog::PrintColorText(LogColor::RED, "is Invalid ID]", "", false, true);
-
 		auto errorPkt = new Protocol::ErrorObj();
 		errorPkt->set_errorcode(errorCode);
 		errorPkt->set_errormsg("Invalid ID");
@@ -27,7 +23,8 @@ bool isInvalidId(GameProtobufSessionRef& session, uint64 pktPlayerId, ErrorCode 
 		pkt.set_success(false);
 		pkt.set_allocated_error(errorPkt);
 
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 		
 		return true;
 	}
@@ -37,7 +34,6 @@ bool isInvalidId(GameProtobufSessionRef& session, uint64 pktPlayerId, ErrorCode 
 bool ClientPacketHandler::HandlePacket(BYTE* buffer, int32 len, GameProtobufSessionRef& session)
 {
 	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
-	GRoom.CheckPlayers();
 	switch (recvHeader->id)
 	{
 	case PKT_C_PING:
@@ -109,7 +105,8 @@ bool ClientPacketHandler::HandleDisconnect(GameProtobufSessionRef& session)
 	uint16 packetId = PKT_S_DISCONNECT;
 	Protocol::S_DISCONNECT pkt;
 	pkt.set_playerid(session->_player->GetPlayerId());
-	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	//GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Broadcast, MakeSendBuffer(pkt, packetId), nullptr });
 
 	return true;
 }
@@ -125,7 +122,8 @@ bool ClientPacketHandler::HandleTest(BYTE* buffer, int32 len, GameProtobufSessio
 	uint16 packetId = PKT_S_PING;
 	Protocol::S_CHAT pkt;
 	pkt.set_msg("Pong");
-	session->Send(MakeSendBuffer(pkt, packetId));
+	//session->Send(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 
 	return true;
 }
@@ -147,7 +145,8 @@ bool ClientPacketHandler::HandleSignup(BYTE* buffer, int32 len, GameProtobufSess
 			uint16 packetId = PKT_S_SIGNUP;
 			Protocol::S_SIGNUP pkt;
 			pkt.set_success(true);
-			session->Send(MakeSendBuffer(pkt, packetId));
+			//session->Send(MakeSendBuffer(pkt, packetId));
+			sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 			return true;
 		}
 	}
@@ -160,7 +159,8 @@ bool ClientPacketHandler::HandleSignup(BYTE* buffer, int32 len, GameProtobufSess
 	Protocol::S_SIGNUP ePkt;
 	ePkt.set_success(false);
 	ePkt.set_allocated_error(errorPkt);
-	session->Send(MakeSendBuffer(ePkt, packetId));
+	//session->Send(MakeSendBuffer(ePkt, packetId));
+	sendQueue.Push({ SendType::Send, MakeSendBuffer(ePkt, packetId), session });
 
 	return false;
 }
@@ -187,7 +187,8 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 		pkt.set_success(false);
 		pkt.set_allocated_player(nullptr);
 		pkt.set_allocated_error(errorPkt); // 소유권을 protobuf에 넘긴다 -> 메모리 해제를 자동으로 함.
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 		
 		return false;
 	}
@@ -204,7 +205,8 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 		pkt.set_success(false);
 		pkt.set_allocated_player(nullptr);
 		pkt.set_allocated_error(errorPkt);
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 
 		return false;
 	}
@@ -257,7 +259,8 @@ bool ClientPacketHandler::HandleLogin(BYTE* buffer, int32 len, GameProtobufSessi
 	Protocol::S_LOGIN pkt;
 	pkt.set_success(true);
 	pkt.set_allocated_player(sendPlayer);
-	session->Send(MakeSendBuffer(pkt, packetId));
+	//session->Send(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 
 	return true;
 }
@@ -281,7 +284,8 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		Protocol::S_ENTER_GAME pkt;
 		pkt.set_success(false);
 		pkt.set_allocated_error(errorPkt);
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 
 		return false;
 	}
@@ -318,7 +322,8 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		repeatPlayer->set_currenthp(playerRef->GetCurrentHP());
 	}
 	
-	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	//GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Broadcast, MakeSendBuffer(pkt, packetId), nullptr });
 
 	// Send all players in room to new player
 	map<uint64, PlayerRef>* players = GRoom.GetPlayersInRoom();
@@ -337,7 +342,8 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		}
 		pkt.set_toplayer(Protocol::TO_PLAYER_OWNER);
 
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 	}
 
 	// Create Game Set
@@ -377,7 +383,8 @@ bool ClientPacketHandler::HandleEnterGame(BYTE* buffer, int32 len, GameProtobufS
 		repeatedItem->set_allocated_item(sendItem);
 	}
 	
-	session->Send(MakeSendBuffer(createRoomPkt, createRoomPacketId));
+	//session->Send(MakeSendBuffer(createRoomPkt, createRoomPacketId));
+	sendQueue.Push({ SendType::Send, MakeSendBuffer(createRoomPkt, createRoomPacketId), session });
 
 	return true;
 }
@@ -405,7 +412,8 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 	{
 	default:
 	case Protocol::CHAT_TYPE_NORMAL:
-		GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+		//GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Broadcast, MakeSendBuffer(pkt, packetId), nullptr });
 	break;
 
 	case Protocol::CHAT_TYPE_WHISPER:
@@ -414,7 +422,8 @@ bool ClientPacketHandler::HandleChat(BYTE* buffer, int32 len, GameProtobufSessio
 		pkt.set_targetid(recvPkt.targetid());
 
 		GRoom.SendToTargetPlayer(recvPlayerId, MakeSendBuffer(pkt, packetId));
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 	}
 	break;
 
@@ -470,7 +479,8 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 		pkt.set_success(false);
 		pkt.set_allocated_error(errorPkt);
 
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 		return false;
 	}
 
@@ -492,7 +502,8 @@ bool ClientPacketHandler::HandleMove(BYTE* buffer, int32 len, GameProtobufSessio
 	pkt.set_success(true);
 	pkt.set_dir(recvPkt.dir());
 	pkt.set_allocated_player(sendPlayer);
-	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	//GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Broadcast, MakeSendBuffer(pkt, packetId), nullptr });
 
 	return true;
 }
@@ -511,7 +522,8 @@ bool ClientPacketHandler::HandleShot(BYTE* buffer, int32 len, GameProtobufSessio
 	pkt.set_spawnposy(recvPkt.spawnposy());
 	pkt.set_targetposx(recvPkt.targetposx());
 	pkt.set_targetposy(recvPkt.targetposy());
-	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	//GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Broadcast, MakeSendBuffer(pkt, packetId), nullptr });
 
 	return false;
 }
@@ -541,7 +553,8 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 				pkt.set_success(false);
 				pkt.set_allocated_error(errorPkt);
 
-				session->Send(MakeSendBuffer(pkt, packetId));
+				//session->Send(MakeSendBuffer(pkt, packetId));
+				sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 				return false;
 			}
 		}
@@ -559,7 +572,8 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 		pkt.set_success(false);
 		pkt.set_allocated_error(errorPkt);
 
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 		return false;
 	}
 
@@ -578,7 +592,8 @@ bool ClientPacketHandler::HandleHit(BYTE* buffer, int32 len, GameProtobufSession
 	}
 	pkt.set_currenthp(currentHP);
 	pkt.set_playerid(session->_player->GetPlayerId());
-	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	//GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Broadcast, MakeSendBuffer(pkt, packetId), nullptr });
 
 	return true;
 }
@@ -626,7 +641,8 @@ bool ClientPacketHandler::HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobu
 	uint16 packetId = PKT_S_EAT_ROOM_ITEM;
 	Protocol::S_EAT_ROOM_ITEM pkt;
 	pkt.set_allocated_player(sendPlayer);
-	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	//GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Broadcast, MakeSendBuffer(pkt, packetId), nullptr });
 
 	// Respawn Room Item
 	thread([=]() {
@@ -656,7 +672,8 @@ bool ClientPacketHandler::HandleEatRoomItem(BYTE* buffer, int32 len, GameProtobu
 		repeatedItem->set_allocated_item(sendItem);
 
 
-		GRoom.Broadcast(MakeSendBuffer(createRoomPkt, createRoomPacketId));
+		//GRoom.Broadcast(MakeSendBuffer(createRoomPkt, createRoomPacketId));
+		sendQueue.Push({ SendType::Broadcast, MakeSendBuffer(createRoomPkt, createRoomPacketId), nullptr });
 		}).detach();
 
 	return true;
@@ -699,7 +716,8 @@ bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobu
 		pkt.set_success(false);
 		pkt.set_allocated_error(errorPkt);
 
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 		return false;
 	}
 
@@ -710,7 +728,8 @@ bool ClientPacketHandler::HandleCreateParty(BYTE* buffer, int32 len, GameProtobu
 	Protocol::S_CREATE_PARTY pkt;
 	pkt.set_success(true);
 	pkt.set_partyid(recvPkt.partyid());
-	session->Send(MakeSendBuffer(pkt, packetId));
+	//session->Send(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 
 	return true;
 }
@@ -735,7 +754,8 @@ bool ClientPacketHandler::HandleJoinParty(BYTE* buffer, int32 len, GameProtobufS
 		pkt.set_success(false);
 		pkt.set_allocated_error(errorPkt);
 
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 		return false;
 	}
 
@@ -749,7 +769,8 @@ bool ClientPacketHandler::HandleJoinParty(BYTE* buffer, int32 len, GameProtobufS
 	playerPkt->set_name(session->_player->GetPlayerName());
 	pkt.set_allocated_players(playerPkt);
 
-	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	//GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Broadcast, MakeSendBuffer(pkt, packetId), nullptr });
 
 	return true;
 }
@@ -773,7 +794,8 @@ bool ClientPacketHandler::HandleWithdrawParty(BYTE* buffer, int32 len, GameProto
 		pkt.set_success(false);
 		pkt.set_allocated_error(errorPkt);
 
-		session->Send(MakeSendBuffer(pkt, packetId));
+		//session->Send(MakeSendBuffer(pkt, packetId));
+		sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 		return false;
 	}
 	
@@ -797,7 +819,8 @@ bool ClientPacketHandler::HandleWithdrawParty(BYTE* buffer, int32 len, GameProto
 		repeatedPlayer->set_name(player->GetPlayerName());
 	}
 
-	GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	//GRoom.Broadcast(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Broadcast, MakeSendBuffer(pkt, packetId), nullptr });
 
 	return true;
 }
@@ -827,7 +850,8 @@ bool ClientPacketHandler::HandleGetMyParty(BYTE* buffer, int32 len, GameProtobuf
 		}
 	}
 
-	session->Send(MakeSendBuffer(pkt, packetId));
+	//session->Send(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 
 	return true;
 }
@@ -868,7 +892,8 @@ bool ClientPacketHandler::HandleGetAllParty(BYTE* buffer, int32 len, GameProtobu
 	}
 	
 	pkt.set_success(true);
-	session->Send(MakeSendBuffer(pkt, packetId));
+	//session->Send(MakeSendBuffer(pkt, packetId));
+	sendQueue.Push({ SendType::Send, MakeSendBuffer(pkt, packetId), session });
 
 	return true;
 }

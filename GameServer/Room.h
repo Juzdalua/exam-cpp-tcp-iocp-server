@@ -36,9 +36,6 @@ public:
 	void CreateParty(uint64 partyId, PlayerRef playerRef);
 	void WithdrawParty(uint64 partyId, PlayerRef playerRef);
 
-	// TEMP
-	void CheckPlayers();
-
 private:
 	//USE_LOCK;
 	mutex _lock;

@@ -5,6 +5,7 @@
 
 int32 MAX_CLIENT_COUNT = 1;
 int32 MAX_WORKER_COUNT = thread::hardware_concurrency();
+int32 FPS = 33; // 33ms -> 30fps
 
 extern CoreGlobal GCoreGlobal;
 ConnectionManager* GConnectionManager = nullptr;

@@ -4,6 +4,7 @@
 #include "IocpEvent.h"
 #include "Session.h"
 #include "Service.h"
+#include "ThreadQueue.h"
 
 /*------------------------
 	Listener
@@ -77,7 +78,6 @@ HANDLE Listener::GetHandle()
 void Listener::RegisterAccept(AcceptEvent* acceptEvent)
 {
 	SessionRef session = _service->CreateSession(); // Register IOCP
-	cout << "===== Create Session =====" << endl;
 
 	acceptEvent->Init();
 	acceptEvent->session = session;
@@ -122,7 +122,7 @@ void Listener::ProcessAccept(AcceptEvent* acceptEvent)
 	}
 
 	session->SetNetAddress(NetAddress(sockAddress));
-	DebugLog::PrintColorText(LogColor::YELLOW, "[Client Connected]", "", true, true);
+	logQueue.Push({ LogType::CONNECT , LogColor::YELLOW, nullptr, nullptr });
 
 	session->ProcessConnect();
 	RegisterAccept(acceptEvent);

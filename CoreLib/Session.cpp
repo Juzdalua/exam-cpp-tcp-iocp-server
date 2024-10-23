@@ -2,6 +2,7 @@
 #include "Session.h"
 #include "SocketUtils.h"
 #include "Service.h"
+#include "ThreadQueue.h"
 
 Session::Session()
 	:_recvBuffer(BUFFER_SIZE)
@@ -44,9 +45,6 @@ void Session::Disconnect(const WCHAR* cause)
 {
 	if (_connected.exchange(false) == false)
 		return;
-
-	// TEMP
-	DebugLog::PrintColorText(LogColor::YELLOW, "[Disconnect]", "", true, false);
 
 	RegisterDisconnect();
 }
