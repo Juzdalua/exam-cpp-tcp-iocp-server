@@ -7,7 +7,7 @@
 #include "Player.h"
 #include "ClientPacketHandler.h"
 #include "PacketUtils.h"
-#include "PacketPriorityQueue.h"
+#include "ThreadQueue.h"
 
 /*---------------
 	Game Session
@@ -110,7 +110,7 @@ void GameProtobufSession::OnDisconnected()
 
 	// Remove Session Ref
 	GProtobufSessionManager.Remove(static_pointer_cast<GameProtobufSession>(shared_from_this()));
-	
+
 	// Session Close
 	if (_player != nullptr && _player->GetOwnerSession() != nullptr)
 	{
@@ -122,20 +122,11 @@ void GameProtobufSession::OnRecvPacket(BYTE* buffer, int32 len)
 {
 	GameProtobufSessionRef session = GetProtobufSessionRef();
 
-	PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
+	//PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(buffer);
+	//HandlePacketStartLog("RECV", LogColor::GREEN, recvHeader, session);
+	//ClientPacketHandler::HandlePacket(buffer, len, session);
 
-	// Check Packet Priority
-	auto it = packetIdToPriority.find(recvHeader->id);
-	if (it != packetIdToPriority.end())
-	{
-		GPacketPriorityQueue->PushPacket(buffer, len, session);
-	}
-	else {
-		// Log
-		cout << endl;
-		HandlePacketStartLog("RECV", LogColor::GREEN, recvHeader, session);
-		ClientPacketHandler::HandlePacket(buffer, len, session);
-	}
+	packetQueue.Push({ buffer, len, session });
 }
 
 void GameProtobufSession::OnSend(int32 len)
@@ -149,7 +140,7 @@ void GameProtobufSession::OnSend(int32 len, vector<SendBufferRef>& sendVec)
 	{
 		GameProtobufSessionRef session = GetProtobufSessionRef();
 		PacketHeader* recvHeader = reinterpret_cast<PacketHeader*>(sendVec.back()->Buffer());
-		
+
 		HandlePacketStartLog("SEND", LogColor::BLUE, recvHeader, session);
 	}
 }

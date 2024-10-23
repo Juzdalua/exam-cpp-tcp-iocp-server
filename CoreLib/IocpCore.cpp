@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "IocpCore.h"
 #include "IocpEvent.h"
+#include "ThreadQueue.h"
 
 IocpCore::IocpCore()
 {
@@ -24,7 +25,7 @@ bool IocpCore::Dispatch(uint32 timeoutMs)
 	ULONG_PTR key = 0;
 	IocpEvent* iocpEvent = nullptr;
 
-	if (GetQueuedCompletionStatus(_iocpHandle, OUT &numOfBytes, OUT &key, OUT reinterpret_cast<LPOVERLAPPED*>(&iocpEvent), timeoutMs))
+	if (GetQueuedCompletionStatus(_iocpHandle, OUT & numOfBytes, OUT & key, OUT reinterpret_cast<LPOVERLAPPED*>(&iocpEvent), timeoutMs))
 	{
 		IocpObjectRef iocpObject = iocpEvent->owner; // Session or Listener
 		iocpObject->Dispatch(iocpEvent, numOfBytes);

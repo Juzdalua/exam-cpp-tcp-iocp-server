@@ -57,9 +57,15 @@ public:
 	virtual ~GameProtobufSession()
 	{
 		DebugLog::PrintColorText(LogColor::YELLOW, "[Session Close]", "", true, false);
-		if (_player != nullptr) {
+		if (_player != nullptr)
+		{
+			// ÆÄÆ¼ Å»Åð
+			GRoom.WithdrawParty(_player->GetPartyId(), _player);
+			_player->SetPartyId(0);
+
+			// °ÔÀÓ ¹æ ¶°³ª±â
 			GRoom.Leave(_player);
-			
+
 			if (_accountId && _accountId != 0) {
 				DebugLog::PrintColorText(LogColor::YELLOW, "[AccountId-> ", to_string(_accountId), false, false);
 			}

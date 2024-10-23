@@ -84,9 +84,6 @@
     <ClCompile Include="EnumMap.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="PacketPriorityQueue.cpp">
-      <Filter>GameContents</Filter>
-    </ClCompile>
     <ClCompile Include="Job.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
@@ -148,9 +145,6 @@
     </ClInclude>
     <ClInclude Include="EnumMap.h">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="PacketPriorityQueue.h">
-      <Filter>GameContents</Filter>
     </ClInclude>
     <ClInclude Include="Job.h">
       <Filter>GameContents</Filter>

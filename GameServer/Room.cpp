@@ -165,3 +165,16 @@ void Room::CreateParty(uint64 partyId, PlayerRef playerRef)
 	if (_parties.find(partyId) == _parties.end() || find(_parties[partyId].begin(), _parties[partyId].end(), playerRef) == _parties[partyId].end())
 		_parties[partyId].push_back(playerRef);
 }
+
+void Room::WithdrawParty(uint64 partyId, PlayerRef playerRef)
+{
+	if (_parties.find(partyId) != _parties.end())
+	{
+		auto it = find(_parties[partyId].begin(), _parties[partyId].end(), playerRef);
+		if(it != _parties[partyId].end())
+			_parties[partyId].erase(it);
+
+		if (_parties[partyId].size() == 0)
+			_parties.erase(partyId);
+	}
+}

@@ -34,6 +34,7 @@ public:
 
 	// Party
 	void CreateParty(uint64 partyId, PlayerRef playerRef);
+	void WithdrawParty(uint64 partyId, PlayerRef playerRef);
 
 	// TEMP
 	void CheckPlayers();

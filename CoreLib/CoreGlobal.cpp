@@ -3,6 +3,9 @@
 #include "SocketUtils.h"
 #include "ConnectionPool.h"
 
+int32 MAX_CLIENT_COUNT = 1;
+int32 MAX_WORKER_COUNT = thread::hardware_concurrency();
+
 extern CoreGlobal GCoreGlobal;
 ConnectionManager* GConnectionManager = nullptr;
 ConnectionPool* CP = nullptr;
